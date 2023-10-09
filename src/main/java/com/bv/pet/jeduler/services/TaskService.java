@@ -4,9 +4,8 @@ import com.bv.pet.jeduler.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.TaskMapper;
-import com.bv.pet.jeduler.repositories.CategoryRepository;
-import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
+import com.bv.pet.jeduler.services.interfaces.ITaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
-    private final CategoryRepository categoryRepository;
-    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional(readOnly = true)

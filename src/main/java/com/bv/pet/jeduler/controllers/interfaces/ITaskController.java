@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.controllers;
+package com.bv.pet.jeduler.controllers.interfaces;
 
 import com.bv.pet.jeduler.dtos.TaskDto;
 import org.springframework.http.ResponseEntity;

@@ -1,5 +1,6 @@
 package com.bv.pet.jeduler.controllers;
 
+import com.bv.pet.jeduler.controllers.interfaces.ITaskController;
 import com.bv.pet.jeduler.dtos.TaskDto;
 import com.bv.pet.jeduler.services.TaskService;
 import jakarta.validation.Valid;
@@ -13,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/jeduler/tasks")
-public class TaskController implements ITaskController{
+public class TaskController implements ITaskController {
     private final TaskService taskService;
 
     @GetMapping
@@ -33,7 +34,7 @@ public class TaskController implements ITaskController{
         TaskDto createdTask = taskService.create(taskDto);
 
         return ResponseEntity
-                .created(URI.create("/tasks" + taskDto.getId()))
+                .created(URI.create("/jeduler/tasks/" + createdTask.getId()))
                 .body(createdTask);
     }
 
@@ -43,7 +44,7 @@ public class TaskController implements ITaskController{
         TaskDto updatedTask = taskService.update(taskDto);
 
         return ResponseEntity
-                .created(URI.create("/tasks" + taskDto.getId()))
+                .created(URI.create("/jeduler/tasks/" + updatedTask.getId()))
                 .body(updatedTask);
     }
 
