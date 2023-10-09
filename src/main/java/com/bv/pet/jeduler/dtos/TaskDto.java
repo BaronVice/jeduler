@@ -31,5 +31,5 @@ public class TaskDto {
     @NotNull
     private Instant expiresAt;
 
-    private Instant notification;
+    private Instant notifyAt;
 }

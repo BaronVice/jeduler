@@ -4,6 +4,8 @@ import com.bv.pet.jeduler.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.TaskMapper;
+import com.bv.pet.jeduler.repositories.CategoryRepository;
+import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,16 +18,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
-    private final TaskMapper taskMapper;
+    private final CategoryRepository categoryRepository;
+    private final NotificationRepository notificationRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<TaskDto> all() {
-        return taskMapper.toTaskDtoList(taskRepository.findAll());
+        return TaskMapper.toTaskDtoList(taskRepository.findAll());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TaskDto get(Long id) {
-        return taskMapper.toTaskDto(
+        return TaskMapper.toTaskDto(
                 taskRepository.findById(id).orElseThrow(
                         () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
                 )
@@ -35,19 +40,40 @@ public class TaskService implements ITaskService {
     @Override
     @Transactional
     public TaskDto create(TaskDto taskDto) {
-        Task task = taskMapper.toTask(taskDto);
+        Task task = TaskMapper.toTask(taskDto);
+        task.getNotification().setTask(task);
+
         taskRepository.save(task);
 
-        return taskMapper.toTaskDto(task);
+        return TaskMapper.toTaskDto(task);
     }
 
     @Override
     @Transactional
     public TaskDto update(TaskDto taskDto) {
-        Task task = taskMapper.toTask(taskDto);
-        taskRepository.save(task);
+        Task toUpdate = taskRepository.findById(taskDto.getId()).orElseThrow(
+                () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
+        );
 
-        return taskMapper.toTaskDto(task);
+        Task task = TaskMapper.toTask(taskDto);
+        toUpdate.setName(task.getName());
+        toUpdate.setDescription(task.getDescription());
+        toUpdate.setStartsAt(task.getStartsAt());
+        toUpdate.setExpiresAt(task.getExpiresAt());
+        toUpdate.setCategories(task.getCategories());
+
+        if (task.getNotification() == null) {
+            toUpdate.setNotification(null);
+        } else if (toUpdate.getNotification() == null) {
+            toUpdate.setNotification(task.getNotification());
+            task.getNotification().setTask(toUpdate);
+        } else {
+            toUpdate.getNotification().setNotifyAt(task.getNotification().getNotifyAt());
+        }
+
+        taskRepository.save(toUpdate);
+
+        return TaskMapper.toTaskDto(task);
     }
 
     @Override

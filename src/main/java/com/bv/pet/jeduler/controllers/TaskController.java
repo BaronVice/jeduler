@@ -39,13 +39,18 @@ public class TaskController implements ITaskController{
 
     @Override
     @PatchMapping
-    public ResponseEntity<TaskDto> updateTask(TaskDto taskDto) {
-        return null;
+    public ResponseEntity<TaskDto> updateTask(@Valid @RequestBody TaskDto taskDto) {
+        TaskDto updatedTask = taskService.update(taskDto);
+
+        return ResponseEntity
+                .created(URI.create("/tasks" + taskDto.getId()))
+                .body(updatedTask);
     }
 
     @Override
-    @DeleteMapping
-    public ResponseEntity<?> deleteTask(Long id) {
-        return null;
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTask(@PathVariable Long id) {
+        taskService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }
