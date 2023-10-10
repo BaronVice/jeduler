@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.TreeSet;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +20,10 @@ public class CategoryController implements ICategoryController {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<CategoryDto>> allCategories() {
-        return ResponseEntity.ok(categoryService.all());
+    public ResponseEntity<TreeSet<CategoryDto>> allCategories() {
+        return ResponseEntity.ok(
+                new TreeSet<>(categoryService.all())
+        );
     }
 
     @Override

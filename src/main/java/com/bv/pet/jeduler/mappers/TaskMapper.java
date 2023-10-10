@@ -1,16 +1,24 @@
 package com.bv.pet.jeduler.mappers;
 
+import com.bv.pet.jeduler.dtos.CategoryDto;
 import com.bv.pet.jeduler.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Task;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
+@Component
+@RequiredArgsConstructor
 public class TaskMapper {
-    public static Task toTask(TaskDto taskDto){
+    private final CategoryMapper categoryMapper;
+
+    public Task toTask(TaskDto taskDto){
         if ( taskDto == null ) {
             return null;
         }
@@ -23,9 +31,10 @@ public class TaskMapper {
         task.setStartsAt( taskDto.getStartsAt() );
         task.setExpiresAt( taskDto.getExpiresAt() );
 
-        List<Category> list = taskDto.getCategories();
-        if ( list != null ) {
-            task.setCategories( new ArrayList<>( list ) );
+        if ( taskDto.getCategories() != null ) {
+            task.setCategories( categoryMapper.toCategoryList(
+                    taskDto.getCategories().stream().toList()
+            ));
         }
         Instant notifyAt = taskDto.getNotifyAt();
         if ( notifyAt != null ){
@@ -40,7 +49,7 @@ public class TaskMapper {
         return task;
     }
 
-    public static TaskDto toTaskDto(Task task){
+    public TaskDto toTaskDto(Task task){
         if ( task == null ) {
             return null;
         }
@@ -55,7 +64,9 @@ public class TaskMapper {
 
         List<Category> list = task.getCategories();
         if ( list != null ) {
-            taskDto.setCategories(new ArrayList<>(list));
+            taskDto.setCategories(
+                    new TreeSet<>(categoryMapper.toCategoryDtoList(list))
+            );
         }
         Notification notification = task.getNotification();
         if ( notification != null ) {
@@ -65,7 +76,7 @@ public class TaskMapper {
         return taskDto;
     }
 
-    public static List<Task> toTaskList(List<TaskDto> taskDtoList){
+    public List<Task> toTaskList(List<TaskDto> taskDtoList){
         if ( taskDtoList == null ) {
             return null;
         }
@@ -78,7 +89,7 @@ public class TaskMapper {
         return list;
     }
 
-    public static List<TaskDto> toTaskDtoList(List<Task> taskList){
+    public List<TaskDto> toTaskDtoList(List<Task> taskList){
         if ( taskList == null ) {
             return null;
         }

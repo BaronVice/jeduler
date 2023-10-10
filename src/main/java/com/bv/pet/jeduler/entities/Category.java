@@ -10,8 +10,7 @@ import java.util.List;
 @Entity
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(name = "UniqueName", columnNames = {"name"}),
-                @UniqueConstraint(name = "UniqueColor", columnNames = {"color"})
+                @UniqueConstraint(name = "UniqueName", columnNames = {"name"})
         }
 )
 @AllArgsConstructor
@@ -19,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class Category implements Comparable<Category> {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -38,10 +37,5 @@ public class Category implements Comparable<Category> {
         for (Task task : this.tasks){
             task.getCategories().remove(this);
         }
-    }
-
-    @Override
-    public int compareTo(Category o) {
-        return this.name.compareTo(o.name);
     }
 }

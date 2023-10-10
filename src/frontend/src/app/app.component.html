@@ -1,0 +1,12 @@
+<div class="main">
+  <h1>New category</h1>
+
+  <app-category-input
+    (newDataEvent)="appendCategory($event)"/>
+
+  <h2>Categories</h2>
+  <app-category-wrapper *ngFor="let category of categories"
+                       (removeItemEvent)="removeCategory($event)"
+                       [category]="category"
+  ></app-category-wrapper>
+</div>

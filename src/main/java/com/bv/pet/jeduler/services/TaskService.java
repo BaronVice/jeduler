@@ -17,17 +17,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
+    private final TaskMapper taskMapper;
 
     @Override
     @Transactional(readOnly = true)
     public List<TaskDto> all() {
-        return TaskMapper.toTaskDtoList(taskRepository.findAll());
+        return taskMapper.toTaskDtoList(taskRepository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
     public TaskDto get(Long id) {
-        return TaskMapper.toTaskDto(
+        return taskMapper.toTaskDto(
                 taskRepository.findById(id).orElseThrow(
                         () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
                 )
@@ -37,12 +38,12 @@ public class TaskService implements ITaskService {
     @Override
     @Transactional
     public TaskDto create(TaskDto taskDto) {
-        Task task = TaskMapper.toTask(taskDto);
+        Task task = taskMapper.toTask(taskDto);
         task.getNotification().setTask(task);
 
         taskRepository.save(task);
 
-        return TaskMapper.toTaskDto(task);
+        return taskMapper.toTaskDto(task);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class TaskService implements ITaskService {
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
         );
 
-        Task task = TaskMapper.toTask(taskDto);
+        Task task = taskMapper.toTask(taskDto);
         toUpdate.setName(task.getName());
         toUpdate.setDescription(task.getDescription());
         toUpdate.setStartsAt(task.getStartsAt());
@@ -70,7 +71,7 @@ public class TaskService implements ITaskService {
 
         taskRepository.save(toUpdate);
 
-        return TaskMapper.toTaskDto(task);
+        return taskMapper.toTaskDto(task);
     }
 
     @Override

@@ -16,7 +16,7 @@ import static jakarta.persistence.CascadeType.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Task implements Comparable<Task> {
+public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -40,9 +40,4 @@ public class Task implements Comparable<Task> {
     @OneToOne(mappedBy = "task", cascade = ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     private Notification notification;
-
-    @Override
-    public int compareTo(Task o) {
-        return this.name.compareTo(o.name);
-    }
 }

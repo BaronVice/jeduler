@@ -1,0 +1,12 @@
+<p>
+  <mat-card class="category-card">
+    <mat-card-header>
+      <mat-card-title [style.background-color]="category.color">{{category.name}}</mat-card-title>
+<!--      <mat-card-subtitle> </mat-card-subtitle>-->
+    </mat-card-header>
+    <mat-card-actions align="end">
+      <button mat-button (click)="editItemEvent.emit(category.id)">Edit</button>
+      <button mat-button (click)="removeItemEvent.emit(category.id)">Remove</button>
+    </mat-card-actions>
+  </mat-card>
+</p>

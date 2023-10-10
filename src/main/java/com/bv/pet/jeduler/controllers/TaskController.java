@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.TreeSet;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,9 +18,12 @@ import java.util.List;
 public class TaskController implements ITaskController {
     private final TaskService taskService;
 
+    @Override
     @GetMapping
-    public ResponseEntity<List<TaskDto>> allTasks(){
-        return ResponseEntity.ok(taskService.all());
+    public ResponseEntity<TreeSet<TaskDto>> allTasks(){
+        return ResponseEntity.ok(
+                new TreeSet<>(taskService.all())
+        );
     }
 
     @Override

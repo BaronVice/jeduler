@@ -1,0 +1,10 @@
+<p>
+  <app-category-edit *ngIf="editable == true"
+                    (editDataEvent)="handleSaveEdition($event)"
+                    [category]="category"/>
+
+  <app-category-display *ngIf="editable == false"
+                       (removeItemEvent)="removeItemEvent.emit($event)"
+                       (editItemEvent)="handleEditClick()"
+                       [category]="category"/>
+</p>

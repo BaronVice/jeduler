@@ -1,0 +1,14 @@
+<form class="category-form" (ngSubmit)="onSubmit()">
+
+  <mat-form-field class="category-full-width">
+    <mat-label>Name</mat-label>
+    <input name="name" [(ngModel)]="category.name" required matInput>
+  </mat-form-field>
+
+  <mat-form-field class="category-full-width">
+    <mat-label>Color</mat-label>
+    <input type="color" name="color" [(ngModel)]="category.color" required matInput>
+  </mat-form-field>
+
+  <button type="submit" mat-raised-button>Save</button>
+</form>
