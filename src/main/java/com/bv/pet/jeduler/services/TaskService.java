@@ -18,6 +18,7 @@ import java.util.List;
 public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
+    private final MailServiceImpl mailServiceImpl;
 
     @Override
     @Transactional(readOnly = true)
@@ -39,10 +40,12 @@ public class TaskService implements ITaskService {
     @Transactional
     public TaskDto create(TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
-        task.getNotification().setTask(task);
+        if (task.getNotification() != null)
+            task.getNotification().setTask(task);
 
         taskRepository.save(task);
 
+        mailServiceImpl.sendTextEmail(task);
         return taskMapper.toTaskDto(task);
     }
 

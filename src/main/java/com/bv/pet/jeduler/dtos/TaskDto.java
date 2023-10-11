@@ -1,11 +1,9 @@
 package com.bv.pet.jeduler.dtos;
 
-import com.bv.pet.jeduler.entities.Category;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.TreeSet;
 
 @AllArgsConstructor
@@ -25,6 +23,7 @@ public class TaskDto implements Comparable<TaskDto> {
 
     private String description;
 
+    @NotNull(message = "Set a date, please")
     private Instant startsAt;
 
     @NotNull(message = "Set a date, please")
