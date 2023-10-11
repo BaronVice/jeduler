@@ -14,7 +14,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Notification {
+public class Notification implements Comparable<Notification> {
     @Id
     @Column(name = "task_id")
     private Long id;
@@ -26,4 +26,12 @@ public class Notification {
     private Task task;
 
     private Instant notifyAt;
+
+    @Override
+    public int compareTo(Notification o) {
+        if (this.notifyAt.equals(o.notifyAt)){
+            return 1;
+        }
+        return this.notifyAt.compareTo(o.notifyAt);
+    }
 }

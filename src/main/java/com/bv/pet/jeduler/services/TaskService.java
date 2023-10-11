@@ -44,8 +44,9 @@ public class TaskService implements ITaskService {
             task.getNotification().setTask(task);
 
         taskRepository.save(task);
+        if (task.getNotification() != null)
+            mailServiceImpl.getNotifications().add(task.getNotification());
 
-        mailServiceImpl.sendTextEmail(task);
         return taskMapper.toTaskDto(task);
     }
 

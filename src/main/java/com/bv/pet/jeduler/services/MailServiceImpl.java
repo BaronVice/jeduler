@@ -1,24 +1,48 @@
 package com.bv.pet.jeduler.services;
 
 import com.bv.pet.jeduler.entities.Category;
+import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Task;
+import com.bv.pet.jeduler.repositories.NotificationRepository;
+import com.bv.pet.jeduler.repositories.TaskRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Date;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Getter
 public class MailServiceImpl {
     private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender javaMailSender;
+    private final NotificationRepository notificationRepository;
+    private final TaskRepository taskRepository;
+    private final TreeSet<Notification> notifications = new TreeSet<>();
 
-    public void sendTextEmail(Task task){
+    @Scheduled(fixedRate = 3000)
+    @Transactional
+    public void sendTextEmail(){
+        if (notifications.isEmpty() || notifications.first().getNotifyAt().isAfter(Instant.now())){
+            logger.info("Sleep...");
+            return;
+        }
+
+        Notification notification = notifications.pollFirst();
+        Task task = taskRepository.findById(notification.getId()).get(); // it's fine
+
         StringBuilder stringBuilder = new StringBuilder();
 
         logger.info("Sending email...");
@@ -34,6 +58,8 @@ public class MailServiceImpl {
         javaMailSender.send(simpleMessage);
 
         logger.info("Simple Email sent");
+        notifications.remove(notification);
+        notificationRepository.deleteById(notification.getId());
     }
 
     private void buildMessage(StringBuilder stringBuilder, Task task){
