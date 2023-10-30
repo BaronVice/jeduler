@@ -5,12 +5,12 @@ import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,9 +25,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Getter
+@Setter
 public class MailServiceImpl {
     private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender javaMailSender;
+    @Value("${custom.mail}")
+    private String sendTo;
     private final NotificationRepository notificationRepository;
     private final TaskRepository taskRepository;
     private final TreeSet<Notification> notifications = new TreeSet<>();
@@ -49,7 +52,7 @@ public class MailServiceImpl {
         buildMessage(stringBuilder, task);
 
         SimpleMailMessage simpleMessage = new SimpleMailMessage();
-        simpleMessage.setTo("toni.sas.228@mail.ru");
+        simpleMessage.setTo(sendTo);
         simpleMessage.setSubject("Jeduler task: " + task.getName());
         simpleMessage.setText(
                 stringBuilder.toString()

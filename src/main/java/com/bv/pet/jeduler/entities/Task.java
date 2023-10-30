@@ -31,6 +31,9 @@ public class Task {
     )
     private List<Category> categories;
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "task")
+    private List<SubTask> subTasks;
+
     private String description;
 
     private Instant startsAt;
