@@ -31,7 +31,7 @@ public class Task {
     )
     private List<Category> categories;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "task")
+    @OneToMany(fetch = FetchType.EAGER, cascade = REFRESH, mappedBy = "task")
     private List<SubTask> subTasks;
 
     private String description;

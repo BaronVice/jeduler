@@ -14,4 +14,8 @@ public class SubTask {
     private Task task;
 
     private String name;
+
+    private boolean isCompleted;
+
+    private int orderInList;
 }

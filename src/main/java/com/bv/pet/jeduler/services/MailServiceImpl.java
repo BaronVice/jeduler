@@ -44,7 +44,9 @@ public class MailServiceImpl {
         }
 
         Notification notification = notifications.pollFirst();
-        Task task = taskRepository.findById(notification.getId()).get(); // it's fine
+        Task task = taskRepository.findById(
+                notification.getId()
+        ).get(); // it's fine
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -62,7 +64,7 @@ public class MailServiceImpl {
 
         logger.info("Simple Email sent");
         notifications.remove(notification);
-        notificationRepository.deleteById(notification.getId());
+        task.setNotification(null);
     }
 
     private void buildMessage(StringBuilder stringBuilder, Task task){
