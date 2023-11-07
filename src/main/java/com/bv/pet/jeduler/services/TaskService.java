@@ -33,13 +33,7 @@ public class TaskService implements ITaskService {
     @Transactional
     public TaskDto create(TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
-        handler.setNotificationOnTaskCreate(task);
-        handler.setSubtasksOnTaskCreate(task);
-
-        handler.saveTask(task);
-        handler.saveSubtasks(task.getSubtasks());
-
-        handler.handNotificationInMailService(task);
+        handler.create(task);
 
         return taskMapper.toTaskDto(task);
     }
@@ -50,20 +44,9 @@ public class TaskService implements ITaskService {
         Task updated = taskMapper.toTask(taskDto);
         Task toUpdate = handler.get(taskDto.getId());
 
-        handler.setNotificationOnTaskUpdate(updated, toUpdate);
-        handler.setSubtasksOnTaskUpdate(updated, toUpdate);
+        handler.update(updated, toUpdate);
 
-        toUpdate.setName(updated.getName());
-        toUpdate.setDescription(updated.getDescription());
-        toUpdate.setStartsAt(updated.getStartsAt());
-        toUpdate.setExpiresAt(updated.getExpiresAt());
-        toUpdate.setCategories(updated.getCategories());
-        toUpdate.setSubtasks(updated.getSubtasks());
-//        toUpdate.setNotification(updated.getNotification());
-
-        handler.saveTask(toUpdate);
-
-        return taskMapper.toTaskDto(updated);
+        return taskMapper.toTaskDto(toUpdate);
     }
 
     @Override

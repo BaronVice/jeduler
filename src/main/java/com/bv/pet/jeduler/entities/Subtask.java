@@ -22,15 +22,4 @@ public class Subtask {
     private String name;
     private boolean isCompleted;
     private short orderInList;
-
-    @Override
-    public String toString() {
-        return "Subtask{" +
-                "id=" + id +
-                ", taskId=" + task.getName() +
-                ", name='" + name + '\'' +
-                ", isCompleted=" + isCompleted +
-                ", orderInList=" + orderInList +
-                '}';
-    }
 }
