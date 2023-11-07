@@ -23,6 +23,8 @@ public class Task {
 
     private String name;
 
+    private String description;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = REFRESH)
     @JoinTable(
             name = "task_category",
@@ -32,9 +34,7 @@ public class Task {
     private List<Category> categories;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = REFRESH, mappedBy = "task")
-    private List<SubTask> subTasks;
-
-    private String description;
+    private List<Subtask> subtasks;
 
     private Instant startsAt;
 

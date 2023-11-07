@@ -1,15 +1,16 @@
 package com.bv.pet.jeduler.mappers;
 
-import com.bv.pet.jeduler.dtos.CategoryDto;
 import com.bv.pet.jeduler.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.entities.Notification;
+import com.bv.pet.jeduler.entities.Subtask;
 import com.bv.pet.jeduler.entities.Task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -17,6 +18,7 @@ import java.util.TreeSet;
 @RequiredArgsConstructor
 public class TaskMapper {
     private final CategoryMapper categoryMapper;
+    private final SubtaskMapper subtaskMapper;
 
     public Task toTask(TaskDto taskDto){
         if ( taskDto == null ) {
@@ -34,6 +36,11 @@ public class TaskMapper {
         if ( taskDto.getCategories() != null ) {
             task.setCategories( categoryMapper.toCategoryList(
                     taskDto.getCategories().stream().toList()
+            ));
+        }
+        if ( taskDto.getSubtasks() != null ) {
+            task.setSubtasks( subtaskMapper.toSubtaskList(
+                    taskDto.getSubtasks()
             ));
         }
         Instant notifyAt = taskDto.getNotifyAt();
@@ -62,12 +69,19 @@ public class TaskMapper {
         taskDto.setStartsAt( task.getStartsAt() );
         taskDto.setExpiresAt( task.getExpiresAt() );
 
-        List<Category> list = task.getCategories();
-        if ( list != null ) {
+        List<Category> categories = task.getCategories();
+        if ( categories != null ) {
             taskDto.setCategories(
-                    new TreeSet<>(categoryMapper.toCategoryDtoList(list))
+                    new TreeSet<>(categoryMapper.toCategoryDtoList(categories))
             );
         }
+        List<Subtask> subtasks = task.getSubtasks();
+        if ( subtasks != null ){
+            taskDto.setSubtasks(
+                    new LinkedList<>(subtaskMapper.toSubtaskDtoList(subtasks))
+            );
+        }
+
         Notification notification = task.getNotification();
         if ( notification != null ) {
             taskDto.setNotifyAt(notification.getNotifyAt());

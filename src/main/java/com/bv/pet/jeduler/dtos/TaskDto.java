@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.TreeSet;
 
 @AllArgsConstructor
@@ -20,6 +21,8 @@ public class TaskDto implements Comparable<TaskDto> {
     private String name;
 
     private TreeSet<CategoryDto> categories;
+
+    private List<SubtaskDto> subtasks;
 
     private String description;
 

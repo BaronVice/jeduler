@@ -5,6 +5,7 @@ import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.repositories.TaskRepository;
+import com.bv.pet.jeduler.services.handlers.TaskServiceHandler;
 import com.bv.pet.jeduler.services.interfaces.ITaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import java.util.List;
 public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
-    private final MailServiceImpl mailServiceImpl;
+    private final TaskServiceHandler handler;
 
     @Override
     @Transactional(readOnly = true)
@@ -40,12 +41,11 @@ public class TaskService implements ITaskService {
     @Transactional
     public TaskDto create(TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
-        if (task.getNotification() != null)
-            task.getNotification().setTask(task);
+        handler.setNotificationOnTaskCreate(task);
+        handler.setSubtasksOnTaskCreate(task);
 
-        taskRepository.save(task);
-        if (task.getNotification() != null)
-            mailServiceImpl.getNotifications().add(task.getNotification());
+        handler.save(task);
+        handler.handNotificationInMailService(task);
 
         return taskMapper.toTaskDto(task);
     }
@@ -63,6 +63,8 @@ public class TaskService implements ITaskService {
         toUpdate.setStartsAt(task.getStartsAt());
         toUpdate.setExpiresAt(task.getExpiresAt());
         toUpdate.setCategories(task.getCategories());
+        toUpdate.setSubtasks(task.getSubtasks());
+        System.out.println(taskDto.getSubtasks());
 
         if (task.getNotification() == null) {
             toUpdate.setNotification(null);
