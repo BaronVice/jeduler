@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MailServiceImpl {
     private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender javaMailSender;
-    private final Map<Long, Instant> instants = new ConcurrentHashMap<>(50);
-    @Value("${custom.mail}")
-    private String sendTo;
+    private final Map<Long, Instant> instants;
     private final NotificationRepository notificationRepository;
     private final TaskRepository taskRepository;
+    @Value("${custom.mail}")
+    private String sendTo;
 
     // @Async ??
     @Transactional
@@ -50,7 +49,7 @@ public class MailServiceImpl {
         javaMailSender.send(message);
         logger.info("Simple Email sent");
 
-        task.setNotification(null);
+        removeNotification(task);
     }
 
     private SimpleMailMessage buildMessage(Task task){
@@ -61,5 +60,10 @@ public class MailServiceImpl {
         message.setText(MessageFormatter.formatText(task));
 
         return message;
+    }
+
+    private void removeNotification(Task task){
+        task.setNotification(null);
+        instants.remove(task.getId());
     }
 }
