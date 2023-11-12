@@ -14,7 +14,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
-                        .allowedOrigins("http://localhost:4200");
+                        .allowedOrigins("http://localhost:4200"); // here should be "React" address
             }
         };
     }

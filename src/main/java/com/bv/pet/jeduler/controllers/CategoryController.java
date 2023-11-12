@@ -2,14 +2,13 @@ package com.bv.pet.jeduler.controllers;
 
 import com.bv.pet.jeduler.controllers.interfaces.ICategoryController;
 import com.bv.pet.jeduler.dtos.CategoryDto;
-import com.bv.pet.jeduler.services.CategoryService;
+import com.bv.pet.jeduler.services.category.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.TreeSet;
 
 @RestController

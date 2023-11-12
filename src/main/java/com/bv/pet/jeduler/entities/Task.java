@@ -33,7 +33,7 @@ public class Task {
     )
     private List<Category> categories;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {REFRESH, REMOVE}, mappedBy = "task")
+    @OneToMany(fetch = FetchType.EAGER, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "task")
     private List<Subtask> subtasks;
 
     private Instant startsAt;
