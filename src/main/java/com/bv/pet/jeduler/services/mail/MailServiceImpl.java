@@ -17,6 +17,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Service
 @RequiredArgsConstructor
 @Getter
@@ -24,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MailServiceImpl {
     private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender javaMailSender;
+    private final Map<Long, Instant> instants = new ConcurrentHashMap<>(50);
     @Value("${custom.mail}")
     private String sendTo;
     private final NotificationRepository notificationRepository;
@@ -32,6 +37,10 @@ public class MailServiceImpl {
     // @Async ??
     @Transactional
     public void sendTextEmail(Notification notification){
+        Instant real = instants.get(notification.getId());
+        if ( real == null || ( ! real.equals(notification.getNotifyAt()) ) )
+            return;
+
         Task task = taskRepository.findById(notification.getId()).orElseThrow(
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
         );
