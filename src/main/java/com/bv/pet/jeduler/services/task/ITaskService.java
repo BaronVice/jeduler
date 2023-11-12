@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.interfaces;
+package com.bv.pet.jeduler.services.task;
 
 import com.bv.pet.jeduler.dtos.TaskDto;
 

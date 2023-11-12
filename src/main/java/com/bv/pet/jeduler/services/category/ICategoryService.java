@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.interfaces;
+package com.bv.pet.jeduler.services.category;
 
 import com.bv.pet.jeduler.dtos.CategoryDto;
 

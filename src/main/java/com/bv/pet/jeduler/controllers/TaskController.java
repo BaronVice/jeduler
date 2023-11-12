@@ -2,7 +2,7 @@ package com.bv.pet.jeduler.controllers;
 
 import com.bv.pet.jeduler.controllers.interfaces.ITaskController;
 import com.bv.pet.jeduler.dtos.TaskDto;
-import com.bv.pet.jeduler.services.TaskService;
+import com.bv.pet.jeduler.services.task.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,11 +1,10 @@
-package com.bv.pet.jeduler.services;
+package com.bv.pet.jeduler.services.category;
 
 import com.bv.pet.jeduler.dtos.CategoryDto;
 import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.CategoryMapper;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
-import com.bv.pet.jeduler.services.interfaces.ICategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

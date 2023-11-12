@@ -1,10 +1,8 @@
-package com.bv.pet.jeduler.services;
+package com.bv.pet.jeduler.services.task;
 
 import com.bv.pet.jeduler.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.mappers.TaskMapper;
-import com.bv.pet.jeduler.services.handlers.TaskServiceHandler;
-import com.bv.pet.jeduler.services.interfaces.ITaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

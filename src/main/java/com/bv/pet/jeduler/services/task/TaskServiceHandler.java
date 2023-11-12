@@ -1,12 +1,13 @@
-package com.bv.pet.jeduler.services.handlers;
+package com.bv.pet.jeduler.services.task;
 
 import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Subtask;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
+import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.SubtaskRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
-import com.bv.pet.jeduler.services.MailServiceImpl;
+import com.bv.pet.jeduler.services.mail.MailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -15,9 +16,11 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+// TODO: figure out how to handle notifications with ThreadPoolTaskScheduler
 public class TaskServiceHandler {
     private final TaskRepository taskRepository;
     private final SubtaskRepository subtaskRepository;
+    private final NotificationRepository notificationRepository;
     private final MailServiceImpl mailService;
 
     public Task get(Long id){
@@ -35,7 +38,6 @@ public class TaskServiceHandler {
         setSubtasksOnTaskCreate(task);
 
         saveTask(task);
-        saveSubtasks(task.getSubtasks());
 
         handNotificationInMailService(task);
     }
@@ -54,6 +56,9 @@ public class TaskServiceHandler {
     }
 
     public void delete(Long id) {
+        /* mailService.getNotifications().remove(
+                notificationRepository.findById(id).get()
+        ); */
         taskRepository.deleteById(id);
     }
 
@@ -80,7 +85,7 @@ public class TaskServiceHandler {
     }
     private boolean removeTaskNotificationIfNotNull(Task task){
         if (task.getNotification() != null){
-            mailService.getNotifications().remove(task.getNotification());
+            // mailService.getNotifications().remove(task.getNotification());
             return true;
         }
 
@@ -94,10 +99,10 @@ public class TaskServiceHandler {
         toUpdate.getNotification().setNotifyAt(
                 updated.getNotification().getNotifyAt()
         );
-        mailService.getNotifications().add(toUpdate.getNotification());
+        // mailService.getNotifications().add(toUpdate.getNotification());
     }
 
-    public void setSubtasksOnTaskUpdate(Task updated, Task toUpdate){
+    private void setSubtasksOnTaskUpdate(Task updated, Task toUpdate){
         for (short i = 0; i < updated.getSubtasks().size(); i++){
             Subtask subtask = updated.getSubtasks().get(i);
             subtask.setTask(toUpdate);
@@ -109,16 +114,13 @@ public class TaskServiceHandler {
         toUpdate.setSubtasks(updated.getSubtasks());
     }
 
-    public void handNotificationInMailService(Task task) {
-        if (task.getNotification() != null)
-            mailService.getNotifications().add(task.getNotification());
+    private void handNotificationInMailService(Task task) {
+        if (task.getNotification() != null) {
+            // mailService.getNotifications().add(task.getNotification());
+        }
     }
 
-    public void saveTask(Task task) {
+    private void saveTask(Task task) {
         taskRepository.save(task);
-    }
-
-    public void saveSubtasks(Iterable<Subtask> subtasks){
-        subtaskRepository.saveAll(subtasks);
     }
 }
