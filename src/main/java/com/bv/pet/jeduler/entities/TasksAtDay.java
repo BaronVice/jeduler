@@ -1,6 +1,8 @@
 package com.bv.pet.jeduler.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +14,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Statistics {
+public class TasksAtDay {
     @Id
-    private Short id;
-
-    private Long amount;
+    private Short dayNumber;
+    private short tasksCreated;
 }

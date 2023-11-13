@@ -17,7 +17,6 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-// TODO: figure out how to handle notifications with ThreadPoolTaskScheduler
 public class TaskServiceHandler {
     private final TaskRepository taskRepository;
     private final SubtaskRepository subtaskRepository;
