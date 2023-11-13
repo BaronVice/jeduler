@@ -3,6 +3,7 @@ package com.bv.pet.jeduler.services.task;
 import com.bv.pet.jeduler.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.mappers.TaskMapper;
+import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import java.util.List;
 public class TaskService implements ITaskService {
     private final TaskMapper taskMapper;
     private final TaskServiceHandler handler;
+    private final StatisticsService statistics;
 
     @Override
     @Transactional(readOnly = true)
@@ -25,6 +27,7 @@ public class TaskService implements ITaskService {
     @Transactional(readOnly = true)
     public TaskDto get(Long id) {
         return taskMapper.toTaskDto(handler.get(id));
+        // If guest - take ip, if requests from ip > 20 -> request captcha
     }
 
     @Override
@@ -32,6 +35,7 @@ public class TaskService implements ITaskService {
     public TaskDto create(TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
         handler.create(task);
+        statistics.onTaskCreation(task);
 
         return taskMapper.toTaskDto(task);
     }

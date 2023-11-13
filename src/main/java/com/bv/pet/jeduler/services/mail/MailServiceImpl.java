@@ -46,7 +46,7 @@ public class MailServiceImpl {
 
         logger.info("Sending email...");
         SimpleMailMessage message = buildMessage(task);
-        javaMailSender.send(message);
+        javaMailSender.send(message); // Maybe sync to avoid spamming, but I think it's fine
         logger.info("Simple Email sent");
 
         removeNotification(task);
