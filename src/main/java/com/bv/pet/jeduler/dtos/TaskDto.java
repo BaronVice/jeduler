@@ -20,11 +20,13 @@ public class TaskDto implements Comparable<TaskDto> {
     @NotNull(message = "Name cannot be empty")
     private String name;
 
+    private String description;
+
+    private boolean taskDone;
+
     private TreeSet<CategoryDto> categories;
 
     private List<SubtaskDto> subtasks;
-
-    private String description;
 
     @NotNull(message = "Set a date, please")
     private Instant startsAt;

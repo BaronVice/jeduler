@@ -31,6 +31,7 @@ public class TaskMapper {
         task.setName( taskDto.getName() );
         task.setDescription( taskDto.getDescription() );
         task.setStartsAt( taskDto.getStartsAt() );
+        task.setTaskDone( taskDto.isTaskDone() );
 
         if ( taskDto.getCategories() != null ) {
             task.setCategories( categoryMapper.toCategoryList(
@@ -66,6 +67,7 @@ public class TaskMapper {
         taskDto.setName( task.getName() );
         taskDto.setDescription( task.getDescription() );
         taskDto.setStartsAt( task.getStartsAt() );
+        taskDto.setTaskDone( task.isTaskDone() );
 
         List<Category> categories = task.getCategories();
         if ( categories != null ) {

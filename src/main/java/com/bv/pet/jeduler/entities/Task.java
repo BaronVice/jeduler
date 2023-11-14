@@ -25,6 +25,8 @@ public class Task {
 
     private String description;
 
+    private boolean taskDone;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = REFRESH)
     @JoinTable(
             name = "task_category",

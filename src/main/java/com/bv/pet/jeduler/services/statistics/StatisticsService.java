@@ -44,7 +44,8 @@ public class StatisticsService implements IStatisticsService {
     @Override
     @Async
     public void onTaskCreation(Task task) {
-        incrementCreatedTasks(task);
+        if (task.isTaskDone())
+            incrementCreatedTasks(task);
     }
 
     @Override
