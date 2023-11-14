@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public interface IStatisticsService {
     StatisticsDto getStatistics();
     void onTaskCreation(Task task);
-    void onTaskUpdate();
+    void onTaskUpdate(Task updated, boolean wasDone);
     void onSendingNotification();
     void increment(AtomicLong value, StatisticsType type);
 }

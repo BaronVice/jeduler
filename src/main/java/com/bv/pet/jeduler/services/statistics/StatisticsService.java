@@ -34,7 +34,8 @@ public class StatisticsService implements IStatisticsService {
     @Override
     public StatisticsDto getStatistics() {
         return StatisticsDto.builder()
-                .tasksAtDay(null)
+                .tasksAtDay(tasksAtDay)
+                .tasksCompleted(tasksAtDay.stream().mapToLong(e->e).sum())
                 .tasksCreated(tasksCreated.get())
                 .tasksUpdated(tasksUpdated.get())
                 .notificationsSent(notificationsSent.get())
@@ -44,17 +45,23 @@ public class StatisticsService implements IStatisticsService {
     @Override
     @Async
     public void onTaskCreation(Task task) {
-        if (task.isTaskDone())
-            incrementCreatedTasks(task);
+        increment(
+                tasksCreated,
+                StatisticsType.TASKS_CREATED
+        );
     }
 
     @Override
     @Async
-    public void onTaskUpdate() {
+    public void onTaskUpdate(Task updated, boolean wasDone) {
         increment(
                 tasksUpdated,
                 StatisticsType.TASKS_UPDATED
         );
+        if (updated.isTaskDone() && (!wasDone))
+            changeTasksAtDay(updated, (short) 1);
+        if (!updated.isTaskDone() && wasDone)
+            changeTasksAtDay(updated, (short) -1);
     }
 
     @Override
@@ -67,16 +74,15 @@ public class StatisticsService implements IStatisticsService {
     }
 
     @Transactional
-    public void incrementCreatedTasks(Task task) {
-        tasksCreated.incrementAndGet();
+    public void changeTasksAtDay(Task task, short v) {
         short pos = InstantsCalculator.getDaysFromStart(task.getStartsAt());
         short val = tasksAtDay.get(pos);
-        tasksAtDay.set(pos, (short)(val + 1));
+        tasksAtDay.set(pos, (short)(val + v));
 
         tasksAtDayRepositoryLock.getLock().lock();
         try {
             TasksAtDay tasks = tasksAtDayRepository.findById(pos).get();
-            tasks.setTasksCreated((short)(tasks.getTasksCreated() + 1));
+            tasks.setTasksCreated((short)(tasks.getTasksCreated() + v));
             tasksAtDayRepository.save(tasks);
         } finally {
             tasksAtDayRepositoryLock.getLock().unlock();

@@ -43,11 +43,14 @@ public class TaskServiceHandler {
     }
 
     @Transactional
-    public void update(Task updated, Task toUpdate) {
+    public void update(Task updated) {
+        Task toUpdate = taskRepository.getReferenceById(updated.getId());
+
         toUpdate.setName(updated.getName());
         toUpdate.setDescription(updated.getDescription());
         toUpdate.setStartsAt(updated.getStartsAt());
         toUpdate.setCategories(updated.getCategories());
+        toUpdate.setTaskDone(updated.isTaskDone());
 
         setNotificationOnTaskUpdate(updated, toUpdate);
         setSubtasksOnTaskUpdate(updated, toUpdate);

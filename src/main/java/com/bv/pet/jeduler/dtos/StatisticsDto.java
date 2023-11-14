@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 public class StatisticsDto {
     private List<Short> tasksAtDay;
+    private long tasksCompleted;
     private long tasksCreated;
     private long tasksUpdated;
     private long notificationsSent;

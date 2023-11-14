@@ -40,9 +40,10 @@ public class TaskService implements ITaskService {
     public TaskDto update(TaskDto taskDto) {
         Task updated = taskMapper.toTask(taskDto);
         Task toUpdate = handler.get(taskDto.getId());
+        boolean wasDone = toUpdate.isTaskDone();
 
-        handler.update(updated, toUpdate);
-        statistics.onTaskUpdate();
+        handler.update(updated);
+        statistics.onTaskUpdate(updated, wasDone);
 
         return taskMapper.toTaskDto(toUpdate);
     }
