@@ -16,6 +16,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+// TODO: both of checks are bad. Use set to find holes
 public class StatisticsRunner implements ApplicationRunner {
     private final StatisticsRepository statisticsRepository;
     private final TasksAtDayRepository tasksAtDayRepository;
@@ -48,7 +49,7 @@ public class StatisticsRunner implements ApplicationRunner {
 
     private void checkTasksAtDayTable(){
         assertTableSizesForShort(tasksAtDayRepository.count());
-
+        // TODO: move to properties
         short days = 3660; // days amount in 10 years
         short realSize = (short) tasksAtDayRepository.count();
 

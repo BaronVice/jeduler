@@ -29,17 +29,14 @@ public class TaskDto implements Comparable<TaskDto> {
     @NotNull(message = "Set a date, please")
     private Instant startsAt;
 
-    @NotNull(message = "Set a date, please")
-    private Instant expiresAt;
-
     private Instant notifyAt;
 
     @Override
     public int compareTo(TaskDto o) {
-        if (this.expiresAt.equals(o.expiresAt)){
+        if (this.startsAt.equals(o.startsAt)){
             return 1;
         }
 
-        return this.expiresAt.compareTo(o.expiresAt);
+        return this.startsAt.compareTo(o.startsAt);
     }
 }

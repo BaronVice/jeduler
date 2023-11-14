@@ -15,7 +15,6 @@ public class MessageFormatter {
         StringBuilder stringBuilder = new StringBuilder();
 
         Date startDate = Date.from(task.getStartsAt());
-        Date expiresDate = Date.from(task.getExpiresAt());
 
         stringBuilder
                 .append("Notifying that you have a task named ").append(task.getName()).append("\n");
@@ -23,8 +22,7 @@ public class MessageFormatter {
             stringBuilder.append("Description: ").append(task.getDescription()).append("\n\n");
         }
         stringBuilder
-                .append("Starts at: ").append(startDate).append("\n")
-                .append("Expires at: ").append(expiresDate).append("\n\n");
+                .append("Starts at: ").append(startDate).append("\n");
         if(task.getCategories() != null){
             stringBuilder
                     .append("Categories: ").append(

@@ -47,7 +47,6 @@ public class TaskServiceHandler {
         toUpdate.setName(updated.getName());
         toUpdate.setDescription(updated.getDescription());
         toUpdate.setStartsAt(updated.getStartsAt());
-        toUpdate.setExpiresAt(updated.getExpiresAt());
         toUpdate.setCategories(updated.getCategories());
 
         setNotificationOnTaskUpdate(updated, toUpdate);

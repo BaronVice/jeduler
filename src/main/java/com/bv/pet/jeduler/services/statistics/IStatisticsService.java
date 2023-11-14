@@ -10,6 +10,5 @@ public interface IStatisticsService {
     void onTaskCreation(Task task);
     void onTaskUpdate();
     void onSendingNotification();
-    void incrementDayStatistics(Task task);
     void increment(AtomicLong value, StatisticsType type);
 }

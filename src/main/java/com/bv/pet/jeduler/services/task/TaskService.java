@@ -31,7 +31,7 @@ public class TaskService implements ITaskService {
     public TaskDto create(TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
         handler.create(task);
-        // statistics.onTaskCreation(task);
+        statistics.onTaskCreation(task);
 
         return taskMapper.toTaskDto(task);
     }

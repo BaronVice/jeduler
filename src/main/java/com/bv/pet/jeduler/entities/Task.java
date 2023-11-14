@@ -38,8 +38,6 @@ public class Task {
 
     private Instant startsAt;
 
-    private Instant expiresAt;
-
     @OneToOne(mappedBy = "task", cascade = ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     private Notification notification;
