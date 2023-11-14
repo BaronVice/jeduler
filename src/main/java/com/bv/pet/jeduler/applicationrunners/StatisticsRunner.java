@@ -37,22 +37,27 @@ public class StatisticsRunner implements ApplicationRunner {
 
         List<Statistics> list = new ArrayList<>();
         long val = 0L;
-        while (realSize++ < statisticsEnumSize)
+        while (realSize < statisticsEnumSize){
             list.add(new Statistics(realSize, val));
+            realSize++;
+        }
+
 
         statisticsRepository.saveAll(list);
     }
 
     private void checkTasksAtDayTable(){
-        assertTableSizesForShort(statisticsRepository.count());
+        assertTableSizesForShort(tasksAtDayRepository.count());
 
-        short days = 10980; // days amount in 30 years
-        short realSize = (short) statisticsRepository.count();
+        short days = 3660; // days amount in 10 years
+        short realSize = (short) tasksAtDayRepository.count();
 
         List<TasksAtDay> list = new ArrayList<>();
         short val = (short) 0;
-        while (realSize++ < days)
+        while (realSize < days){
             list.add(new TasksAtDay(realSize, val));
+            realSize++;
+        }
 
         tasksAtDayRepository.saveAll(list);
     }

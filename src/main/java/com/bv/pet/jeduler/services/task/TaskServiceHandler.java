@@ -7,11 +7,10 @@ import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.repositories.SubtaskRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.services.mail.MailServiceImpl;
-import com.bv.pet.jeduler.services.mail.SendEmailTask;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,27 +19,30 @@ import java.util.List;
 public class TaskServiceHandler {
     private final TaskRepository taskRepository;
     private final SubtaskRepository subtaskRepository;
-    private final ThreadPoolTaskScheduler scheduler;
     private final MailServiceImpl mailService;
 
+    @Transactional(readOnly = true)
     public Task get(Long id){
         return taskRepository.findById(id).orElseThrow(
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
         );
     }
 
+    @Transactional(readOnly = true)
     public List<Task> getAll() {
         return taskRepository.findAll();
     }
 
+    @Transactional
     public void create(Task task) {
         setNotificationOnTaskCreate(task);
         setSubtasksOnTaskCreate(task);
 
         saveTask(task);
-        handNotificationInScheduler(task);
+        mailService.handNotificationInScheduler(task);
     }
 
+    @Transactional
     public void update(Task updated, Task toUpdate) {
         toUpdate.setName(updated.getName());
         toUpdate.setDescription(updated.getDescription());
@@ -52,8 +54,10 @@ public class TaskServiceHandler {
         setSubtasksOnTaskUpdate(updated, toUpdate);
 
         saveTask(toUpdate);
+        mailService.handNotificationInScheduler(toUpdate);
     }
 
+    @Transactional
     public void delete(Long id) {
         mailService.getInstants().remove(id);
         taskRepository.deleteById(id);
@@ -61,21 +65,6 @@ public class TaskServiceHandler {
 
     private void saveTask(Task task) {
         taskRepository.save(task);
-    }
-
-    private void handNotificationInScheduler(Task task) {
-        if (task.getNotification() != null){
-            Notification notification = task.getNotification();
-            mailService.getInstants().put(
-                    notification.getId(),
-                    notification.getNotifyAt()
-            );
-
-            scheduler.schedule(
-                    new SendEmailTask(notification, mailService),
-                    notification.getNotifyAt()
-            );
-        }
     }
 
     private void setNotificationOnTaskCreate(Task task){
@@ -120,7 +109,5 @@ public class TaskServiceHandler {
         toUpdate.getNotification().setNotifyAt(
                 updated.getNotification().getNotifyAt()
         );
-
-        handNotificationInScheduler(toUpdate);
     }
 }

@@ -53,7 +53,7 @@ public class CategoryService implements ICategoryService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(Short id) {
         categoryRepository.deleteById(id);
     }
 }

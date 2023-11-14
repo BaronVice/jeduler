@@ -11,7 +11,7 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class CategoryDto implements Comparable<CategoryDto> {
-    private Long id;
+    private Short id;
 
     @NotNull (message = "Give it a name")
     @Size(min = 2, max = 16, message = "Size should be between 2 and 16")

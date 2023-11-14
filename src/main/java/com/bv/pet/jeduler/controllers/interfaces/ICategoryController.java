@@ -10,5 +10,5 @@ public interface ICategoryController {
     ResponseEntity<TreeSet<CategoryDto>> allCategories();
     ResponseEntity<CategoryDto> createCategory(CategoryDto categoryDto);
     ResponseEntity<CategoryDto> updateCategory(CategoryDto categoryDto);
-    ResponseEntity<?> deleteCategory(Long id);
+    ResponseEntity<?> deleteCategory(Short id);
 }
