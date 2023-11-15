@@ -1,6 +1,5 @@
-package com.bv.pet.jeduler.controllers;
+package com.bv.pet.jeduler.controllers.task;
 
-import com.bv.pet.jeduler.controllers.interfaces.ITaskController;
 import com.bv.pet.jeduler.dtos.TaskDto;
 import com.bv.pet.jeduler.services.task.TaskService;
 import jakarta.validation.Valid;
@@ -33,12 +32,12 @@ public class TaskController implements ITaskController {
 
     @Override
     @PostMapping
-    public ResponseEntity<TaskDto> createTask(@Valid @RequestBody TaskDto taskDto) {
+    public ResponseEntity<Long> createTask(@Valid @RequestBody TaskDto taskDto) {
         TaskDto createdTask = taskService.create(taskDto);
 
         return ResponseEntity
                 .created(URI.create("/jeduler/tasks/" + createdTask.getId()))
-                .body(createdTask);
+                .body(createdTask.getId());
     }
 
     @Override
