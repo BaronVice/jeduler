@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ICategoryService {
     List<CategoryDto> all();
-    CategoryDto create(CategoryDto categoryDto);
-    CategoryDto update(CategoryDto categoryDto);
+    Short create(CategoryDto categoryDto);
+    void update(CategoryDto categoryDto);
     void delete(Short id);
 }
