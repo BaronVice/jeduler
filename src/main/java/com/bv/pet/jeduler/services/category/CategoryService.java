@@ -22,22 +22,22 @@ public class CategoryService implements ICategoryService {
     @Transactional(readOnly = true)
     public List<CategoryDto> all() {
         return categoryMapper.toCategoryDtoList(
-                categoryRepository.findAll()
+                categoryRepository.findByOrderByNameAsc()
         );
     }
 
     @Override
     @Transactional
-    public CategoryDto create(CategoryDto categoryDto) {
+    public Short create(CategoryDto categoryDto) {
         Category category = categoryMapper.toCategory(categoryDto);
         categoryRepository.save(category);
 
-        return categoryMapper.toCategoryDto(category);
+        return category.getId();
     }
 
     @Override
     @Transactional
-    public CategoryDto update(CategoryDto categoryDto) {
+    public void update(CategoryDto categoryDto) {
         Category toUpdate = categoryRepository.findById(categoryDto.getId()).orElseThrow(
                 () -> new ApplicationException("Category not found", HttpStatus.NOT_FOUND)
         );
@@ -47,8 +47,6 @@ public class CategoryService implements ICategoryService {
         toUpdate.setColor(category.getColor());
 
         categoryRepository.save(toUpdate);
-
-        return categoryMapper.toCategoryDto(toUpdate);
     }
 
     @Override

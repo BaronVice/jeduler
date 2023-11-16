@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.TreeSet;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +13,7 @@ import java.util.TreeSet;
 @EqualsAndHashCode
 @ToString
 // TODO: add more constrains
-public class TaskDto implements Comparable<TaskDto> {
+public class TaskDto {
     private Long id;
 
     @NotNull(message = "Name cannot be empty")
@@ -24,7 +23,7 @@ public class TaskDto implements Comparable<TaskDto> {
 
     private boolean taskDone;
 
-    private TreeSet<CategoryDto> categories;
+    private List<CategoryDto> categories;
 
     private List<SubtaskDto> subtasks;
 
@@ -32,13 +31,4 @@ public class TaskDto implements Comparable<TaskDto> {
     private Instant startsAt;
 
     private Instant notifyAt;
-
-    @Override
-    public int compareTo(TaskDto o) {
-        if (this.startsAt.equals(o.startsAt)){
-            return 1;
-        }
-
-        return this.startsAt.compareTo(o.startsAt);
-    }
 }

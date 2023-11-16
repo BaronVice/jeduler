@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.TreeSet;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,10 +18,8 @@ public class TaskController implements ITaskController {
 
     @Override
     @GetMapping
-    public ResponseEntity<TreeSet<TaskDto>> allTasks(){
-        return ResponseEntity.ok(
-                new TreeSet<>(taskService.all())
-        );
+    public ResponseEntity<List<TaskDto>> allTasks(){
+        return ResponseEntity.ok(taskService.all());
     }
 
     @Override
@@ -33,21 +31,18 @@ public class TaskController implements ITaskController {
     @Override
     @PostMapping
     public ResponseEntity<Long> createTask(@Valid @RequestBody TaskDto taskDto) {
-        TaskDto createdTask = taskService.create(taskDto);
+        Long id = taskService.create(taskDto);
 
         return ResponseEntity
-                .created(URI.create("/jeduler/tasks/" + createdTask.getId()))
-                .body(createdTask.getId());
+                .created(URI.create("/jeduler/tasks/" + id))
+                .body(id);
     }
 
     @Override
     @PatchMapping
-    public ResponseEntity<TaskDto> updateTask(@Valid @RequestBody TaskDto taskDto) {
-        TaskDto updatedTask = taskService.update(taskDto);
-
-        return ResponseEntity
-                .created(URI.create("/jeduler/tasks/" + updatedTask.getId()))
-                .body(updatedTask);
+    public ResponseEntity<?> updateTask(@Valid @RequestBody TaskDto taskDto) {
+        taskService.update(taskDto);
+        return ResponseEntity.ok().build();
     }
 
     @Override

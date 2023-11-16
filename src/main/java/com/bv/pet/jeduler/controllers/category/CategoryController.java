@@ -1,6 +1,5 @@
 package com.bv.pet.jeduler.controllers.category;
 
-import com.bv.pet.jeduler.controllers.category.ICategoryController;
 import com.bv.pet.jeduler.dtos.CategoryDto;
 import com.bv.pet.jeduler.services.category.CategoryService;
 import jakarta.validation.Valid;
@@ -9,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.TreeSet;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,30 +18,25 @@ public class CategoryController implements ICategoryController {
 
     @Override
     @GetMapping
-    public ResponseEntity<TreeSet<CategoryDto>> allCategories() {
-        return ResponseEntity.ok(
-                new TreeSet<>(categoryService.all())
-        );
+    public ResponseEntity<List<CategoryDto>> allCategories() {
+        return ResponseEntity.ok(categoryService.all());
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
-        CategoryDto createdCategory = categoryService.create(categoryDto);
+    public ResponseEntity<Short> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
+        Short id = categoryService.create(categoryDto);
 
         return ResponseEntity
-                .created(URI.create("/jeduler/category/" + createdCategory.getId()))
-                .body(createdCategory);
+                .created(URI.create("/jeduler/category/" + id))
+                .body(id);
     }
 
     @Override
     @PatchMapping
-    public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto) {
-        CategoryDto updatedCategory = categoryService.update(categoryDto);
-
-        return ResponseEntity
-                .created(URI.create("/jeduler/category/" + updatedCategory.getId()))
-                .body(updatedCategory);
+    public ResponseEntity<?> updateCategory(@Valid @RequestBody CategoryDto categoryDto) {
+        categoryService.update(categoryDto);
+        return ResponseEntity.ok().build();
     }
 
     @Override
