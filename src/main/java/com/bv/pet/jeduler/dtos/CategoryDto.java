@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @ToString
-public class CategoryDto implements Comparable<CategoryDto> {
+public class CategoryDto {
     private Short id;
 
     @NotNull (message = "Give it a name")
@@ -19,12 +19,4 @@ public class CategoryDto implements Comparable<CategoryDto> {
 
     @NotNull (message = "If you'll get tired of that, add a random option")
     private String color;
-
-    @Override
-    public int compareTo(CategoryDto o) {
-        if (this.name.equals(o.name)){
-            return 1;
-        }
-        return this.name.compareTo(o.name);
-    }
 }

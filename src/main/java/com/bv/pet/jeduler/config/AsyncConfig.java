@@ -13,7 +13,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Configuration
-@EnableAsync
 public class AsyncConfig {
     @Bean
     @Scope("prototype")

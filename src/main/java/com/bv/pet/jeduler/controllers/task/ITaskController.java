@@ -1,15 +1,14 @@
-package com.bv.pet.jeduler.controllers.interfaces;
+package com.bv.pet.jeduler.controllers.task;
 
 import com.bv.pet.jeduler.dtos.TaskDto;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.TreeSet;
 
 public interface ITaskController {
-    ResponseEntity<TreeSet<TaskDto>> allTasks();
+    ResponseEntity<List<TaskDto>> allTasks();
     ResponseEntity<TaskDto> getTask(Long id);
-    ResponseEntity<TaskDto> createTask(TaskDto taskDto);
-    ResponseEntity<TaskDto> updateTask(TaskDto taskDto);
+    ResponseEntity<Long> createTask(TaskDto taskDto);
+    ResponseEntity<?> updateTask(TaskDto taskDto);
     ResponseEntity<?> deleteTask(Long id);
 }

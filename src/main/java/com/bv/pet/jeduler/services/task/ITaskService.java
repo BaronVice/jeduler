@@ -7,7 +7,7 @@ import java.util.List;
 public interface ITaskService {
     List<TaskDto> all();
     TaskDto get(Long id);
-    TaskDto create(TaskDto taskDto);
-    TaskDto update(TaskDto taskDto);
+    Long create(TaskDto taskDto);
+    void update(TaskDto taskDto);
     void delete(Long id);
 }

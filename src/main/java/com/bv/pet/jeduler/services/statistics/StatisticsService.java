@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -53,15 +54,20 @@ public class StatisticsService implements IStatisticsService {
 
     @Override
     @Async
-    public void onTaskUpdate(Task updated, boolean wasDone) {
+    public void onTaskUpdate(Task updated, boolean wasDone, Instant previousDate) {
         increment(
                 tasksUpdated,
                 StatisticsType.TASKS_UPDATED
         );
+
         if (updated.isTaskDone() && (!wasDone))
-            changeTasksAtDay(updated, (short) 1);
+            changeTasksAtDay(updated.getStartsAt(), (short) 1);
         if (!updated.isTaskDone() && wasDone)
-            changeTasksAtDay(updated, (short) -1);
+            changeTasksAtDay(previousDate, (short) -1);
+        if (updated.isTaskDone() && wasDone && (!updated.getStartsAt().equals(previousDate))){
+            changeTasksAtDay(previousDate, (short) -1);
+            changeTasksAtDay(updated.getStartsAt(), (short) 1);
+        }
     }
 
     @Override
@@ -74,8 +80,8 @@ public class StatisticsService implements IStatisticsService {
     }
 
     @Transactional
-    public void changeTasksAtDay(Task task, short v) {
-        short pos = InstantsCalculator.getDaysFromStart(task.getStartsAt());
+    public void changeTasksAtDay(Instant instant, short v) {
+        short pos = InstantsCalculator.getDaysFromStart(instant);
         short val = tasksAtDay.get(pos);
         tasksAtDay.set(pos, (short)(val + v));
 

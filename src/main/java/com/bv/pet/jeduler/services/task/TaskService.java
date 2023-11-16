@@ -7,6 +7,7 @@ import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -28,24 +29,23 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public TaskDto create(TaskDto taskDto) {
+    public Long create(TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
         handler.create(task);
         statistics.onTaskCreation(task);
 
-        return taskMapper.toTaskDto(task);
+        return task.getId();
     }
 
     @Override
-    public TaskDto update(TaskDto taskDto) {
+    public void update(TaskDto taskDto) {
         Task updated = taskMapper.toTask(taskDto);
         Task toUpdate = handler.get(taskDto.getId());
         boolean wasDone = toUpdate.isTaskDone();
+        Instant previousDate = toUpdate.getStartsAt();
 
         handler.update(updated);
-        statistics.onTaskUpdate(updated, wasDone);
-
-        return taskMapper.toTaskDto(toUpdate);
+        statistics.onTaskUpdate(updated, wasDone, previousDate);
     }
 
     @Override

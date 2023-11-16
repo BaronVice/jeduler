@@ -30,7 +30,7 @@ public class TaskServiceHandler {
 
     @Transactional(readOnly = true)
     public List<Task> getAll() {
-        return taskRepository.findAll();
+        return taskRepository.findByOrderByStartsAtAsc();
     }
 
     @Transactional

@@ -1,6 +1,6 @@
-package com.bv.pet.jeduler.controllers;
+package com.bv.pet.jeduler.controllers.statistics;
 
-import com.bv.pet.jeduler.controllers.interfaces.IStatisticsController;
+import com.bv.pet.jeduler.controllers.statistics.IStatisticsController;
 import com.bv.pet.jeduler.dtos.StatisticsDto;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
-package com.bv.pet.jeduler.controllers;
+package com.bv.pet.jeduler.controllers.demo;
 
-import com.bv.pet.jeduler.controllers.interfaces.IDemoController;
+import com.bv.pet.jeduler.controllers.demo.IDemoController;
 import com.bv.pet.jeduler.dtos.DemoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
