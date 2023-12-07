@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.controllers.task;
 
-import com.bv.pet.jeduler.dtos.TaskDto;
+import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.services.task.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

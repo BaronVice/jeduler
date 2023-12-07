@@ -35,7 +35,7 @@ public class MailServiceImpl {
     private final JavaMailSender javaMailSender;
     private final ThreadPoolTaskScheduler scheduler;
     private final Map<Long, Instant> instants;
-    @Value("${custom.mail}")
+    // TODO: change for multiple users
     private String sendTo;
 
     // @Async ??

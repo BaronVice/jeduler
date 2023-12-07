@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.mappers;
 
-import com.bv.pet.jeduler.dtos.TaskDto;
+import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import org.mapstruct.Mapper;
 

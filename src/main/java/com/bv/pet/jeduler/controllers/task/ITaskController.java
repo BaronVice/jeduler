@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.controllers.task;
 
-import com.bv.pet.jeduler.dtos.TaskDto;
+import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

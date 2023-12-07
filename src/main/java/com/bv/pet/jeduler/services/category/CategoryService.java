@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.services.category;
 
-import com.bv.pet.jeduler.dtos.CategoryDto;
+import com.bv.pet.jeduler.datacarriers.dtos.CategoryDto;
 import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.CategoryMapper;

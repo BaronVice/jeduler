@@ -1,7 +1,6 @@
 package com.bv.pet.jeduler.controllers.demo;
 
-import com.bv.pet.jeduler.controllers.demo.IDemoController;
-import com.bv.pet.jeduler.dtos.DemoDto;
+import com.bv.pet.jeduler.datacarriers.dtos.DemoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

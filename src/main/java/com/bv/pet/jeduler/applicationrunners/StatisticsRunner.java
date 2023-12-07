@@ -14,10 +14,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
+/**
+ * Update required due to multiple users
+ */
+//@Component
 @RequiredArgsConstructor
-// TODO: both of checks are bad. Use set to find holes
+@Deprecated(forRemoval = true)
 public class StatisticsRunner implements ApplicationRunner {
+
     private final StatisticsRepository statisticsRepository;
     private final TasksAtDayRepository tasksAtDayRepository;
 

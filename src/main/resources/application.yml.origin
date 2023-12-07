@@ -1,3 +1,17 @@
+server:
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:ssl/*****.p12
+    key-store-password: *****
+
+  servlet:
+    session:
+      timeout: 60m
+      tracking-modes: cookie
+      cookie:
+        http-only: true
+        secure: true
 
 spring:
   # Mail server properties

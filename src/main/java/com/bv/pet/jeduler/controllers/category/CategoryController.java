@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.controllers.category;
 
-import com.bv.pet.jeduler.dtos.CategoryDto;
+import com.bv.pet.jeduler.datacarriers.dtos.CategoryDto;
 import com.bv.pet.jeduler.services.category.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
