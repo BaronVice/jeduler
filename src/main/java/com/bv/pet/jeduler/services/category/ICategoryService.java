@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.services.category;
 
-import com.bv.pet.jeduler.dtos.CategoryDto;
+import com.bv.pet.jeduler.datacarriers.dtos.CategoryDto;
 
 import java.util.List;
 

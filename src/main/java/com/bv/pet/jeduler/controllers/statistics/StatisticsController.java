@@ -1,7 +1,6 @@
 package com.bv.pet.jeduler.controllers.statistics;
 
-import com.bv.pet.jeduler.controllers.statistics.IStatisticsController;
-import com.bv.pet.jeduler.dtos.StatisticsDto;
+import com.bv.pet.jeduler.datacarriers.dtos.StatisticsDto;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

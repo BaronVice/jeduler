@@ -1,6 +1,6 @@
-package com.bv.pet.jeduler.config;
+package com.bv.pet.jeduler.exceptions;
 
-import com.bv.pet.jeduler.dtos.ErrorDto;
+import com.bv.pet.jeduler.datacarriers.dtos.ErrorDto;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

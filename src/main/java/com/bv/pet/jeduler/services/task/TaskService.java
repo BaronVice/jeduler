@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.services.task;
 
-import com.bv.pet.jeduler.dtos.TaskDto;
+import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;

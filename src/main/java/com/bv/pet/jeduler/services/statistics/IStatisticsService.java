@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.services.statistics;
 
-import com.bv.pet.jeduler.dtos.StatisticsDto;
+import com.bv.pet.jeduler.datacarriers.dtos.StatisticsDto;
 import com.bv.pet.jeduler.entities.Task;
 
 import java.time.Instant;
