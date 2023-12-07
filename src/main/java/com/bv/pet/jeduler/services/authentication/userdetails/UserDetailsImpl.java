@@ -17,6 +17,10 @@ public class UserDetailsImpl implements UserDetails {
         return AuthorityUtils.createAuthorityList(user.getRole().name());
     }
 
+    public short getUserId(){
+        return user.getId();
+    }
+
     @Override
     public String getPassword() {
         return user.getPassword();

@@ -1,7 +1,14 @@
 package com.bv.pet.jeduler.entities.user;
 
+import com.bv.pet.jeduler.entities.Category;
+import com.bv.pet.jeduler.entities.Task;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
+
+import static jakarta.persistence.CascadeType.*;
+import static jakarta.persistence.CascadeType.REMOVE;
 
 @Entity
 /*
@@ -30,4 +37,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     @NonNull
     private Role role;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "user")
+    private List<Category> categories;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "user")
+    private List<Task> tasks;
 }

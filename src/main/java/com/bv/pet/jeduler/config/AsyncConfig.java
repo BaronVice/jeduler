@@ -25,12 +25,4 @@ public class AsyncConfig {
     public AtomicLong atomicLong(){
         return new AtomicLong(0);
     }
-
-    @Bean
-    @Scope("prototype")
-    public List<Short> synchronizedList(){
-        return Collections.synchronizedList(
-                new ArrayList<>(Collections.nCopies(3660, (short) 0))
-        );
-    }
 }

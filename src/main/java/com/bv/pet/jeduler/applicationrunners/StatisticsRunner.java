@@ -22,54 +22,54 @@ import java.util.List;
 @Deprecated(forRemoval = true)
 public class StatisticsRunner implements ApplicationRunner {
 
-    private final StatisticsRepository statisticsRepository;
-    private final TasksAtDayRepository tasksAtDayRepository;
-
+//    private final StatisticsRepository statisticsRepository;
+//    private final TasksAtDayRepository tasksAtDayRepository;
+//
     @Override
     public void run(ApplicationArguments args) {
-        checkStatisticsTable();
-        checkTasksAtDayTable();
+//        checkStatisticsTable();
+//        checkTasksAtDayTable();
     }
-
-    private void checkStatisticsTable(){
-        assertTableSizesForShort(
-                StatisticsType.values().length,
-                statisticsRepository.count()
-        );
-
-        short statisticsEnumSize = (short) StatisticsType.values().length;
-        short realSize = (short) statisticsRepository.count();
-
-        List<Statistics> list = new ArrayList<>();
-        long val = 0L;
-        while (realSize < statisticsEnumSize){
-            list.add(new Statistics(realSize, val));
-            realSize++;
-        }
-
-
-        statisticsRepository.saveAll(list);
-    }
-
-    private void checkTasksAtDayTable(){
-        assertTableSizesForShort(tasksAtDayRepository.count());
-        // TODO: move to properties
-        short days = 3660; // days amount in 10 years
-        short realSize = (short) tasksAtDayRepository.count();
-
-        List<TasksAtDay> list = new ArrayList<>();
-        short val = (short) 0;
-        while (realSize < days){
-            list.add(new TasksAtDay(realSize, val));
-            realSize++;
-        }
-
-        tasksAtDayRepository.saveAll(list);
-    }
-
-    private void assertTableSizesForShort(Number... numbers){
-        if (Arrays.stream(numbers).anyMatch(num -> num.longValue() > Short.MAX_VALUE)){
-            throw new RuntimeException("Overflow for short type");
-        }
-    }
+//
+//    private void checkStatisticsTable(){
+//        assertTableSizesForShort(
+//                StatisticsType.values().length,
+//                statisticsRepository.count()
+//        );
+//
+//        short statisticsEnumSize = (short) StatisticsType.values().length;
+//        short realSize = (short) statisticsRepository.count();
+//
+//        List<Statistics> list = new ArrayList<>();
+//        long val = 0L;
+//        while (realSize < statisticsEnumSize){
+//            list.add(new Statistics(realSize, val));
+//            realSize++;
+//        }
+//
+//
+//        statisticsRepository.saveAll(list);
+//    }
+//
+//    private void checkTasksAtDayTable(){
+//        assertTableSizesForShort(tasksAtDayRepository.count());
+//        // TODO: move to properties
+//        short days = 3660; // days amount in 10 years
+//        short realSize = (short) tasksAtDayRepository.count();
+//
+//        List<TasksAtDay> list = new ArrayList<>();
+//        short val = (short) 0;
+//        while (realSize < days){
+//            list.add(new TasksAtDay(realSize, val));
+//            realSize++;
+//        }
+//
+//        tasksAtDayRepository.saveAll(list);
+//    }
+//
+//    private void assertTableSizesForShort(Number... numbers){
+//        if (Arrays.stream(numbers).anyMatch(num -> num.longValue() > Short.MAX_VALUE)){
+//            throw new RuntimeException("Overflow for short type");
+//        }
+//    }
 }

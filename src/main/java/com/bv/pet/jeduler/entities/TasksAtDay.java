@@ -1,8 +1,7 @@
 package com.bv.pet.jeduler.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.bv.pet.jeduler.entities.user.User;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +16,10 @@ import lombok.Setter;
 public class TasksAtDay {
     @Id
     private Short dayNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private short tasksCreated;
 }

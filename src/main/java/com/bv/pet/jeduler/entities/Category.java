@@ -1,5 +1,6 @@
 package com.bv.pet.jeduler.entities;
 
+import com.bv.pet.jeduler.entities.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -25,8 +26,11 @@ public class Category {
 
     private String name;
 
-    @Pattern(regexp = "^#([a-z0-9]){6}")
     private String color;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
     @JsonIgnore

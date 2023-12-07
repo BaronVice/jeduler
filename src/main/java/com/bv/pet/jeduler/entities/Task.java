@@ -1,5 +1,6 @@
 package com.bv.pet.jeduler.entities;
 
+import com.bv.pet.jeduler.entities.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,6 +38,10 @@ public class Task {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "task")
     private List<Subtask> subtasks;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private Instant startsAt;
 

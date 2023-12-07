@@ -1,17 +1,19 @@
 server:
+
   ssl:
-    enabled: true
+    enabled: false # TODO: CHANGE TO TRUE AFTER CONFIGURING POSTMAN SSL
     key-store-type: PKCS12
     key-store: classpath:ssl/*****.p12
     key-store-password: *****
 
   servlet:
     session:
-      timeout: 60m
+      timeout: 24h
       tracking-modes: cookie
       cookie:
         http-only: true
         secure: true
+        max-age: 24h
 
 spring:
   # Mail server properties
@@ -37,7 +39,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     # show-sql: true
     properties:
       hibernate:
@@ -51,4 +53,7 @@ spring:
       mode: always
 
 custom:
-  mail: *****
+  admin:
+    username: *****
+    # 123
+    password: $argon2id$v=19$m=16384,t=2,p=1$ucTBGBGVW2SmbpmGEQlkJw$P61VQNQilS+zeoU9Zyg8joaSkM8nUwHG+HcyJprBDSQ

@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
-public class MailServiceConfiguration {
+public class MailServiceConfig {
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(5);
+        threadPoolTaskScheduler.setPoolSize(10);
         threadPoolTaskScheduler.setThreadNamePrefix("MailServiceTaskScheduler");
 
         return threadPoolTaskScheduler;
@@ -24,7 +24,7 @@ public class MailServiceConfiguration {
 
     @Bean
     public Map<Long, Instant> instants(){
-        return new ConcurrentHashMap<>(50);
+        return new ConcurrentHashMap<>(64);
     }
 
     @Bean
