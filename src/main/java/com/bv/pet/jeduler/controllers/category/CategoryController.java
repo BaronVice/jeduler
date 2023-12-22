@@ -3,12 +3,10 @@ package com.bv.pet.jeduler.controllers.category;
 import com.bv.pet.jeduler.datacarriers.dtos.CategoryDto;
 import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
 import com.bv.pet.jeduler.services.category.CategoryService;
+import com.bv.pet.jeduler.utils.AllowedAmount;
 import com.bv.pet.jeduler.utils.Assert;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +26,9 @@ public class CategoryController implements ICategoryController {
     public ResponseEntity<List<CategoryDto>> allCategories(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-
-        return ResponseEntity.ok(categoryService.all());
+        return ResponseEntity.ok(
+                categoryService.all(userDetails.getUserId())
+        );
     }
 
     @Override
@@ -39,7 +38,10 @@ public class CategoryController implements ICategoryController {
             @Valid @RequestBody CategoryDto categoryDto
     ) {
         short userId = userDetails.getUserId();
-        Assert.assertAllowedCategoryAmount(categoryPerUser.get(userId));
+        Assert.assertAllowedCategoryAmount(
+                categoryPerUser.get(userId),
+                AllowedAmount.CATEGORY
+        );
 
         Short id = categoryService.create(categoryDto);
         changeCategoryPerUser(userId, 1);
@@ -60,7 +62,6 @@ public class CategoryController implements ICategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable Short id) {
         categoryService.delete(id);
-// TODO       changeCategoryPerUser();
         return ResponseEntity.ok().build();
     }
 

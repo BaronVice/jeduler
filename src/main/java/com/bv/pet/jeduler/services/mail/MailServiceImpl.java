@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.Map;
 
+/**
+ * Implementation of service used for sending notifications
+ */
 @Service
 @RequiredArgsConstructor
 @Getter
@@ -34,11 +36,9 @@ public class MailServiceImpl {
     private final Logger logger;
     private final JavaMailSender javaMailSender;
     private final ThreadPoolTaskScheduler scheduler;
-    private final Map<Long, Instant> instants;
-    // TODO: change for multiple users
+    private final Map<Integer, Instant> instants;
     private String sendTo;
 
-    // @Async ??
     @Transactional
     public void sendTextEmail(Notification notification){
         Instant real = instants.get(notification.getId());

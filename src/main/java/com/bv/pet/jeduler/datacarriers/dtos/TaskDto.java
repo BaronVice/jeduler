@@ -12,9 +12,8 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @ToString
-// TODO: add more constrains
 public class TaskDto {
-    private Long id;
+    private Integer id;
 
     @NotNull(message = "Name cannot be empty")
     private String name;

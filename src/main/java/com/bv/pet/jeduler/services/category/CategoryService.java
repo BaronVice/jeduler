@@ -20,9 +20,9 @@ public class CategoryService implements ICategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryDto> all() {
+    public List<CategoryDto> all(short userId) {
         return categoryMapper.toCategoryDtoList(
-                categoryRepository.findByOrderByNameAsc()
+                categoryRepository.findByUserIdOrderByNameAsc(userId)
         );
     }
 

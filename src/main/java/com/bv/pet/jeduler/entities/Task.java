@@ -20,7 +20,7 @@ import static jakarta.persistence.CascadeType.*;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
 
     private String name;
 
