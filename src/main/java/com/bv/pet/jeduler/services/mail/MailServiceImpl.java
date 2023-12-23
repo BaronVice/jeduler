@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -33,7 +34,7 @@ public class MailServiceImpl {
     private final NotificationRepository notificationRepository;
     private final TaskRepository taskRepository;
 
-    private final Logger logger;
+    private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender javaMailSender;
     private final ThreadPoolTaskScheduler scheduler;
     private final Map<Integer, Instant> instants;

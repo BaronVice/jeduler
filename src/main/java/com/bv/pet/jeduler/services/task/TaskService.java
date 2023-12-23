@@ -23,13 +23,13 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public TaskDto get(Long id) {
+    public TaskDto get(Integer id) {
         return taskMapper.toTaskDto(handler.get(id));
         // If guest - take ip, if requests from ip > 20 -> request captcha
     }
 
     @Override
-    public Long create(TaskDto taskDto) {
+    public Integer create(TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
         handler.create(task);
         statistics.onTaskCreation(task);
@@ -49,7 +49,7 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         handler.delete(id);
     }
 }

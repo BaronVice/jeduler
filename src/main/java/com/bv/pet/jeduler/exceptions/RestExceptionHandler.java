@@ -1,7 +1,6 @@
 package com.bv.pet.jeduler.exceptions;
 
 import com.bv.pet.jeduler.datacarriers.dtos.ErrorDto;
-import com.bv.pet.jeduler.exceptions.ApplicationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +35,13 @@ public class RestExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorDto("This name is already reserved"));
+    }
+
+    @ExceptionHandler(value = {InterruptedException.class})
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleException(InterruptedException e){
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorDto("Lock is interrupted"));
     }
 }

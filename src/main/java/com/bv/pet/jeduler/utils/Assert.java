@@ -12,4 +12,13 @@ public class Assert {
                     HttpStatus.BAD_REQUEST
             );
     }
+
+    public static void assertNotAdmin(short adminId, short givenId) {
+        if (adminId == givenId){
+            throw new ApplicationException(
+                    "Break a leg",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
 }

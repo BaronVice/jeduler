@@ -24,14 +24,14 @@ public class TaskController implements ITaskController {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDto> getTask(@PathVariable Long id) {
+    public ResponseEntity<TaskDto> getTask(@PathVariable Integer id) {
         return ResponseEntity.ok(taskService.get(id));
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<Long> createTask(@Valid @RequestBody TaskDto taskDto) {
-        Long id = taskService.create(taskDto);
+    public ResponseEntity<Integer> createTask(@Valid @RequestBody TaskDto taskDto) {
+        Integer id = taskService.create(taskDto);
 
         return ResponseEntity
                 .created(URI.create("/jeduler/tasks/" + id))
@@ -47,7 +47,7 @@ public class TaskController implements ITaskController {
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTask(@PathVariable Long id) {
+    public ResponseEntity<?> deleteTask(@PathVariable Integer id) {
         taskService.delete(id);
         return ResponseEntity.ok().build();
     }

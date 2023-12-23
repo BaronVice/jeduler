@@ -1,34 +1,41 @@
 package com.bv.pet.jeduler.applicationrunners;
 
+import com.bv.pet.jeduler.applicationrunners.data.AdminInfo;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.security.access.prepost.PreInvocationAuthorizationAdviceVoter;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.bv.pet.jeduler.entities.user.Role.ADMIN;
 
 @Component
 @RequiredArgsConstructor
+@Order(1)
 public class AdminRunner implements ApplicationRunner {
     private final UserRepository userRepository;
-    @Value("${custom.admin.username}")
-    private String username;
-    @Value("${custom.admin.password}")
-    private String password;
+    private final AdminInfo admin;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
-        userRepository.save(
-                new User(
-                        username,
-                        password,
-                        ADMIN
-                )
+    @Transactional
+    public void run(ApplicationArguments args) {
+        createAdmin();
+    }
+
+    private void createAdmin() {
+        if (userRepository.findByUsername(admin.getUsername()).isPresent())
+            return;
+
+        User user = new User(
+                admin.getUsername(),
+                admin.getPassword(),
+                ADMIN
         );
+
+        userRepository.save(user);
+        admin.setId(user.getId());
     }
 }

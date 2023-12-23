@@ -22,7 +22,7 @@ public class TaskServiceHandler {
     private final MailServiceImpl mailService;
 
     @Transactional(readOnly = true)
-    public Task get(Long id){
+    public Task get(Integer id){
         return taskRepository.findById(id).orElseThrow(
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
         );
@@ -60,7 +60,7 @@ public class TaskServiceHandler {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Integer id) {
         mailService.getInstants().remove(id);
         taskRepository.deleteById(id);
     }

@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface ITaskController {
     ResponseEntity<List<TaskDto>> allTasks();
-    ResponseEntity<TaskDto> getTask(Long id);
-    ResponseEntity<Long> createTask(TaskDto taskDto);
+    ResponseEntity<TaskDto> getTask(Integer id);
+    ResponseEntity<Integer> createTask(TaskDto taskDto);
     ResponseEntity<?> updateTask(TaskDto taskDto);
-    ResponseEntity<?> deleteTask(Long id);
+    ResponseEntity<?> deleteTask(Integer id);
 }

@@ -1,8 +1,5 @@
 package com.bv.pet.jeduler.config;
 
-import com.bv.pet.jeduler.services.mail.MailServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -25,10 +22,5 @@ public class MailServiceConfig {
     @Bean
     public Map<Long, Instant> instants(){
         return new ConcurrentHashMap<>(64);
-    }
-
-    @Bean
-    public Logger logger(){
-        return LoggerFactory.getLogger(MailServiceImpl.class);
     }
 }
