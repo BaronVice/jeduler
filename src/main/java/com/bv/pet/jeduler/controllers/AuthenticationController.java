@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.controllers.authentication;
+package com.bv.pet.jeduler.controllers;
 
 import com.bv.pet.jeduler.datacarriers.AuthenticationRequest;
 import com.bv.pet.jeduler.services.authentication.AuthenticationService;
@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/jeduler/auth")
-public class AuthenticationController implements IAuthenticationController{
+@RequestMapping("/jeduler")
+public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @Override
-    @PostMapping
-    public ResponseEntity<?> authenticate(
+    @PostMapping("/login")
+    public ResponseEntity<?> login(
             @RequestBody AuthenticationRequest authenticationRequest,
             HttpServletRequest request,
             HttpServletResponse response

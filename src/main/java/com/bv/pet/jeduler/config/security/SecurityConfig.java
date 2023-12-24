@@ -16,8 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static com.bv.pet.jeduler.entities.user.Role.*;
 
@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final SecurityContextRepository securityContextRepository;
     private final String[] publicRoutes = {
-            "/jeduler/auth",
+            "/jeduler/login",
     };
     private final String[] adminRoutes = {
             "/jeduler/admin/**"
@@ -61,19 +61,14 @@ public class SecurityConfig {
                                 .maxSessionsPreventsLogin(false)
 //							.expiredUrl("/login")
                 )
-//				.formLogin(
-//						form -> form
-//								.loginPage("/login")
-//								.loginProcessingUrl("/jeduler/auth")
-//								.successHandler(customSuccessHandler).permitAll()
-//				)
+				.formLogin(AbstractHttpConfigurer::disable)
                 .logout(
                         form -> form
                                 .invalidateHttpSession(true)
                                 .clearAuthentication(true)
                                 .deleteCookies("JSESSIONID")
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/jeduler/logout"))
-//								.logoutSuccessUrl("/login?logout")
+                                .logoutUrl("/jeduler/logout")
+                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                                 .permitAll()
                 );
 
@@ -92,7 +87,7 @@ public class SecurityConfig {
     }
 
     @Autowired
-    public void configure (AuthenticationManagerBuilder auth) throws Exception {
+    public void configure (AuthenticationManagerBuilder auth) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());

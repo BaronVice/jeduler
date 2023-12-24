@@ -3,7 +3,6 @@ package com.bv.pet.jeduler.entities;
 import com.bv.pet.jeduler.entities.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 @Entity
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(name = "UniqueName", columnNames = {"name"})
+                @UniqueConstraint(name = "UniqueName", columnNames = {"name", "user_id"})
         }
 )
 @AllArgsConstructor

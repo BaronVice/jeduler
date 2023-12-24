@@ -28,7 +28,9 @@ public class Task {
 
     private boolean taskDone;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = REFRESH)
+    private short priority;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = REFRESH)
     @JoinTable(
             name = "task_category",
             joinColumns = @JoinColumn(name = "task_id"),

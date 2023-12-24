@@ -1,34 +1,43 @@
 package com.bv.pet.jeduler.controllers.task;
 
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
+import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
 import com.bv.pet.jeduler.services.task.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/jeduler/tasks")
-public class TaskController implements ITaskController {
+public class TaskController {
     private final TaskService taskService;
 
-    @Override
-    @GetMapping
-    public ResponseEntity<List<TaskDto>> allTasks(){
-        return ResponseEntity.ok(taskService.all());
+    @GetMapping("/order")
+    public ResponseEntity<?> getOrder(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody OrderType type
+    ){
+        return ResponseEntity.ok(type);
     }
 
-    @Override
+    @GetMapping
+    public ResponseEntity<List<TaskDto>> allTasks(@RequestBody int[] ids){
+        Arrays.stream(ids).forEach(System.out::println);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TaskDto> getTask(@PathVariable Integer id) {
         return ResponseEntity.ok(taskService.get(id));
     }
 
-    @Override
     @PostMapping
     public ResponseEntity<Integer> createTask(@Valid @RequestBody TaskDto taskDto) {
         Integer id = taskService.create(taskDto);
@@ -38,14 +47,12 @@ public class TaskController implements ITaskController {
                 .body(id);
     }
 
-    @Override
     @PatchMapping
     public ResponseEntity<?> updateTask(@Valid @RequestBody TaskDto taskDto) {
         taskService.update(taskDto);
         return ResponseEntity.ok().build();
     }
 
-    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTask(@PathVariable Integer id) {
         taskService.delete(id);

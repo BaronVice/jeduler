@@ -1,9 +1,9 @@
 package com.bv.pet.jeduler.applicationrunners;
 
-import com.bv.pet.jeduler.applicationrunners.data.UserAmount;
-import com.bv.pet.jeduler.applicationrunners.data.UserInfo;
-import com.bv.pet.jeduler.applicationrunners.data.UserInfoCategories;
-import com.bv.pet.jeduler.applicationrunners.data.UserInfoTasks;
+import com.bv.pet.jeduler.applicationrunners.cache.UserAmount;
+import com.bv.pet.jeduler.applicationrunners.cache.UserInfo;
+import com.bv.pet.jeduler.applicationrunners.cache.UserInfoCategories;
+import com.bv.pet.jeduler.applicationrunners.cache.UserInfoTasks;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.repositories.UserRepository;
@@ -50,11 +50,7 @@ public class UserInfoRunner implements ApplicationRunner {
     public void populate(UserInfo userInfoCategories, UserIdCollector repository) {
         List<UserId> list = repository.findAllBy();
         for (UserId userId : list){
-            userInfoCategories.getInfo().merge(
-                    userId.getUser(),
-                    (short) 1,
-                    (a, b) -> (short) (a + b)
-            );
+            userInfoCategories.changeValue(userId.getUser(), (short) 1);
         }
     }
 

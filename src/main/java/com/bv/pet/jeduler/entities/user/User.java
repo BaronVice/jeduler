@@ -8,7 +8,6 @@ import lombok.*;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.CascadeType.REMOVE;
 
 @Entity
 /*
@@ -21,21 +20,19 @@ import static jakarta.persistence.CascadeType.REMOVE;
 )
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Short id;
 
-    @NonNull
     private String username;
 
-    @NonNull
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @NonNull
     private Role role;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "user")
@@ -43,4 +40,10 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "user")
     private List<Task> tasks;
+
+    public User(String username, String password, Role role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 }

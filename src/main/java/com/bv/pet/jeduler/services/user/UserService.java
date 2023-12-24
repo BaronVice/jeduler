@@ -22,21 +22,20 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void save(UserDto userDto) {
-        userRepository.save(
-                new User(
-                        userDto.username(),
-                        passwordEncoder.encode(userDto.password()),
-                        USER
-                )
+        User user = new User(
+                userDto.username(),
+                passwordEncoder.encode(userDto.password()),
+                USER
         );
 
-        applicationInfo.userAmount().increment();
+        userRepository.save(user);
+        applicationInfo.addUser(user.getId());
     }
 
     @Override
     @Transactional
     public void delete(Short id) {
         userRepository.deleteById(id);
-        applicationInfo.userAmount().decrement();
+        applicationInfo.deleteUser(id);
     }
 }

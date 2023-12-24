@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.controllers.statistics;
+package com.bv.pet.jeduler.controllers;
 
 import com.bv.pet.jeduler.datacarriers.dtos.StatisticsDto;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;
@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/jeduler/statistics")
-public class StatisticsController implements IStatisticsController {
+public class StatisticsController {
     private final StatisticsService statisticsService;
 
-    @Override
     @GetMapping
     public ResponseEntity<StatisticsDto> getStatistics() {
         return ResponseEntity.ok(

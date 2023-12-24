@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.applicationrunners.data;
+package com.bv.pet.jeduler.applicationrunners.cache;
 
 import lombok.Getter;
 import lombok.Setter;

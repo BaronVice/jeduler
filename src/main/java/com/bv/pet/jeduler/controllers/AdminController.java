@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.controllers.admin;
+package com.bv.pet.jeduler.controllers;
 
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.dtos.UserDto;
@@ -34,13 +34,13 @@ public class AdminController {
 
     @PostMapping("/create-user")
     public ResponseEntity<?> create(@RequestBody UserDto userDto){
-        Assert.assertAllowedCategoryAmount(
+        Assert.assertAllowedAmount(
                 applicationInfo.userAmount().getAmount(),
                 AllowedAmount.USER
         );
 
         userService.save(userDto);
-        return ResponseEntity.ok("Created");
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/delete-user/{id}")

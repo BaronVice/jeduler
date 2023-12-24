@@ -1,7 +1,9 @@
 package com.bv.pet.jeduler.services.category;
 
+import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.dtos.CategoryDto;
 import com.bv.pet.jeduler.entities.Category;
+import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.CategoryMapper;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
@@ -17,6 +19,7 @@ import java.util.List;
 public class CategoryService implements ICategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final ApplicationInfo applicationInfo;
 
     @Override
     @Transactional(readOnly = true)
@@ -28,9 +31,12 @@ public class CategoryService implements ICategoryService {
 
     @Override
     @Transactional
-    public Short create(CategoryDto categoryDto) {
+    public Short create(short userId, CategoryDto categoryDto) {
         Category category = categoryMapper.toCategory(categoryDto);
+        category.setUser(User.builder().id(userId).build());
+
         categoryRepository.save(category);
+        applicationInfo.userInfoCategories().changeValue(userId, (short) 1);
 
         return category.getId();
     }
@@ -51,7 +57,8 @@ public class CategoryService implements ICategoryService {
 
     @Override
     @Transactional
-    public void delete(Short id) {
+    public void delete(short userId, short id) {
         categoryRepository.deleteById(id);
+        applicationInfo.userInfoCategories().changeValue(userId, (short) -1);
     }
 }

@@ -1,6 +1,6 @@
 package com.bv.pet.jeduler.applicationrunners;
 
-import com.bv.pet.jeduler.applicationrunners.data.AdminInfo;
+import com.bv.pet.jeduler.applicationrunners.cache.AdminInfo;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;

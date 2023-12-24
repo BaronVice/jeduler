@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 @Component
+@Deprecated(forRemoval = true)
 public class InstantsCalculator {
     private static final Instant startInstant = Instant.parse("2023-01-01T00:00:00.001+08:00");
 
