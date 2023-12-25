@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -42,7 +43,7 @@ public class TaskService implements ITaskService {
         Task updated = taskMapper.toTask(taskDto);
         Task toUpdate = handler.get(taskDto.getId());
         boolean wasDone = toUpdate.isTaskDone();
-        Instant previousDate = toUpdate.getStartsAt();
+        LocalDateTime previousDate = toUpdate.getStartsAt();
 
         handler.update(updated);
         statistics.onTaskUpdate(updated, wasDone, previousDate);

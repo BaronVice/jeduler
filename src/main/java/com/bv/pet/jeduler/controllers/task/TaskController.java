@@ -19,32 +19,20 @@ import java.util.List;
 public class TaskController {
     private final TaskService taskService;
 
-    @GetMapping("/order")
-    public ResponseEntity<?> getOrder(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody OrderType type
-    ){
-        return ResponseEntity.ok(type);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<TaskDto>> allTasks(@RequestBody int[] ids){
-        Arrays.stream(ids).forEach(System.out::println);
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<TaskDto> getTask(@PathVariable Integer id) {
         return ResponseEntity.ok(taskService.get(id));
     }
 
     @PostMapping
-    public ResponseEntity<Integer> createTask(@Valid @RequestBody TaskDto taskDto) {
-        Integer id = taskService.create(taskDto);
-
-        return ResponseEntity
-                .created(URI.create("/jeduler/tasks/" + id))
-                .body(id);
+    public ResponseEntity<?> createTask(@Valid @RequestBody TaskDto taskDto) {
+        System.out.println(taskDto.getStartsAt());
+        return ResponseEntity.ok(taskDto);
+//        Integer id = taskService.create(taskDto);
+//
+//        return ResponseEntity
+//                .created(URI.create("/jeduler/tasks/" + id))
+//                .body(id);
     }
 
     @PatchMapping

@@ -6,7 +6,6 @@ import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.entities.TasksAtDay;
 import com.bv.pet.jeduler.repositories.StatisticsRepository;
 import com.bv.pet.jeduler.repositories.TasksAtDayRepository;
-import com.bv.pet.jeduler.utils.InstantsCalculator;
 import com.bv.pet.jeduler.utils.locks.StatisticsRepositoryLock;
 import com.bv.pet.jeduler.utils.locks.TasksAtDayRepositoryLock;
 import lombok.AllArgsConstructor;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -54,20 +54,20 @@ public class StatisticsService implements IStatisticsService {
 
     @Override
     @Async
-    public void onTaskUpdate(Task updated, boolean wasDone, Instant previousDate) {
-        increment(
-                tasksUpdated,
-                StatisticsType.TASKS_UPDATED
-        );
-
-        if (updated.isTaskDone() && (!wasDone))
-            changeTasksAtDay(updated.getStartsAt(), (short) 1);
-        if (!updated.isTaskDone() && wasDone)
-            changeTasksAtDay(previousDate, (short) -1);
-        if (updated.isTaskDone() && wasDone && (!updated.getStartsAt().equals(previousDate))){
-            changeTasksAtDay(previousDate, (short) -1);
-            changeTasksAtDay(updated.getStartsAt(), (short) 1);
-        }
+    public void onTaskUpdate(Task updated, boolean wasDone, LocalDateTime previousDate) {
+//        increment(
+//                tasksUpdated,
+//                StatisticsType.TASKS_UPDATED
+//        );
+//
+//        if (updated.isTaskDone() && (!wasDone))
+//            changeTasksAtDay(updated.getStartsAt(), (short) 1);
+//        if (!updated.isTaskDone() && wasDone)
+//            changeTasksAtDay(previousDate, (short) -1);
+//        if (updated.isTaskDone() && wasDone && (!updated.getStartsAt().equals(previousDate))){
+//            changeTasksAtDay(previousDate, (short) -1);
+//            changeTasksAtDay(updated.getStartsAt(), (short) 1);
+//        }
     }
 
     @Override
@@ -81,7 +81,7 @@ public class StatisticsService implements IStatisticsService {
 
     @Transactional
     public void changeTasksAtDay(Instant instant, short v) {
-        short pos = InstantsCalculator.getDaysFromStart(instant);
+        short pos = /*InstantsCalculator.getDaysFromStart(instant)*/1;
         short val = tasksAtDay.get(pos);
         tasksAtDay.set(pos, (short)(val + v));
 

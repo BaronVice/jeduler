@@ -1,8 +1,11 @@
 package com.bv.pet.jeduler.datacarriers.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,7 +29,9 @@ public class TaskDto {
 
     private List<SubtaskDto> subtasks;
 
-    private Instant startsAt;
+    @JsonFormat(pattern = "dd.MM.yyyy+HH:mm")
+    private LocalDateTime startsAt;
 
-    private Instant notifyAt;
+    @JsonFormat(pattern = "dd.MM.yyyy+HH:mm")
+    private LocalDateTime notifyAt;
 }

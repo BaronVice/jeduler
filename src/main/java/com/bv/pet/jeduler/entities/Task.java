@@ -3,8 +3,12 @@ package com.bv.pet.jeduler.entities;
 import com.bv.pet.jeduler.entities.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
@@ -45,7 +49,10 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Instant startsAt;
+    @DateTimeFormat(pattern = "dd.mm.yyyy+hh:mm")
+    private LocalDateTime startsAt;
+
+    private LocalDateTime lastChanged;
 
     @OneToOne(mappedBy = "task", cascade = ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
