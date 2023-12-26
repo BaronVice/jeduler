@@ -1,9 +1,13 @@
 package com.bv.pet.jeduler.services.task;
 
+import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
+import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Subtask;
 import com.bv.pet.jeduler.entities.Task;
+import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
+import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.repositories.SubtaskRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.services.mail.MailServiceImpl;
@@ -12,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 @Component
@@ -20,6 +25,8 @@ public class TaskServiceHandler {
     private final TaskRepository taskRepository;
     private final SubtaskRepository subtaskRepository;
     private final MailServiceImpl mailService;
+    private final ApplicationInfo applicationInfo;
+    private final TaskMapper taskMapper;
 
     @Transactional(readOnly = true)
     public Task get(Integer id){
@@ -34,12 +41,15 @@ public class TaskServiceHandler {
     }
 
     @Transactional
-    public void create(Task task) {
-        setNotificationOnTaskCreate(task);
+    public Task create(short userId, TaskDto taskDto) {
+        Task task = taskMapper.toTask(taskDto);
+
+        setUserOnTask(task, userId);
+        setNotificationOnTaskCreate(task, taskDto);
         setSubtasksOnTaskCreate(task);
 
         saveTask(task);
-        mailService.handNotificationInScheduler(task);
+        return task;
     }
 
     @Transactional
@@ -69,9 +79,21 @@ public class TaskServiceHandler {
         taskRepository.save(task);
     }
 
-    private void setNotificationOnTaskCreate(Task task){
-        if (task.getNotification() != null)
-            task.getNotification().setTask(task);
+    private void setUserOnTask(Task task, short userId){
+        task.setUser(User.builder().id(userId).build());
+    }
+
+    private void setNotificationOnTaskCreate(Task task, TaskDto taskDto){
+        Instant notifyAt = taskDto.getNotifyAt();
+        if (notifyAt != null) {
+            task.setNotification(
+                    Notification
+                            .builder()
+                            .task(task)
+                            .notifyAt(notifyAt)
+                            .build()
+            );
+        }
     }
 
     private void setSubtasksOnTaskCreate(Task task){

@@ -3,8 +3,7 @@ package com.bv.pet.jeduler.services.mail;
 import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.entities.Task;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 public class MessageFormatter {
@@ -15,7 +14,7 @@ public class MessageFormatter {
     public static String formatText(Task task){
         StringBuilder stringBuilder = new StringBuilder();
 
-        LocalDateTime startDate = task.getStartsAt();
+        Instant startDate = task.getStartsAt();
 
         stringBuilder
                 .append("Notifying that you have a task named ").append(task.getName()).append("\n");

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -54,7 +53,7 @@ public class StatisticsService implements IStatisticsService {
 
     @Override
     @Async
-    public void onTaskUpdate(Task updated, boolean wasDone, LocalDateTime previousDate) {
+    public void onTaskUpdate(Task updated, boolean wasDone, Instant previousDate) {
 //        increment(
 //                tasksUpdated,
 //                StatisticsType.TASKS_UPDATED

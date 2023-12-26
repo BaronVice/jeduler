@@ -10,8 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SubtaskDto {
-    private Integer id;
-
     private String name;
 
     private boolean isCompleted;

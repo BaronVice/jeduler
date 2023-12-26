@@ -1,23 +1,23 @@
 package com.bv.pet.jeduler.controllers.task;
 
+import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
-import com.bv.pet.jeduler.services.task.TaskService;
+import com.bv.pet.jeduler.services.task.ITaskService;
+import com.bv.pet.jeduler.utils.AllowedAmount;
+import com.bv.pet.jeduler.utils.Assert;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/jeduler/tasks")
 public class TaskController {
-    private final TaskService taskService;
+    private final ITaskService taskService;
+    private final ApplicationInfo applicationInfo;
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskDto> getTask(@PathVariable Integer id) {
@@ -25,14 +25,18 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createTask(@Valid @RequestBody TaskDto taskDto) {
-        System.out.println(taskDto.getStartsAt());
-        return ResponseEntity.ok(taskDto);
-//        Integer id = taskService.create(taskDto);
-//
-//        return ResponseEntity
-//                .created(URI.create("/jeduler/tasks/" + id))
-//                .body(id);
+    public ResponseEntity<?> createTask(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody TaskDto taskDto
+    ) {
+        short userId = userDetails.getUserId();
+        Assert.assertAllowedAmount(
+                applicationInfo.userInfoTasks().getInfo().get(userId),
+                AllowedAmount.TASK
+        );
+
+        Integer id = taskService.create(userId, taskDto);
+        return ResponseEntity.ok(id);
     }
 
     @PatchMapping

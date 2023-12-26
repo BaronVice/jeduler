@@ -38,7 +38,6 @@ public class MailServiceImpl {
     private final JavaMailSender javaMailSender;
     private final ThreadPoolTaskScheduler scheduler;
     private final Map<Integer, Instant> instants;
-    private String sendTo;
 
     @Transactional
     public void sendTextEmail(Notification notification){
@@ -78,7 +77,8 @@ public class MailServiceImpl {
 
     private SimpleMailMessage buildMessage(Task task){
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(sendTo);
+        // Username is email
+        message.setTo(task.getUser().getUsername());
         message.setFrom("Jeduler");
         message.setSubject(MessageFormatter.formatSubject(task));
         message.setText(MessageFormatter.formatText(task));
