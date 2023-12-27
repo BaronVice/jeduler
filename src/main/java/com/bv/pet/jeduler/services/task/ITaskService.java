@@ -2,12 +2,10 @@ package com.bv.pet.jeduler.services.task;
 
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 
-import java.util.List;
 
 public interface ITaskService {
-    List<TaskDto> all();
     TaskDto get(Integer id);
-    Integer create(short userId, TaskDto taskDto);
-    void update(TaskDto taskDto);
-    void delete(Integer id);
+    Integer create(short userId, String mail, TaskDto taskDto);
+    void update(String mail, TaskDto taskDto);
+    void delete(short userId, Integer id);
 }

@@ -8,8 +8,6 @@ import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,42 +18,37 @@ public class TaskService implements ITaskService {
     private final ApplicationInfo applicationInfo;
 
     @Override
-    public List<TaskDto> all() {
-        return taskMapper.toTaskDtoList(handler.getAll());
-    }
-
-    @Override
     public TaskDto get(Integer id) {
         return taskMapper.toTaskDto(handler.get(id));
     }
 
     @Override
-    public Integer create(short userId, TaskDto taskDto) {
-        Task task = handler.create(userId, taskDto);
-        // Not now
-//        mailService.handNotificationInScheduler(task);
-        applicationInfo.userInfoTasks().changeValue(
-                task.getUser().getId(),
-                (short) 1
-        );
+    public Integer create(short userId, String mail, TaskDto taskDto) {
+        Task task = handler.create(userId, mail, taskDto);
+
+        applicationInfo.userInfoTasks().changeValue(userId, (short) 1);
 //        statistics.onTaskCreation(task);
 
         return task.getId();
     }
 
     @Override
-    public void update(TaskDto taskDto) {
-        Task updated = taskMapper.toTask(taskDto);
-        Task toUpdate = handler.get(taskDto.getId());
-        boolean wasDone = toUpdate.isTaskDone();
-        Instant previousDate = toUpdate.getStartsAt();
+    public void update(String mail, TaskDto taskDto) {
+//        Task updated = taskMapper.toTask(taskDto);
+//        Task toUpdate = handler.get(taskDto.getId());
+//        boolean wasDone = toUpdate.isTaskDone();
+//        Instant previousDate = toUpdate.getStartsAt();
 
-        handler.update(updated);
-        statistics.onTaskUpdate(updated, wasDone, previousDate);
+        handler.update(mail, taskDto);
+        // statistics.onTaskUpdate(updated, wasDone, previousDate);
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(short userId, Integer id) {
         handler.delete(id);
+        applicationInfo.userInfoTasks().changeValue(
+                userId,
+                (short) -1
+        );
     }
 }

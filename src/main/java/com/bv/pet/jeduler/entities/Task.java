@@ -30,7 +30,7 @@ public class Task {
 
     private short priority;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = REFRESH)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = REFRESH)
     @JoinTable(
             name = "task_category",
             joinColumns = @JoinColumn(name = "task_id"),
@@ -41,7 +41,7 @@ public class Task {
     @OneToMany(fetch = FetchType.EAGER, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "task")
     private List<Subtask> subtasks;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

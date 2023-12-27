@@ -1,6 +1,5 @@
 package com.bv.pet.jeduler.services.task;
 
-import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Subtask;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -25,7 +23,6 @@ public class TaskServiceHandler {
     private final TaskRepository taskRepository;
     private final SubtaskRepository subtaskRepository;
     private final MailServiceImpl mailService;
-    private final ApplicationInfo applicationInfo;
     private final TaskMapper taskMapper;
 
     @Transactional(readOnly = true)
@@ -35,25 +32,24 @@ public class TaskServiceHandler {
         );
     }
 
-    @Transactional(readOnly = true)
-    public List<Task> getAll() {
-        return taskRepository.findByOrderByStartsAtAsc();
-    }
-
     @Transactional
-    public Task create(short userId, TaskDto taskDto) {
+    public Task create(short userId, String mail, TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
 
         setUserOnTask(task, userId);
+        setLastChangedAsNow(task);
         setNotificationOnTaskCreate(task, taskDto);
         setSubtasksOnTaskCreate(task);
 
         saveTask(task);
+        mailService.handNotificationInScheduler(task, mail);
+
         return task;
     }
 
     @Transactional
-    public void update(Task updated) {
+    public void update(String mail, TaskDto taskDto) {
+        Task updated = taskMapper.toTask(taskDto);
         Task toUpdate = taskRepository.getReferenceById(updated.getId());
 
         toUpdate.setName(updated.getName());
@@ -61,18 +57,20 @@ public class TaskServiceHandler {
         toUpdate.setStartsAt(updated.getStartsAt());
         toUpdate.setCategories(updated.getCategories());
         toUpdate.setTaskDone(updated.isTaskDone());
+        toUpdate.setPriority(updated.getPriority());
 
+        setLastChangedAsNow(toUpdate);
         setNotificationOnTaskUpdate(updated, toUpdate);
         setSubtasksOnTaskUpdate(updated, toUpdate);
 
         saveTask(toUpdate);
-        mailService.handNotificationInScheduler(toUpdate);
+        mailService.handNotificationInScheduler(toUpdate, mail);
     }
 
     @Transactional
     public void delete(Integer id) {
-        mailService.getInstants().remove(id);
         taskRepository.deleteById(id);
+        mailService.getInstants().remove(id);
     }
 
     private void saveTask(Task task) {
@@ -81,6 +79,10 @@ public class TaskServiceHandler {
 
     private void setUserOnTask(Task task, short userId){
         task.setUser(User.builder().id(userId).build());
+    }
+
+    private void setLastChangedAsNow(Task task){
+        task.setLastChanged(Instant.now());
     }
 
     private void setNotificationOnTaskCreate(Task task, TaskDto taskDto){
@@ -113,6 +115,16 @@ public class TaskServiceHandler {
         }
     }
 
+    private void changeTaskNotification(Task updated, Task toUpdate){
+        if (toUpdate.getNotification() == null) {
+            toUpdate.setNotification(new Notification());
+            toUpdate.getNotification().setTask(toUpdate);
+        }
+        toUpdate.getNotification().setNotifyAt(
+                updated.getNotification().getNotifyAt()
+        );
+    }
+
     private void setSubtasksOnTaskUpdate(Task updated, Task toUpdate){
         for (short i = 0; i < updated.getSubtasks().size(); i++){
             Subtask subtask = updated.getSubtasks().get(i);
@@ -123,15 +135,5 @@ public class TaskServiceHandler {
         subtaskRepository.saveAll(updated.getSubtasks());
 
         toUpdate.setSubtasks(updated.getSubtasks());
-    }
-
-    private void changeTaskNotification(Task updated, Task toUpdate){
-        if (toUpdate.getNotification() == null) {
-            toUpdate.setNotification(new Notification());
-            toUpdate.getNotification().setTask(toUpdate);
-        }
-        toUpdate.getNotification().setNotifyAt(
-                updated.getNotification().getNotifyAt()
-        );
     }
 }

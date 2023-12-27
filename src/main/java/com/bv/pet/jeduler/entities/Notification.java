@@ -19,7 +19,7 @@ public class Notification {
     @Column(name = "task_id")
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @MapsId
     @JoinColumn(name = "task_id")
     @JsonIgnore
