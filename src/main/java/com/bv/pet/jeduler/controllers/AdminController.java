@@ -2,6 +2,7 @@ package com.bv.pet.jeduler.controllers;
 
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.dtos.UserDto;
+import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.services.user.IUserService;
 import com.bv.pet.jeduler.utils.AllowedAmount;
 import com.bv.pet.jeduler.utils.Assert;
@@ -16,6 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final IUserService userService;
     private final ApplicationInfo applicationInfo;
+    private final CategoryRepository categoryRepository; // to remove
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok(categoryRepository.findNamesByTaskId(1));
+    }
 
     @GetMapping("/categories")
     public ResponseEntity<?> categoriesInfo(){

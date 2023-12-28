@@ -19,6 +19,7 @@ public class TaskService implements ITaskService {
 
     @Override
     public TaskDto get(Integer id) {
+        // TODO: refactor
         return taskMapper.toTaskDto(handler.get(id));
     }
 

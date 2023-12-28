@@ -23,7 +23,7 @@ public class TaskDto {
 
     private short priority;
 
-    private List<CategoryDto> categories;
+    private List<Short> categoryIds;
 
     private List<SubtaskDto> subtasks;
 

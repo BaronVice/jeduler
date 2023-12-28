@@ -30,7 +30,7 @@ public class Task {
 
     private short priority;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = REFRESH)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = REFRESH)
     @JoinTable(
             name = "task_category",
             joinColumns = @JoinColumn(name = "task_id"),

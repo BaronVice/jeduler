@@ -1,6 +1,7 @@
 package com.bv.pet.jeduler.services.task;
 
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
+import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Subtask;
 import com.bv.pet.jeduler.entities.Task;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -37,12 +39,13 @@ public class TaskServiceHandler {
         Task task = taskMapper.toTask(taskDto);
 
         setUserOnTask(task, userId);
+        setCategoriesOnTask(task, taskDto);
         setLastChangedAsNow(task);
         setNotificationOnTaskCreate(task, taskDto);
         setSubtasksOnTaskCreate(task);
 
         saveTask(task);
-        mailService.handNotificationInScheduler(task, mail);
+        mailService.handNotificationInScheduler(mail, task);
 
         return task;
     }
@@ -55,22 +58,22 @@ public class TaskServiceHandler {
         toUpdate.setName(updated.getName());
         toUpdate.setDescription(updated.getDescription());
         toUpdate.setStartsAt(updated.getStartsAt());
-        toUpdate.setCategories(updated.getCategories());
         toUpdate.setTaskDone(updated.isTaskDone());
         toUpdate.setPriority(updated.getPriority());
 
         setLastChangedAsNow(toUpdate);
+        setCategoriesOnTask(toUpdate, taskDto);
         setNotificationOnTaskUpdate(updated, toUpdate);
         setSubtasksOnTaskUpdate(updated, toUpdate);
 
         saveTask(toUpdate);
-        mailService.handNotificationInScheduler(toUpdate, mail);
+        mailService.handNotificationInScheduler(mail, toUpdate);
     }
 
     @Transactional
-    public void delete(Integer id) {
+    public void delete(int id) {
         taskRepository.deleteById(id);
-        mailService.getInstants().remove(id);
+        mailService.removeNotificationFromScheduler(id);
     }
 
     private void saveTask(Task task) {
@@ -79,6 +82,14 @@ public class TaskServiceHandler {
 
     private void setUserOnTask(Task task, short userId){
         task.setUser(User.builder().id(userId).build());
+    }
+
+    private void setCategoriesOnTask(Task task, TaskDto taskDto) {
+        task.setCategories(
+                taskDto.getCategoryIds().stream().map(
+                        id -> Category.builder().id(id).build()
+                ).collect(Collectors.toList())
+        );
     }
 
     private void setLastChangedAsNow(Task task){
@@ -108,7 +119,7 @@ public class TaskServiceHandler {
 
     private void setNotificationOnTaskUpdate(Task updated, Task toUpdate) {
         if (updated.getNotification() == null){
-            mailService.getInstants().remove(updated.getId());
+            mailService.removeNotificationFromScheduler(updated.getId());
             toUpdate.setNotification(null);
         } else {
             changeTaskNotification(updated, toUpdate);
@@ -119,6 +130,8 @@ public class TaskServiceHandler {
         if (toUpdate.getNotification() == null) {
             toUpdate.setNotification(new Notification());
             toUpdate.getNotification().setTask(toUpdate);
+        } else {
+            mailService.removeNotificationFromScheduler(toUpdate.getId());
         }
         toUpdate.getNotification().setNotifyAt(
                 updated.getNotification().getNotifyAt()

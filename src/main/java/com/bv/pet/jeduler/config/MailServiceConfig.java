@@ -14,6 +14,7 @@ public class MailServiceConfig {
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setPoolSize(10);
+        threadPoolTaskScheduler.setRemoveOnCancelPolicy(true);
         threadPoolTaskScheduler.setThreadNamePrefix("MailServiceTaskScheduler");
 
         return threadPoolTaskScheduler;

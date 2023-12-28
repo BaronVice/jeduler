@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.repositories.projections;
+package com.bv.pet.jeduler.repositories.projections.user;
 
 import java.util.List;
 

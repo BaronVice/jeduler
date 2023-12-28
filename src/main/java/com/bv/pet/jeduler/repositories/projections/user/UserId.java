@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.repositories.projections;
+package com.bv.pet.jeduler.repositories.projections.user;
 
 /**
  * Projection that is used to get inner key user_id

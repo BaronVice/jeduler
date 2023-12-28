@@ -6,11 +6,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SendEmailTask implements Runnable {
-    private MailServiceNotification notification;
+    private String mail;
+    private int id;
     private MailServiceImpl mailService;
 
     @Override
     public void run() {
-        mailService.sendTextEmail(notification);
+        mailService.sendTextEmail(mail, id);
     }
 }

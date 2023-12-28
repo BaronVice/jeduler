@@ -1,17 +1,15 @@
 package com.bv.pet.jeduler.services.mail;
 
-import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.entities.Task;
-
 import java.time.Instant;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class MessageFormatter {
     public static String formatSubject(Task task){
         return "Jeduler task: " + task.getName();
     }
 
-    public static String formatText(Task task){
+    public static String formatText(Task task, List<String> categoryNames){
         StringBuilder stringBuilder = new StringBuilder();
 
         Instant startDate = task.getStartsAt();
@@ -26,8 +24,7 @@ public class MessageFormatter {
         if(task.getCategories() != null){
             stringBuilder
                     .append("Categories: ").append(
-                            task.getCategories().stream().map(Category::getName)
-                                    .collect(Collectors.joining(", "))
+                            String.join(", ", categoryNames)
                     );
         }
 

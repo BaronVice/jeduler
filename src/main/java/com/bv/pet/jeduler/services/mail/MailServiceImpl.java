@@ -3,6 +3,7 @@ package com.bv.pet.jeduler.services.mail;
 import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
+import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.repositories.UserRepository;
@@ -20,8 +21,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.Map;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * Implementation of service used for sending notifications
@@ -35,25 +36,21 @@ public class MailServiceImpl {
     private final NotificationRepository notificationRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender javaMailSender;
     private final ThreadPoolTaskScheduler scheduler;
-    private final Map<Integer, Instant> instants;
+    private final Map<Integer, ScheduledFuture<?>> futureMap;
 
-    @Transactional
-    public void sendTextEmail(MailServiceNotification serviceNotification){
-        Notification notification = serviceNotification.notification();
-        Instant real = instants.get(notification.getId());
-        if ( real == null || ( ! real.equals(notification.getNotifyAt()) ) )
-            return;
-
-        Task task = taskRepository.findById(notification.getId()).orElseThrow(
+    @Transactional(readOnly = true)
+    public void sendTextEmail(String mail, int taskId){
+        Task task = taskRepository.findById(taskId).orElseThrow(
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
         );
 
         logger.info("Sending email...");
-        SimpleMailMessage message = buildMessage(task, serviceNotification.mail());
+        SimpleMailMessage message = buildMessage(mail, task);
         javaMailSender.send(message); // Maybe sync to avoid spamming, but I think it's fine
         logger.info("Simple Email sent");
 
@@ -63,38 +60,55 @@ public class MailServiceImpl {
     }
 
     @Async
-    public void handNotificationInScheduler(Task task, String mail) {
+    public void handNotificationInScheduler(String mail, Task task) {
         if (task.getNotification() != null){
             Notification notification = task.getNotification();
-            instants.put(
-                    task.getId(),
-                    notification.getNotifyAt()
-            );
 
-            scheduler.schedule(
+            ScheduledFuture<?> future = scheduler.schedule(
                     new SendEmailTask(
-                            new MailServiceNotification(notification, mail),
+                            mail,
+                            task.getId(),
                             this
                     ),
                     notification.getNotifyAt()
             );
+
+            futureMap.put(
+                    task.getId(),
+                    future
+            );
         }
     }
 
-    private SimpleMailMessage buildMessage(Task task, String mail){
+    @Async
+    public void removeNotificationFromScheduler(int id){
+        ScheduledFuture<?> future = futureMap.get(id);
+        if (future != null)
+            future.cancel(false);
+    }
+
+    @Transactional(readOnly = true)
+    public SimpleMailMessage buildMessage(String mail, Task task){
         SimpleMailMessage message = new SimpleMailMessage();
         // Username is email
+
         message.setTo(mail);
         message.setFrom("Jeduler");
         message.setSubject(MessageFormatter.formatSubject(task));
-        message.setText(MessageFormatter.formatText(task));
+        message.setText(
+                MessageFormatter.formatText(
+                        task,
+                        categoryRepository.findNamesByTaskId(task.getId())
+                )
+        );
 
         return message;
     }
 
-    private void removeNotification(Task task){
+    @Transactional
+    public void removeNotification(Task task){
         task.setNotification(null);
-        instants.remove(task.getId());
+        futureMap.remove(task.getId());
         taskRepository.save(task);
     }
 }
