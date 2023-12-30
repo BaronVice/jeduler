@@ -10,9 +10,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Short>, UserIdCollector {
-
+    /*
+       --- This method returns ids without sort by names. One of the solution - join table, nut that's kinda bad ---
+       ... so let it be ...
+     */
     String GET_CATEGORY_IDS_BY_TASK_ID =
-            "select category_id from task_category where task_id = :task_id order by ca.name asc";
+            "select category_id from task_category where task_id = :task_id";
     String GET_CATEGORY_NAMES_BY_TASK_ID =
             "select ca.name from category ca inner join task_category tc " +
                     "on ca.id = tc.category_id where task_id = :task_id " +

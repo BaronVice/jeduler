@@ -53,7 +53,8 @@ public class TaskServiceHandler {
     @Transactional
     public void update(String mail, TaskDto taskDto) {
         Task updated = taskMapper.toTask(taskDto);
-        Task toUpdate = taskRepository.getReferenceById(updated.getId());
+        // TODO: getReference is doomed due to null identifier on hibernate assert
+        Task toUpdate = taskRepository.findById(updated.getId()).get();
 
         toUpdate.setName(updated.getName());
         toUpdate.setDescription(updated.getDescription());
@@ -66,6 +67,7 @@ public class TaskServiceHandler {
         setNotificationOnTaskUpdate(updated, toUpdate);
         setSubtasksOnTaskUpdate(updated, toUpdate);
 
+        System.out.println(toUpdate.getId());
         saveTask(toUpdate);
         mailService.handNotificationInScheduler(mail, toUpdate);
     }
@@ -119,7 +121,7 @@ public class TaskServiceHandler {
 
     private void setNotificationOnTaskUpdate(Task updated, Task toUpdate) {
         if (updated.getNotification() == null){
-            mailService.removeNotificationFromScheduler(updated.getId());
+            mailService.removeNotificationFromScheduler(toUpdate.getId());
             toUpdate.setNotification(null);
         } else {
             changeTaskNotification(updated, toUpdate);
@@ -129,7 +131,7 @@ public class TaskServiceHandler {
     private void changeTaskNotification(Task updated, Task toUpdate){
         if (toUpdate.getNotification() == null) {
             toUpdate.setNotification(new Notification());
-            toUpdate.getNotification().setTask(toUpdate);
+            toUpdate.setId(toUpdate.getId());
         } else {
             mailService.removeNotificationFromScheduler(toUpdate.getId());
         }

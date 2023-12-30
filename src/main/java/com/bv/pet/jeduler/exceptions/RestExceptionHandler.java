@@ -1,6 +1,7 @@
 package com.bv.pet.jeduler.exceptions;
 
 import com.bv.pet.jeduler.datacarriers.dtos.ErrorDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -47,5 +48,13 @@ public class RestExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorDto("Lock is interrupted"));
+    }
+
+    @ExceptionHandler(value = {EntityNotFoundException.class})
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleException(EntityNotFoundException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorDto("Entity not found"));
     }
 }

@@ -4,9 +4,11 @@ import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.mappers.TaskMapper;
+import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -16,11 +18,19 @@ public class TaskService implements ITaskService {
     private final TaskServiceHandler handler;
     private final StatisticsService statistics;
     private final ApplicationInfo applicationInfo;
+    // TODO: place it somewhere else
+    private final CategoryRepository categoryRepository;
 
     @Override
-    public TaskDto get(Integer id) {
-        // TODO: refactor
-        return taskMapper.toTaskDto(handler.get(id));
+    @Transactional
+    public TaskDto get(int id) {
+        Task task = handler.get(id);
+        TaskDto taskDto = taskMapper.toTaskDto(task);
+        taskDto.setCategoryIds(
+                categoryRepository.findIdsByTaskId(task.getId())
+        );
+
+        return taskDto;
     }
 
     @Override
