@@ -8,6 +8,7 @@ import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.TaskMapper;
+import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.SubtaskRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.services.mail.MailServiceImpl;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class TaskServiceHandler {
     private final TaskRepository taskRepository;
     private final SubtaskRepository subtaskRepository;
+    private final NotificationRepository notificationRepository;
     private final MailServiceImpl mailService;
     private final TaskMapper taskMapper;
 
@@ -53,8 +55,7 @@ public class TaskServiceHandler {
     @Transactional
     public void update(String mail, TaskDto taskDto) {
         Task updated = taskMapper.toTask(taskDto);
-        // TODO: getReference is doomed due to null identifier on hibernate assert
-        Task toUpdate = taskRepository.findById(updated.getId()).get();
+        Task toUpdate = taskRepository.getReferenceById(taskDto.getId());
 
         toUpdate.setName(updated.getName());
         toUpdate.setDescription(updated.getDescription());
@@ -67,7 +68,6 @@ public class TaskServiceHandler {
         setNotificationOnTaskUpdate(updated, toUpdate);
         setSubtasksOnTaskUpdate(updated, toUpdate);
 
-        System.out.println(toUpdate.getId());
         saveTask(toUpdate);
         mailService.handNotificationInScheduler(mail, toUpdate);
     }
@@ -131,13 +131,14 @@ public class TaskServiceHandler {
     private void changeTaskNotification(Task updated, Task toUpdate){
         if (toUpdate.getNotification() == null) {
             toUpdate.setNotification(new Notification());
-            toUpdate.setId(toUpdate.getId());
+            toUpdate.getNotification().setTask(toUpdate);
         } else {
             mailService.removeNotificationFromScheduler(toUpdate.getId());
         }
         toUpdate.getNotification().setNotifyAt(
                 updated.getNotification().getNotifyAt()
         );
+        notificationRepository.save(toUpdate.getNotification());
     }
 
     private void setSubtasksOnTaskUpdate(Task updated, Task toUpdate){

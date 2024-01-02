@@ -7,7 +7,6 @@ import com.bv.pet.jeduler.applicationrunners.cache.UserInfoTasks;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.repositories.UserRepository;
-import com.bv.pet.jeduler.repositories.projections.user.UserId;
 import com.bv.pet.jeduler.repositories.projections.user.UserIdCollector;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -48,9 +47,9 @@ public class UserInfoRunner implements ApplicationRunner {
     }
 
     public void populate(UserInfo userInfoCategories, UserIdCollector repository) {
-        List<UserId> list = repository.findAllBy();
-        for (UserId userId : list){
-            userInfoCategories.changeValue(userId.getUser(), (short) 1);
+        List<Short> list = repository.getUserIds();
+        for (Short userId : list){
+            userInfoCategories.changeValue(userId, (short) 1);
         }
     }
 
