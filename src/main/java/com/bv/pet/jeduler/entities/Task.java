@@ -38,6 +38,9 @@ public class Task {
     )
     private List<Category> categories;
 
+    @Transient
+    private List<Short> categoryIds;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "task")
     private List<Subtask> subtasks;
 

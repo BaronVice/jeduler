@@ -5,10 +5,16 @@ import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
+import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -18,19 +24,44 @@ public class TaskService implements ITaskService {
     private final TaskServiceHandler handler;
     private final StatisticsService statistics;
     private final ApplicationInfo applicationInfo;
-    // TODO: place it somewhere else
     private final CategoryRepository categoryRepository;
+    private final TaskRepository taskRepository;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public TaskDto get(int id) {
         Task task = handler.get(id);
-        TaskDto taskDto = taskMapper.toTaskDto(task);
-        taskDto.setCategoryIds(
+        task.setCategoryIds(
                 categoryRepository.findIdsByTaskId(task.getId())
         );
 
-        return taskDto;
+        return taskMapper.toTaskDto(task);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    // TODO: the amount of queries is much worse than terrible
+    public List<TaskDto> get(List<Short> categoryIds) {
+        if (categoryIds.size() == 0){
+            categoryIds.add((short) 0);
+        }
+        List<Integer> taskIds = taskRepository.findByCategoryIds(categoryIds);
+        List<Task> tasks = taskRepository.findAllById(taskIds);
+        for (Task task : tasks){
+            task.setCategoryIds(
+                    categoryRepository.findIdsByTaskId(task.getId())
+            );
+        }
+
+        return taskMapper.toTaskDtoList(tasks);
+    }
+
+    @Override
+    @Transactional
+    // That's also bad as categoryIds are required (could be done by queries like above)
+    public Page<TaskDto> get(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return taskRepository.findByFirstNameLike(name, pageable).map(taskMapper::toTaskDto);
     }
 
     @Override

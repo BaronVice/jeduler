@@ -1,35 +1,29 @@
 package com.bv.pet.jeduler.datacarriers.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
 
 import java.time.Instant;
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
-public class TaskDto {
-    private Integer id;
+public record TaskDto (
+        Integer id,
 
-    private String name;
+        String name,
 
-    private String description;
+        String description,
 
-    private boolean taskDone;
+        boolean taskDone,
 
-    private short priority;
+        short priority,
 
-    private List<Short> categoryIds;
+        List<Short> categoryIds,
 
-    private List<SubtaskDto> subtasks;
+        List<SubtaskDto> subtasks,
 
-    @JsonFormat(pattern = "dd.MM.yyyy+HH:mm", timezone = "UTC")
-    private Instant startsAt;
+        @JsonFormat(pattern = "dd.MM.yyyy+HH:mm", timezone = "UTC")
+        Instant startsAt,
 
-    @JsonFormat(pattern = "dd.MM.yyyy+HH:mm", timezone = "UTC")
-    private Instant notifyAt;
+        @JsonFormat(pattern = "dd.MM.yyyy+HH:mm", timezone = "UTC")
+        Instant notifyAt
+){
 }

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/jeduler/tasks")
@@ -23,6 +24,20 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getTask(@PathVariable Integer id) {
         return ResponseEntity.ok(taskService.get(id));
+    }
+
+//    @GetMapping
+//    public ResponseEntity<?> getTasks(@RequestParam(name = "categories", defaultValue = "") List<Short> ids){
+//        return ResponseEntity.ok(taskService.get(ids));
+//    }
+
+    @GetMapping
+    public ResponseEntity<?> getTask(
+            @RequestParam(name = "name", defaultValue = "") String name,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(taskService.get(name, page, size));
     }
 
     @PostMapping

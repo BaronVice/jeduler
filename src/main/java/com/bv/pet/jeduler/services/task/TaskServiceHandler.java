@@ -29,7 +29,6 @@ public class TaskServiceHandler {
     private final MailServiceImpl mailService;
     private final TaskMapper taskMapper;
 
-    @Transactional(readOnly = true)
     public Task get(Integer id){
         return taskRepository.findById(id).orElseThrow(
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
@@ -55,7 +54,7 @@ public class TaskServiceHandler {
     @Transactional
     public void update(String mail, TaskDto taskDto) {
         Task updated = taskMapper.toTask(taskDto);
-        Task toUpdate = taskRepository.getReferenceById(taskDto.getId());
+        Task toUpdate = taskRepository.getReferenceById(taskDto.id());
 
         toUpdate.setName(updated.getName());
         toUpdate.setDescription(updated.getDescription());
@@ -88,7 +87,7 @@ public class TaskServiceHandler {
 
     private void setCategoriesOnTask(Task task, TaskDto taskDto) {
         task.setCategories(
-                taskDto.getCategoryIds().stream().map(
+                taskDto.categoryIds().stream().map(
                         id -> Category.builder().id(id).build()
                 ).collect(Collectors.toList())
         );
@@ -99,7 +98,7 @@ public class TaskServiceHandler {
     }
 
     private void setNotificationOnTaskCreate(Task task, TaskDto taskDto){
-        Instant notifyAt = taskDto.getNotifyAt();
+        Instant notifyAt = taskDto.notifyAt();
         if (notifyAt != null) {
             task.setNotification(
                     Notification

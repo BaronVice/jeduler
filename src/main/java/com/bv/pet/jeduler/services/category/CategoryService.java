@@ -44,7 +44,7 @@ public class CategoryService implements ICategoryService {
     @Override
     @Transactional
     public void update(CategoryDto categoryDto) {
-        Category toUpdate = categoryRepository.findById(categoryDto.getId()).orElseThrow(
+        Category toUpdate = categoryRepository.findById(categoryDto.id()).orElseThrow(
                 () -> new ApplicationException("Category not found", HttpStatus.NOT_FOUND)
         );
 
