@@ -34,10 +34,12 @@ public class TaskController {
     @GetMapping
     public ResponseEntity<?> getTask(
             @RequestParam(name = "name", defaultValue = "") String name,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
+            @RequestParam(name = "order", defaultValue = "name") OrderType orderType,
+            @RequestParam(name = "page", defaultValue = "0") int page
     ) {
-        return ResponseEntity.ok(taskService.get(name, page, size));
+        return ResponseEntity.ok(
+                taskService.get(name, page, orderType)
+        );
     }
 
     @PostMapping

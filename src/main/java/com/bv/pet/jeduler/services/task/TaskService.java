@@ -1,20 +1,28 @@
 package com.bv.pet.jeduler.services.task;
 
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
+import com.bv.pet.jeduler.controllers.task.OrderType;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
+import com.bv.pet.jeduler.repositories.projections.task.TaskCategory;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -58,10 +66,21 @@ public class TaskService implements ITaskService {
 
     @Override
     @Transactional
-    // That's also bad as categoryIds are required (could be done by queries like above)
-    public Page<TaskDto> get(String name, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return taskRepository.findByFirstNameLike(name, pageable).map(taskMapper::toTaskDto);
+    public List<TaskDto> get(String name, int page, OrderType orderType) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(orderType.toString()));
+        List<Task> tasks = taskRepository.findByFirstNameLike(name, pageable).getContent();
+        tasks.forEach(t -> t.setCategoryIds(new ArrayList<>()));
+
+        List<TaskDto> taskDtoList = taskMapper.toTaskDtoList(tasks);
+        Map<Integer, TaskDto> map = taskDtoList.stream().collect(Collectors.toMap(TaskDto::id, Function.identity()));
+        List<TaskCategory> taskCategories = taskRepository.getCategoryIdsByTaskIds(
+                taskDtoList.stream().map(TaskDto::id).toList()
+        );
+
+        for (TaskCategory taskCategory : taskCategories)
+            map.get(taskCategory.getTaskId()).categoryIds().add(taskCategory.getCategoryId());
+
+        return taskDtoList;
     }
 
     @Override
