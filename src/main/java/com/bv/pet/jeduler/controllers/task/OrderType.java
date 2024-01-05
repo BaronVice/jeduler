@@ -1,10 +1,10 @@
 package com.bv.pet.jeduler.controllers.task;
 
 public enum OrderType {
-    STARTS("starts_at"),
-    PRIORITY("priority"),
-    CHANGED("last_changed"),
-    NAME("name");
+    starts("starts_at"),
+    priority("priority"),
+    changed("last_changed"),
+    name("name");
 
     final String columnName;
 

@@ -5,9 +5,11 @@ import com.bv.pet.jeduler.repositories.projections.user.UserIdCollector;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface CategoryRepository extends JpaRepository<Category, Short>, UserIdCollector {
     /*
        --- This method returns ids without sort by names. One of the solution - join table, nut that's kinda bad ---

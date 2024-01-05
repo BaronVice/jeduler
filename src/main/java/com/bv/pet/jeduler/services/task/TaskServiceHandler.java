@@ -11,6 +11,7 @@ import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.SubtaskRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
+import com.bv.pet.jeduler.repositories.projections.task.TaskCategory;
 import com.bv.pet.jeduler.services.mail.MailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -150,5 +154,15 @@ public class TaskServiceHandler {
         subtaskRepository.saveAll(updated.getSubtasks());
 
         toUpdate.setSubtasks(updated.getSubtasks());
+    }
+
+    public void setCategoryIdsForTaskDto(List<TaskDto> taskDtoList) {
+        Map<Integer, TaskDto> map = taskDtoList.stream().collect(Collectors.toMap(TaskDto::id, Function.identity()));
+        List<TaskCategory> taskCategories = taskRepository.getCategoryIdsByTaskIds(
+                taskDtoList.stream().map(TaskDto::id).toList()
+        );
+
+        for (TaskCategory taskCategory : taskCategories)
+            map.get(taskCategory.getTaskId()).categoryIds().add(taskCategory.getCategoryId());
     }
 }

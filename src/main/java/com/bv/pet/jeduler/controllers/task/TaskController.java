@@ -7,11 +7,18 @@ import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
 import com.bv.pet.jeduler.services.task.ITaskService;
 import com.bv.pet.jeduler.utils.AllowedAmount;
 import com.bv.pet.jeduler.utils.Assert;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -33,12 +40,25 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<?> getTask(
-            @RequestParam(name = "name", defaultValue = "") String name,
-            @RequestParam(name = "order", defaultValue = "name") OrderType orderType,
-            @RequestParam(name = "page", defaultValue = "0") int page
+            // TODO: wrap in optionals perhaps?
+            @RequestParam(name = "name") Optional<String> name,
+            @RequestParam(name = "priorities") Optional<List<Short>> priorities,
+            @RequestParam(name = "categories") Optional<List<Short>> categories,
+            @RequestParam(name = "from") @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Optional<Date> from,
+            @RequestParam(name = "to") @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Optional<Date> to,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "order", defaultValue = "name") OrderType orderType
     ) {
         return ResponseEntity.ok(
-                taskService.get(name, page, orderType)
+                taskService.get(
+                        name,
+                        priorities,
+                        categories,
+                        from,
+                        to,
+                        page,
+                        orderType
+                )
         );
     }
 

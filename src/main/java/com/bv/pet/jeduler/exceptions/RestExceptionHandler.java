@@ -57,4 +57,12 @@ public class RestExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorDto("Entity not found"));
     }
+
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleException(IllegalArgumentException e){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorDto(e.getMessage()));
+    }
 }
