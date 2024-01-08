@@ -3,8 +3,6 @@ package com.bv.pet.jeduler.repositories;
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.repositories.projections.task.TaskCategory;
 import com.bv.pet.jeduler.repositories.projections.user.UserIdCollector;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Integer>, UserIdCollector, TaskFilterRepository {
+public interface TaskRepository extends JpaRepository<Task, Integer>, UserIdCollector {
     String GET_USER_IDS =
             "select user_id from task";
 

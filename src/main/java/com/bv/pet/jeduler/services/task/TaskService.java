@@ -7,20 +7,13 @@ import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
-import com.bv.pet.jeduler.repositories.projections.task.TaskCategory;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -73,7 +66,7 @@ public class TaskService implements ITaskService {
             Optional<Date> from,
             Optional<Date> to,
             int page,
-            OrderType orderType
+            OrderType order
     ) {
         List<Task> tasks = filtering.filter(
                 name,
@@ -81,11 +74,13 @@ public class TaskService implements ITaskService {
                 categories,
                 from,
                 to,
-                PageRequest.of(page, 10, Sort.by(orderType.toString()))
+                page,
+                order
         );
 
         List<TaskDto> taskDtoList = taskMapper.toTaskDtoList(tasks);
         handler.setCategoryIdsForTaskDto(taskDtoList);
+        // TODO: handler.setSubtasksForTaskDto(taskDtoList);
 
         return taskDtoList;
     }
