@@ -36,7 +36,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryDto categoryDto
     ) {
         short userId = userDetails.getUserId();
-        Assert.assertAllowedAmount(
+        Assert.assertAllowedCreation(
                 applicationInfo.userInfoCategories().getInfo().get(userId),
                 AllowedAmount.CATEGORY
         );

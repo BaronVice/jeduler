@@ -1,9 +1,6 @@
 package com.bv.pet.jeduler.config;
 
-import com.bv.pet.jeduler.applicationrunners.cache.AdminInfo;
-import com.bv.pet.jeduler.applicationrunners.cache.UserAmount;
-import com.bv.pet.jeduler.applicationrunners.cache.UserInfoCategories;
-import com.bv.pet.jeduler.applicationrunners.cache.UserInfoTasks;
+import com.bv.pet.jeduler.application.cache.*;
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +20,8 @@ public class ApplicationInfoConfig {
                 adminInfo,
                 userAmount,
                 userInfoCategories,
-                userInfoTasks
+                userInfoTasks,
+                new MockInfo()
         );
     }
 }

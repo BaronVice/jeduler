@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public class Assert {
 
-    public static void assertAllowedAmount(short value, AllowedAmount type){
+    public static void assertAllowedCreation(int value, AllowedAmount type){
         if (value + 1 > type.amount)
             throw new ApplicationException(
                     type.message,
@@ -13,7 +13,15 @@ public class Assert {
             );
     }
 
-    public static void assertNotAdmin(short adminId, short givenId) {
+    public static void assertAllowedAmount(int value, AllowedAmount type){
+        if (value > type.amount)
+            throw new ApplicationException(
+                    type.message,
+                    HttpStatus.BAD_REQUEST
+            );
+    }
+
+    public static void assertNotAdmin(int adminId, short givenId) {
         if (adminId == givenId){
             throw new ApplicationException(
                     "Break a leg",

@@ -1,9 +1,9 @@
-package com.bv.pet.jeduler.applicationrunners;
+package com.bv.pet.jeduler.application.runners;
 
-import com.bv.pet.jeduler.applicationrunners.cache.UserAmount;
-import com.bv.pet.jeduler.applicationrunners.cache.UserInfo;
-import com.bv.pet.jeduler.applicationrunners.cache.UserInfoCategories;
-import com.bv.pet.jeduler.applicationrunners.cache.UserInfoTasks;
+import com.bv.pet.jeduler.application.cache.UserAmount;
+import com.bv.pet.jeduler.application.cache.UserInfo;
+import com.bv.pet.jeduler.application.cache.UserInfoCategories;
+import com.bv.pet.jeduler.application.cache.UserInfoTasks;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.repositories.UserRepository;

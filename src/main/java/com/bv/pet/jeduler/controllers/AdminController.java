@@ -34,7 +34,7 @@ public class AdminController {
 
     @PostMapping("/create-user")
     public ResponseEntity<?> create(@RequestBody UserDto userDto){
-        Assert.assertAllowedAmount(
+        Assert.assertAllowedCreation(
                 applicationInfo.userAmount().getAmount(),
                 AllowedAmount.USER
         );

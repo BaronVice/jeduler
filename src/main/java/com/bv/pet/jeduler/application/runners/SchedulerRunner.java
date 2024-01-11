@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.applicationrunners;
+package com.bv.pet.jeduler.application.runners;
 
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.projections.mailtask.MailTask;

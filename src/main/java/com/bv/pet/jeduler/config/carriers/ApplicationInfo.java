@@ -1,15 +1,13 @@
 package com.bv.pet.jeduler.config.carriers;
 
-import com.bv.pet.jeduler.applicationrunners.cache.AdminInfo;
-import com.bv.pet.jeduler.applicationrunners.cache.UserAmount;
-import com.bv.pet.jeduler.applicationrunners.cache.UserInfoCategories;
-import com.bv.pet.jeduler.applicationrunners.cache.UserInfoTasks;
+import com.bv.pet.jeduler.application.cache.*;
 
 public record ApplicationInfo(
         AdminInfo adminInfo,
         UserAmount userAmount,
         UserInfoCategories userInfoCategories,
-        UserInfoTasks userInfoTasks
+        UserInfoTasks userInfoTasks,
+        MockInfo mockInfo
 ) {
     public void addUser(short id){
         userAmount.increment();

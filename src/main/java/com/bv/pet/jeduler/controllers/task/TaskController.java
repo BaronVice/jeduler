@@ -68,7 +68,7 @@ public class TaskController {
         short userId = userDetails.getUserId();
         String mail = userDetails.getUsername();
 
-        Assert.assertAllowedAmount(
+        Assert.assertAllowedCreation(
                 applicationInfo.userInfoTasks().getInfo().get(userId),
                 AllowedAmount.TASK
         );

@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.applicationrunners.cache;
+package com.bv.pet.jeduler.application.cache;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 public class AdminInfo {
-
     private short id;
     @Value("${custom.admin.username}")
     private String username;

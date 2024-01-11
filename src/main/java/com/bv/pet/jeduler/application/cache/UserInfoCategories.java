@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.applicationrunners.cache;
+package com.bv.pet.jeduler.application.cache;
 
 import org.springframework.stereotype.Component;
 
