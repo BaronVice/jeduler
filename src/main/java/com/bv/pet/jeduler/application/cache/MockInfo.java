@@ -1,11 +1,13 @@
 package com.bv.pet.jeduler.application.cache;
 
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @Getter
+@Component
 public class MockInfo {
     private final List<Short> userIds;
     private final List<Short> categoryIds;

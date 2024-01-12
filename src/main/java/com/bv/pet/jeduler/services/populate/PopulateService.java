@@ -1,28 +1,27 @@
 package com.bv.pet.jeduler.services.populate;
 
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
+import com.bv.pet.jeduler.config.carriers.Generators;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.repositories.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PopulateService implements IPopulateService {
     private final ApplicationInfo applicationInfo;
-    private final EntitiesGenerator generator;
+    private final Generators generators;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
     private final SubtaskRepository subtaskRepository;
     private final NotificationRepository notificationRepository;
-    @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
-    private int batchSize;
 
     @Override
     @Transactional
@@ -32,7 +31,13 @@ public class PopulateService implements IPopulateService {
         tasksPerUser = setMaxTasksAmount(tasksPerUser);
         subtasksPerTask = setMaxSubtasksAmount(subtasksPerTask);
 
+        List<User> users = generators.userGenerator().generate(amount);
+        userRepository.saveAllAndFlush(users);
 
+        // TODO: in another method
+        List<Short> userIds = users.stream().map(User::getId).collect(Collectors.toList());
+        applicationInfo.addUsers(userIds);
+        applicationInfo.mockInfo().getUserIds().addAll(userIds);
     }
 
     @Override
@@ -55,7 +60,6 @@ public class PopulateService implements IPopulateService {
 
     }
 
-    // TODO: In entities generator perhaps?
     private int setMaxUsersAmount(int amount){
         return Math.min(amount, 100);
     }

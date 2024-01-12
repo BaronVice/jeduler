@@ -36,6 +36,11 @@ public class UserAmount {
         changeAmount((short) -1);
     }
 
+    @Async
+    public void change(int val){
+        changeAmount((short) val);
+    }
+
     @SneakyThrows
     private void changeAmount(short val){
         boolean isAcquired = lock.tryLock(5, TimeUnit.SECONDS);

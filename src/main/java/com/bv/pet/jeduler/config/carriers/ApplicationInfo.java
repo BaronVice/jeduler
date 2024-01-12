@@ -2,6 +2,8 @@ package com.bv.pet.jeduler.config.carriers;
 
 import com.bv.pet.jeduler.application.cache.*;
 
+import java.util.List;
+
 public record ApplicationInfo(
         AdminInfo adminInfo,
         UserAmount userAmount,
@@ -19,5 +21,13 @@ public record ApplicationInfo(
         userAmount.decrement();
         userInfoCategories.getInfo().remove(id);
         userInfoTasks.getInfo().remove(id);
+    }
+
+    public void addUsers(List<Short> ids){
+        userAmount.change(ids.size());
+        ids.forEach(id -> {
+                    userInfoCategories.getInfo().put(id, (short) 0);
+                    userInfoTasks.getInfo().put(id, (short) 0);
+        });
     }
 }

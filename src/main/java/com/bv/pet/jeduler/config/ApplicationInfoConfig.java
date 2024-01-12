@@ -2,6 +2,8 @@ package com.bv.pet.jeduler.config;
 
 import com.bv.pet.jeduler.application.cache.*;
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
+import com.bv.pet.jeduler.config.carriers.Generators;
+import com.bv.pet.jeduler.services.populate.generators.UserGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,9 @@ public class ApplicationInfoConfig {
     private final UserAmount userAmount;
     private final UserInfoCategories userInfoCategories;
     private final UserInfoTasks userInfoTasks;
+    private final MockInfo mockInfo;
+
+    private final UserGenerator userGenerator;
 
     @Bean
     public ApplicationInfo applicationInfo(){
@@ -21,7 +26,14 @@ public class ApplicationInfoConfig {
                 userAmount,
                 userInfoCategories,
                 userInfoTasks,
-                new MockInfo()
+                mockInfo
+        );
+    }
+
+    @Bean
+    public Generators generators(){
+        return new Generators(
+                userGenerator
         );
     }
 }
