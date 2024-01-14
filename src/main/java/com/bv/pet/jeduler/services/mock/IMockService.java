@@ -1,9 +1,9 @@
-package com.bv.pet.jeduler.services.populate;
+package com.bv.pet.jeduler.services.mock;
 
 import java.util.Date;
 import java.util.List;
 
-public interface IPopulateService {
+public interface IMockService {
     void addUsers(int amount, int categoriesPerUser, int tasksPerUser, int subtasksPerTask);
     void addTasks(short userId, int amount, int subtasksPerTask);
     void addCategories(int amount, List<Short> userIds, List<Integer> taskIds);

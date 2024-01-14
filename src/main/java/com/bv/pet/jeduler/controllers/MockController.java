@@ -1,7 +1,7 @@
 package com.bv.pet.jeduler.controllers;
 
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
-import com.bv.pet.jeduler.services.populate.IPopulateService;
+import com.bv.pet.jeduler.services.mock.IMockService;
 import com.bv.pet.jeduler.utils.AllowedAmount;
 import com.bv.pet.jeduler.utils.Assert;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/jeduler/populate")
 // TODO: return some info back in response
-public class PopulateController {
+public class MockController {
     private final ApplicationInfo applicationInfo;
-    private final IPopulateService populateService;
+    private final IMockService populateService;
 
     @PostMapping("/users")
     public ResponseEntity<?> addUser(

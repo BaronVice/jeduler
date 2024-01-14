@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.populate;
+package com.bv.pet.jeduler.services.mock;
 
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.config.carriers.Generators;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PopulateService implements IPopulateService {
+public class MockService implements IMockService {
     private final ApplicationInfo applicationInfo;
     private final Generators generators;
     private final UserRepository userRepository;

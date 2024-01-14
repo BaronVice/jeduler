@@ -3,7 +3,8 @@ package com.bv.pet.jeduler.config;
 import com.bv.pet.jeduler.application.cache.*;
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.config.carriers.Generators;
-import com.bv.pet.jeduler.services.populate.generators.UserGenerator;
+import com.bv.pet.jeduler.services.mock.generators.CategoryGenerator;
+import com.bv.pet.jeduler.services.mock.generators.UserGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ public class ApplicationInfoConfig {
     private final MockInfo mockInfo;
 
     private final UserGenerator userGenerator;
+    private final CategoryGenerator categoryGenerator;
 
     @Bean
     public ApplicationInfo applicationInfo(){
@@ -33,7 +35,8 @@ public class ApplicationInfoConfig {
     @Bean
     public Generators generators(){
         return new Generators(
-                userGenerator
+                userGenerator,
+                categoryGenerator
         );
     }
 }
