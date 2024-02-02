@@ -21,7 +21,14 @@ public class Notification {
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "task_id")
+    @JoinColumn(
+            name = "task_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "FK_NOTIFICATION_ID",
+                    foreignKeyDefinition = "foreign key (task_id) references task(id) on delete cascade"
+            )
+    )
     @JsonIgnore
     private Task task;
 

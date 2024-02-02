@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserGenerator extends Generator<User, GenerateUserTask> {
-    protected UserGenerator() {
+    public UserGenerator() {
         super(GenerateUserTask.class);
     }
 }

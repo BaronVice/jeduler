@@ -52,7 +52,7 @@ public class Task {
 
     private Instant lastChanged;
 
-    @OneToOne(mappedBy = "task", cascade = ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "task", cascade = ALL)
     @PrimaryKeyJoinColumn
     private Notification notification;
 }

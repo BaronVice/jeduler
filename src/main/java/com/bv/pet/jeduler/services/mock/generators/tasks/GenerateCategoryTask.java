@@ -2,18 +2,21 @@ package com.bv.pet.jeduler.services.mock.generators.tasks;
 
 import com.bv.pet.jeduler.entities.Category;
 
-import java.util.Random;
+import java.util.List;
 
 public class GenerateCategoryTask extends GenerateTask<Category> {
+    public GenerateCategoryTask(List<Category> list) {
+        super(list);
+    }
+
     @Override
     public void run() {
-        Random random = new Random();
-        int name = random.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        String name = faker.color().name() + random.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
         int color = random.nextInt(100000, 999999);
 
-        getList().add(
+        list.add(
                 Category.builder()
-                        .name(String.format("Mock%d", name))
+                        .name(String.format("Mock%s", name))
                         .color(String.format("#%d", color))
                         .build()
         );

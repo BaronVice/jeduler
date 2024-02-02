@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryGenerator extends Generator<Category, GenerateCategoryTask> {
-    protected CategoryGenerator() {
+    public CategoryGenerator() {
         super(GenerateCategoryTask.class);
     }
 }

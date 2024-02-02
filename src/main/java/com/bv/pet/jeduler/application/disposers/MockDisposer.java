@@ -24,7 +24,6 @@ public class MockDisposer implements DisposableBean {
     @Override
     public void destroy() {
         MockInfo mockInfo = applicationInfo.mockInfo();
-
         dispose(mockInfo.getUserIds(), userRepository);
         dispose(mockInfo.getTaskIds(), taskRepository);
         dispose(mockInfo.getCategoryIds(), categoryRepository);

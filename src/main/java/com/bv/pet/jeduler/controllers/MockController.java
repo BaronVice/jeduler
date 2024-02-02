@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -85,11 +86,11 @@ public class MockController {
     @PostMapping("/notification")
     public ResponseEntity<?> addNotification(
             @RequestParam(name = "taskid", defaultValue = "-1") int taskId,
-            @RequestParam(name = "date", defaultValue = "") Date date
+            @RequestParam(name = "date") Optional<Date> date
     ){
         populateService.addNotification(
                 taskId,
-                date
+                date.orElse(new Date(System.currentTimeMillis() + 10000))
         );
         return ResponseEntity.ok().build();
     }
