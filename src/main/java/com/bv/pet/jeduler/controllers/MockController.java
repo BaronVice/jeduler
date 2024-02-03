@@ -25,34 +25,26 @@ public class MockController {
 
     @PostMapping("/users")
     public ResponseEntity<?> addUser(
-            @RequestParam(name = "amount", defaultValue = "1") int amount,
-            @RequestParam(name = "amount", defaultValue = "1") int categoriesPerUser,
-            @RequestParam(name = "tasks", defaultValue = "1") int tasksPerUser,
-            @RequestParam(name = "subtasks", defaultValue = "1") int subtasksPerTask
+            @RequestParam(name = "amount", defaultValue = "1") int amount
     ){
         Assert.assertAllowedAmount(
                 amount + applicationInfo.userAmount().getAmount(),
                 AllowedAmount.USER
         );
         populateService.addUsers(
-                amount,
-                categoriesPerUser,
-                tasksPerUser,
-                subtasksPerTask
+                amount
         );
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/tasks")
     public ResponseEntity<?> addTasks(
-            @RequestParam(name = "userid", defaultValue = "-1") short userId,
             @RequestParam(name = "amount", defaultValue = "1") int amount,
-            @RequestParam(name = "subtasks", defaultValue = "1") int subtasksPerTask
+            @RequestParam(name = "userid", defaultValue = "-1") short userId
     ){
         populateService.addTasks(
-                userId,
                 amount,
-                subtasksPerTask
+                userId
         );
         return ResponseEntity.ok().build();
     }
@@ -60,13 +52,12 @@ public class MockController {
     @PostMapping("/categories")
     public ResponseEntity<?> addCategories(
             @RequestParam(name = "amount", defaultValue = "1") int amount,
-            @RequestParam(name = "userids", defaultValue = "") List<Short> userIds,
-            @RequestParam(name = "taskids", defaultValue = "") List<Integer> taskIds
+            @RequestParam(name = "taskids", defaultValue = "-1") short userId
     ){
+        // TODO: assert?
         populateService.addCategories(
                 amount,
-                userIds,
-                taskIds
+                userId
         );
         return ResponseEntity.ok().build();
     }

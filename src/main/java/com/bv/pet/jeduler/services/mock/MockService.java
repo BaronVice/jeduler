@@ -1,5 +1,6 @@
 package com.bv.pet.jeduler.services.mock;
 
+import com.bv.pet.jeduler.application.cache.UserInfo;
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.config.carriers.Generators;
 import com.bv.pet.jeduler.entities.Category;
@@ -9,6 +10,8 @@ import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.Repository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,11 +33,11 @@ public class MockService implements IMockService {
 
     @Override
     @Transactional
-    public void addUsers(int amount, int categoriesPerUser, int tasksPerUser, int subtasksPerTask) {
+    public void addUsers(int amount) {
         amount = setMaxUsersAmount(amount);
-        categoriesPerUser = setMaxCategoriesAmount(categoriesPerUser);
-        tasksPerUser = setMaxTasksAmount(tasksPerUser);
-        subtasksPerTask = setMaxSubtasksAmount(subtasksPerTask);
+//        categoriesPerUser = setMaxCategoriesAmount(categoriesPerUser);
+//        tasksPerUser = setMaxTasksAmount(tasksPerUser);
+//        subtasksPerTask = setMaxSubtasksAmount(subtasksPerTask);
 
         List<User> users = generators.userGenerator().generate(amount);
         userRepository.saveAllAndFlush(users);
@@ -46,38 +49,89 @@ public class MockService implements IMockService {
     }
 
     @Override
-    public void addTasks(short userId, int amount, int subtasksPerTask) {
+    @Transactional
+    public void addTasks(int amount, short userId) {
+        User user = userRepository.findById(userId).orElse(generators.userGenerator().generateOne());
+        amount = setMaxTasksAmount(amount) - applicationInfo.userInfoTasks().getOrElseZero(userId);
 
+        List<Task> tasks = generators.taskGenerator().generate(amount);
+        tasks.forEach(t -> t.setUser(user));
+
+        // REPLACED INSTEAD OF APPEND
+        if (user.getId() != null){
+            taskRepository.saveAll(tasks);
+            applicationInfo.userInfoTasks().changeValue(
+                    user.getId(),
+                    (short) amount
+            );
+            addIdsOfGeneratedEntities(
+                    applicationInfo.mockInfo().getTaskIds(),
+                    tasks.stream().map(Task::getId).collect(Collectors.toList())
+            );
+
+            return;
+        }
+        user.setTasks(tasks);
+        userRepository.save(user);
+
+        short id = user.getId();
+        addMockUser(id);
+        applicationInfo.userInfoTasks().setValue(
+                id,
+                (short) user.getTasks().size()
+        );
     }
 
     @Override
     @Transactional
-    public void addCategories(int amount, List<Short> userIds, List<Integer> taskIds) {
-        List<Category> categories = generators.categoryGenerator().generate(amount);
-        categoryRepository.saveAll(categories);
+    public void addCategories(int amount, short userId) {
+        User user = userRepository.findById(userId).orElse(generators.userGenerator().generateOne());
+        amount = setMaxCategoriesAmount(amount) - applicationInfo.userInfoCategories().getOrElseZero(userId);
 
-        addIdsOfGeneratedEntities(
-                applicationInfo.mockInfo().getCategoryIds(),
-                categories.stream().map(Category::getId).collect(Collectors.toList())
+        List<Category> categories = generators.categoryGenerator().generate(amount);
+        categories.forEach(c -> c.setUser(user));
+
+        if (user.getId() != null){
+            categoryRepository.saveAll(categories);
+            applicationInfo.userInfoCategories().changeValue(
+                    user.getId(),
+                    (short) amount
+            );
+            addIdsOfGeneratedEntities(
+                    applicationInfo.mockInfo().getCategoryIds(),
+                    categories.stream().map(Category::getId).collect(Collectors.toList())
+            );
+            return;
+        }
+
+        user.setCategories(categories);
+        userRepository.save(user);
+
+        short id = user.getId();
+        addMockUser(id);
+        applicationInfo.userInfoCategories().setValue(
+                id,
+                (short) user.getCategories().size()
         );
     }
 
     @Override
     @Transactional
     public void addSubtasks(int taskId, int amount) {
-        amount = setMaxSubtasksAmount(amount);
         Task task = taskRepository.findById(taskId).orElse(generateTaskIfNull());
-        List<Subtask> subtasks = generators.subtaskGenerator().generate(amount);
+        amount = setMaxSubtasksAmount(amount) - listSizeOrZeroIfNull(task.getSubtasks());
 
+        List<Subtask> subtasks = generators.subtaskGenerator().generate(amount);
         task.setSubtasks(subtasks);
         subtasks.forEach(s -> s.setTask(task));
 
-        boolean isTaskGenerated = task.getId() == null;
-        taskRepository.save(task);
-        addIfTaskIsGenerated(
-                isTaskGenerated,
-                task.getId(),
-                applicationInfo.mockInfo().getNotificationIds(),
+        if (taskNotExistOrElseSaveTask(task)){
+            generateUserForTask(task);
+            return;
+        }
+
+        addIdsOfGeneratedEntities(
+                applicationInfo.mockInfo().getSubtaskIds(),
                 subtasks.stream().map(Subtask::getId).collect(Collectors.toList())
         );
     }
@@ -86,43 +140,58 @@ public class MockService implements IMockService {
     @Transactional
     public void addNotification(int taskId, Date date) {
         Task task = taskRepository.findById(taskId).orElse(generateTaskIfNull());
-        Notification notification = generators.notificationGenerator().generate(1).get(0);
+        Notification notification = generators.notificationGenerator().generateOne();
         notification.setNotifyAt(date.toInstant());
 
         task.setNotification(notification);
         notification.setTask(task);
 
-        boolean isTaskGenerated = task.getId() == null;
-        taskRepository.save(task);
-        addIfTaskIsGenerated(
-                isTaskGenerated,
-                task.getId(),
+        if (taskNotExistOrElseSaveTask(task)){
+            generateUserForTask(task);
+            return;
+        }
+
+        addIdsOfGeneratedEntities(
                 applicationInfo.mockInfo().getNotificationIds(),
-                List.of(notification.getId())
+                notification.getId()
         );
     }
 
     private Task generateTaskIfNull(){
-        return generators.taskGenerator().generate(1).get(0);
+        return generators.taskGenerator().generateOne();
     }
 
-    private <T> void addIfTaskIsGenerated(
-            boolean isTaskGenerated,
-            int taskId,
-            List<T> mockInfoList,
-            List<T> toAdd
-    ){
-        if (isTaskGenerated){
-            addIdsOfGeneratedEntities(
-                    applicationInfo.mockInfo().getTaskIds(),
-                    taskId
-            );
-        } else {
-            addIdsOfGeneratedEntities(
-                    mockInfoList,
-                    toAdd
-            );
+    private void addMockUser(short id){
+        applicationInfo.mockInfo().getUserIds().add(id);
+        applicationInfo.addUser(id);
+    }
+
+    private boolean taskNotExistOrElseSaveTask(Task task){
+        if (task.getId() != null){
+            taskRepository.save(task);
+            return false;
         }
+        return true;
+    }
+
+    private boolean saveUserIfExist(User user){
+        if (user.getId() != null){
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    private void generateUserForTask(Task task){
+        User user = generators.userGenerator().generateOne();
+        user.setTasks(List.of(task));
+        task.setUser(user);
+
+        userRepository.save(user);
+        short userId = user.getId();
+
+        addMockUser(userId);
+        applicationInfo.userInfoTasks().changeValue(userId, (short) 1);
     }
 
     @Async
@@ -133,6 +202,10 @@ public class MockService implements IMockService {
     @Async
     public <T> void addIdsOfGeneratedEntities(List<T> list, List<T> ids){
         list.addAll(ids);
+    }
+
+    private int listSizeOrZeroIfNull(List<?> list){
+        return (list == null ? 0 : list.size());
     }
 
     private int setMaxUsersAmount(int amount){

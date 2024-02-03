@@ -13,7 +13,7 @@ public class GenerateTaskTask extends GenerateTask<Task> {
     @Override
     public void run() {
         String name = faker.book().title();
-        String description = faker.backToTheFuture().quote();
+        String description = faker.hobbit().location();
         short priority = (short) random.nextInt(1, 3);
         Instant startsAt = Instant.now().plusSeconds(random.nextInt(1000, 10000));
         Instant lastChanged = Instant.now().minusSeconds(random.nextInt(1, 10000));

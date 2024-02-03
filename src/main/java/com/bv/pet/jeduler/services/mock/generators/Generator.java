@@ -30,6 +30,17 @@ public abstract class Generator <T, S extends GenerateTask<T>> {
         return generated;
     }
 
+    // This is lame
+    @SneakyThrows
+    public T generateOne(){
+        List<T> generated = Collections.synchronizedList(new LinkedList<>());
+        Thread thread = new Thread(getRunnableTask(generated));
+        thread.start();
+        thread.join(10000);
+
+        return generated.get(0);
+    }
+
     protected void submit(int amount, ExecutorService executorService, List<T> generated){
         for (int i = 0; i < amount; i++) {
             executorService.submit(() -> getRunnableTask(generated).run());
