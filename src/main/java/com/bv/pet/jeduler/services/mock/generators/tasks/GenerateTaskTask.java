@@ -12,6 +12,11 @@ public class GenerateTaskTask extends GenerateTask<Task> {
 
     @Override
     public void run() {
+        generate();
+    }
+
+    @Override
+    public void generate() {
         String name = faker.book().title();
         String description = faker.hobbit().location();
         short priority = (short) random.nextInt(1, 3);

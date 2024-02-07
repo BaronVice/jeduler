@@ -17,4 +17,6 @@ public abstract class GenerateTask<T> implements Runnable{
         this.random = new Random();
         this.faker = new Faker();
     }
+
+    public abstract void generate();
 }

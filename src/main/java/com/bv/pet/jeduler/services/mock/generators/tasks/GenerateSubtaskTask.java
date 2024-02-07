@@ -11,8 +11,11 @@ public class GenerateSubtaskTask extends GenerateTask<Subtask> {
 
     @Override
     public void run() {
+        generate();
+    }
 
-
+    @Override
+    public void generate() {
         list.add(
                 Subtask.builder()
                         .name(faker.harryPotter().spell())

@@ -35,24 +35,25 @@ public class MockService implements IMockService {
     @Transactional
     public void addUsers(int amount) {
         amount = setMaxUsersAmount(amount);
-//        categoriesPerUser = setMaxCategoriesAmount(categoriesPerUser);
-//        tasksPerUser = setMaxTasksAmount(tasksPerUser);
-//        subtasksPerTask = setMaxSubtasksAmount(subtasksPerTask);
-
         List<User> users = generators.userGenerator().generate(amount);
-        userRepository.saveAllAndFlush(users);
+        userRepository.saveAll(users);
 
-        // TODO: in another method
         List<Short> userIds = users.stream().map(User::getId).collect(Collectors.toList());
         applicationInfo.addUsers(userIds);
-        applicationInfo.mockInfo().getUserIds().addAll(userIds);
+        addIdsOfGeneratedEntities(
+                applicationInfo.mockInfo().getUserIds(),
+                userIds
+        );
+        System.gc();
     }
 
     @Override
     @Transactional
     public void addTasks(int amount, short userId) {
-        User user = userRepository.findById(userId).orElse(generators.userGenerator().generateOne());
-        amount = setMaxTasksAmount(amount) - applicationInfo.userInfoTasks().getOrElseZero(userId);
+        // TODO: its easier to look in applicationInfo if it exist
+        User user = userRepository.getReferenceById(userId);
+        amount = setMaxTasksAmount(amount, userId);
+        if (amount == 0) return;
 
         List<Task> tasks = generators.taskGenerator().generate(amount);
         tasks.forEach(t -> t.setUser(user));
@@ -86,7 +87,7 @@ public class MockService implements IMockService {
     @Transactional
     public void addCategories(int amount, short userId) {
         User user = userRepository.findById(userId).orElse(generators.userGenerator().generateOne());
-        amount = setMaxCategoriesAmount(amount) - applicationInfo.userInfoCategories().getOrElseZero(userId);
+        amount = setMaxCategoriesAmount(amount, userId);
 
         List<Category> categories = generators.categoryGenerator().generate(amount);
         categories.forEach(c -> c.setUser(user));
@@ -138,6 +139,7 @@ public class MockService implements IMockService {
 
     @Override
     @Transactional
+    // TODO: add in scheduler
     public void addNotification(int taskId, Date date) {
         Task task = taskRepository.findById(taskId).orElse(generateTaskIfNull());
         Notification notification = generators.notificationGenerator().generateOne();
@@ -209,17 +211,18 @@ public class MockService implements IMockService {
     }
 
     private int setMaxUsersAmount(int amount){
-        return Math.min(amount, 100);
+        return Math.min(amount, 1000 - applicationInfo.userAmount().getAmount());
     }
 
-    private int setMaxTasksAmount(int amount){
-        return Math.min(amount, 1000);
+    private int setMaxTasksAmount(int amount, short userId){
+        return Math.min(amount, 10000 - applicationInfo.userInfoTasks().getOrElseZero(userId));
     }
 
-    private int setMaxCategoriesAmount(int amount){
-        return Math.min(amount, 20);
+    private int setMaxCategoriesAmount(int amount, short userId){
+        return Math.min(amount, 20 - applicationInfo.userInfoCategories().getOrElseZero(userId));
     }
 
+    @Deprecated(since = "wrong calculations")
     private int setMaxSubtasksAmount(int amount){
         return Math.min(amount, 20);
     }

@@ -28,7 +28,14 @@ public class Category {
     private String color;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(
+            name = "user_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "FK_USER_ID",
+                    foreignKeyDefinition = "foreign key (user_id) references users(id) on delete cascade"
+            )
+    )
     private User user;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)

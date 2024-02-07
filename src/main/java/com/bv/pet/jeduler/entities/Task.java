@@ -33,8 +33,22 @@ public class Task {
     @ManyToMany(fetch = FetchType.LAZY, cascade = REFRESH)
     @JoinTable(
             name = "task_category",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
+            joinColumns = @JoinColumn(
+                    name = "task_id",
+                    referencedColumnName = "id",
+                    foreignKey = @ForeignKey(
+                            name = "FK_TASK_CATEGORY_ID",
+                            foreignKeyDefinition = "foreign key (task_id) references task(id) on delete cascade"
+                    )
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "category_id",
+                    referencedColumnName = "id",
+                    foreignKey = @ForeignKey(
+                            name = "FK_CATEGORY_TASK_ID",
+                            foreignKeyDefinition = "foreign key (category_id) references category(id) on delete cascade"
+                    )
+            )
     )
     private List<Category> categories;
 

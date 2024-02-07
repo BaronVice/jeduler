@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,7 +20,7 @@ import java.util.Optional;
 // TODO: return some info back in response
 public class MockController {
     private final ApplicationInfo applicationInfo;
-    private final IMockService populateService;
+    private final IMockService mockService;
 
     @PostMapping("/users")
     public ResponseEntity<?> addUser(
@@ -31,7 +30,7 @@ public class MockController {
                 amount + applicationInfo.userAmount().getAmount(),
                 AllowedAmount.USER
         );
-        populateService.addUsers(
+        mockService.addUsers(
                 amount
         );
         return ResponseEntity.ok().build();
@@ -42,7 +41,7 @@ public class MockController {
             @RequestParam(name = "amount", defaultValue = "1") int amount,
             @RequestParam(name = "userid", defaultValue = "-1") short userId
     ){
-        populateService.addTasks(
+        mockService.addTasks(
                 amount,
                 userId
         );
@@ -55,7 +54,7 @@ public class MockController {
             @RequestParam(name = "taskids", defaultValue = "-1") short userId
     ){
         // TODO: assert?
-        populateService.addCategories(
+        mockService.addCategories(
                 amount,
                 userId
         );
@@ -67,7 +66,7 @@ public class MockController {
             @RequestParam(name = "taskid", defaultValue = "-1") int taskId,
             @RequestParam(name = "amount", defaultValue = "1") int amount
     ){
-        populateService.addSubtasks(
+        mockService.addSubtasks(
                 taskId,
                 amount
         );
@@ -79,7 +78,7 @@ public class MockController {
             @RequestParam(name = "taskid", defaultValue = "-1") int taskId,
             @RequestParam(name = "date") Optional<Date> date
     ){
-        populateService.addNotification(
+        mockService.addNotification(
                 taskId,
                 date.orElse(new Date(System.currentTimeMillis() + 10000))
         );

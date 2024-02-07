@@ -11,6 +11,11 @@ public class GenerateCategoryTask extends GenerateTask<Category> {
 
     @Override
     public void run() {
+        generate();
+    }
+
+    @Override
+    public void generate() {
         String name = faker.color().name() + random.nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE);
         int color = random.nextInt(100000, 999999);
 

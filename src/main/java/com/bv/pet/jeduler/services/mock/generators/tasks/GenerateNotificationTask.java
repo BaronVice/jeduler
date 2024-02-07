@@ -12,6 +12,11 @@ public class GenerateNotificationTask extends GenerateTask<Notification> {
 
     @Override
     public void run() {
+        generate();
+    }
+
+    @Override
+    public void generate() {
         Instant notifyAt = Instant.now().plusSeconds(random.nextInt(20, 1000));
 
         list.add(
