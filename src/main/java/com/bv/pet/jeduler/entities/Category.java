@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class Category {
+public class Category implements UserActivity<Short> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Short id;

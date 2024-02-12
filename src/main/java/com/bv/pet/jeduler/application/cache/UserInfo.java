@@ -29,6 +29,9 @@ public abstract class UserInfo {
     public short getOrElseZero(short key){
         Optional<Short> op = Optional.ofNullable(info.get(key));
         return op.orElse((short) 0);
+    }
 
+    public boolean isExist(short key){
+        return info.get(key) != null;
     }
 }

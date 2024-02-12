@@ -51,7 +51,7 @@ public class MockController {
     @PostMapping("/categories")
     public ResponseEntity<?> addCategories(
             @RequestParam(name = "amount", defaultValue = "1") int amount,
-            @RequestParam(name = "taskids", defaultValue = "-1") short userId
+            @RequestParam(name = "userid", defaultValue = "-1") short userId
     ){
         // TODO: assert?
         mockService.addCategories(
