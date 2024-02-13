@@ -20,6 +20,7 @@ public class FilteringHandler {
     private final FilteringRepository filteringRepository;
 
     public List<Task> filter(
+            short userId,
             Optional<String> name,
             Optional<List<Short>> priorities,
             Optional<List<Short>> categories,
@@ -29,15 +30,21 @@ public class FilteringHandler {
             OrderType order
     ) {
         // TODO: 5 + 4 + 3 + 2 + 1 = 15 combinations => I have to hardcode 15 queries :skull:
-//        System.out.println(name.isPresent());
-//        System.out.println(categories.isPresent());
-//        System.out.println(from.isPresent());
-//        System.out.println(to.isPresent());
-        priorities.ifPresent(p -> System.out.println(filteringRepository.filterByPriorities(p, page, order).stream().map(Task::getId).collect(Collectors.toList())));
-        name.ifPresent(n -> System.out.println(filteringRepository.filterByName(n, page, order).stream().map(Task::getId).collect(Collectors.toList())));
-        categories.ifPresent(c -> System.out.println(filteringRepository.filterByCategories(c, page, order).stream().map(Task::getId).collect(Collectors.toList())));
-        from.ifPresent(f -> System.out.println(filteringRepository.filterByFrom(f, page, order).stream().map(Task::getId).collect(Collectors.toList())));
-        to.ifPresent(t -> System.out.println(filteringRepository.filterByTo(t, page, order).stream().map(Task::getId).collect(Collectors.toList())));
+        //  this is much worse...
+//        boolean n = name.isPresent();
+//        boolean p = priorities.isPresent();
+//        boolean c = categories.isPresent();
+//        boolean f = from.isPresent();
+//        boolean t = to.isPresent();
+
+        // if none, than just filter by userId and order by
+
+//        priorities.ifPresent(p -> System.out.println(filteringRepository.filterByPriorities(userId, p, page, order).stream().map(Task::getId).collect(Collectors.toList())));
+//        name.ifPresent(n -> System.out.println(filteringRepository.filterByName(userId, n, page, order).stream().map(Task::getId).collect(Collectors.toList())));
+//        categories.ifPresent(c -> System.out.println(filteringRepository.filterByCategories(userId, c, page, order).stream().map(Task::getId).collect(Collectors.toList())));
+//        from.ifPresent(f -> System.out.println(filteringRepository.filterByFrom(userId, f, page, order).stream().map(Task::getId).collect(Collectors.toList())));
+//        to.ifPresent(t -> System.out.println(filteringRepository.filterByTo(userId, t, page, order).stream().map(Task::getId).collect(Collectors.toList())));
+
 
 
 //        from.ifPresent(f -> System.out.println(taskRepository.findByFrom(f, pageable).getTotalElements()));

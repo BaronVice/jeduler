@@ -25,20 +25,16 @@ import java.util.Optional;
 public class TaskController {
     private final ITaskService taskService;
     private final ApplicationInfo applicationInfo;
+    private final Assert anAssert;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTask(@PathVariable Integer id) {
         return ResponseEntity.ok(taskService.get(id));
     }
 
-//    @GetMapping
-//    public ResponseEntity<?> getTasks(@RequestParam(name = "categories", defaultValue = "") List<Short> ids){
-//        return ResponseEntity.ok(taskService.get(ids));
-//    }
-
     @GetMapping
     public ResponseEntity<?> getTask(
-            // TODO: wrap in optionals perhaps?
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam(name = "name") Optional<String> name,
             @RequestParam(name = "priorities") Optional<List<Short>> priorities,
             @RequestParam(name = "categories") Optional<List<Short>> categories,
@@ -49,6 +45,7 @@ public class TaskController {
     ) {
         return ResponseEntity.ok(
                 taskService.get(
+                        userDetails.getUserId(),
                         name,
                         priorities,
                         categories,
@@ -68,7 +65,7 @@ public class TaskController {
         short userId = userDetails.getUserId();
         String mail = userDetails.getUsername();
 
-        Assert.assertAllowedCreation(
+        anAssert.allowedCreation(
                 applicationInfo.userInfoTasks().getInfo().get(userId),
                 AllowedAmount.TASK
         );
@@ -83,7 +80,12 @@ public class TaskController {
             @Valid @RequestBody TaskDto taskDto
     ) {
         String mail = userDetails.getUsername();
-        taskService.update(mail, taskDto);
+        short userId = userDetails.getUserId();
+        taskService.update(
+                userId,
+                mail,
+                taskDto
+        );
         return ResponseEntity.ok().build();
     }
 

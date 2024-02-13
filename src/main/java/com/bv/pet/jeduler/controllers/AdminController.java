@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final IUserService userService;
     private final ApplicationInfo applicationInfo;
+    private final Assert anAssert;
 
     @GetMapping("/categories")
     public ResponseEntity<?> categoriesInfo(){
@@ -34,7 +35,7 @@ public class AdminController {
 
     @PostMapping("/create-user")
     public ResponseEntity<?> create(@RequestBody UserDto userDto){
-        Assert.assertAllowedCreation(
+        anAssert.allowedCreation(
                 applicationInfo.userAmount().getAmount(),
                 AllowedAmount.USER
         );
@@ -45,10 +46,7 @@ public class AdminController {
 
     @DeleteMapping("/delete-user/{id}")
     public ResponseEntity<?> delete(@PathVariable Short id){
-        Assert.assertNotAdmin(
-                applicationInfo.adminInfo().getId(),
-                id
-        );
+        anAssert.notMainAdmin(id);
 
         userService.delete(id);
         return ResponseEntity.ok().build();

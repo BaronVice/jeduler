@@ -11,8 +11,8 @@ import java.util.Optional;
 
 public interface ITaskService {
     TaskDto get(int id);
-    List<TaskDto> get(List<Short> categoryIds);
     List<TaskDto> get(
+            short userId,
             Optional<String> name,
             Optional<List<Short>> priorities,
             Optional<List<Short>> categories,
@@ -22,6 +22,6 @@ public interface ITaskService {
             OrderType orderType
     );
     Integer create(short userId, String mail, TaskDto taskDto);
-    void update(String mail, TaskDto taskDto);
+    void update(short userId, String mail, TaskDto taskDto);
     void delete(short userId, Integer id);
 }

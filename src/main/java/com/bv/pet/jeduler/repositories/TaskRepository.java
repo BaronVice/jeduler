@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer>, UserIdCollector {
@@ -22,4 +23,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer>, UserIdColl
     List<Short> getUserIds();
     @Query(value = GET_CATEGORY_IDS_BY_TASK_IDS, nativeQuery = true)
     List<TaskCategory> getCategoryIdsByTaskIds(@Param("task_ids") List<Integer> taskIds);
+
+    Optional<Task> findByUserIdAndId(short userId, int id);
 }

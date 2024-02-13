@@ -39,27 +39,9 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    // TODO: the amount of queries is much worse than terrible
-    public List<TaskDto> get(List<Short> categoryIds) {
-//        if (categoryIds.size() == 0){
-//            categoryIds.add((short) 0);
-//        }
-//        List<Integer> taskIds = taskRepository.findByCategoryIds(categoryIds);
-//        List<Task> tasks = taskRepository.findAllById(taskIds);
-//        for (Task task : tasks){
-//            task.setCategoryIds(
-//                    categoryRepository.findIdsByTaskId(task.getId())
-//            );
-//        }
-//
-//        return taskMapper.toTaskDtoList(tasks);
-        return null;
-    }
-
-    @Override
     @Transactional
     public List<TaskDto> get(
+            short userId,
             Optional<String> name,
             Optional<List<Short>> priorities,
             Optional<List<Short>> categories,
@@ -69,6 +51,7 @@ public class TaskService implements ITaskService {
             OrderType order
     ) {
         List<Task> tasks = filtering.filter(
+                userId,
                 name,
                 priorities,
                 categories,
@@ -89,26 +72,30 @@ public class TaskService implements ITaskService {
     public Integer create(short userId, String mail, TaskDto taskDto) {
         Task task = handler.create(userId, mail, taskDto);
 
-        applicationInfo.userInfoTasks().changeValue(userId, (short) 1);
+        applicationInfo.userInfoTasks().changeValue(
+                userId,
+                (short) 1
+        );
 //        statistics.onTaskCreation(task);
 
         return task.getId();
     }
 
     @Override
-    public void update(String mail, TaskDto taskDto) {
+    public void update(short userId, String mail, TaskDto taskDto) {
 //        Task updated = taskMapper.toTask(taskDto);
 //        Task toUpdate = handler.get(taskDto.getId());
 //        boolean wasDone = toUpdate.isTaskDone();
 //        Instant previousDate = toUpdate.getStartsAt();
 
-        handler.update(mail, taskDto);
+        handler.update(userId, mail, taskDto);
         // statistics.onTaskUpdate(updated, wasDone, previousDate);
     }
 
     @Override
     public void delete(short userId, Integer id) {
-        handler.delete(id);
+        // TODO: check if user owns task with such id
+        handler.delete(userId, id);
         applicationInfo.userInfoTasks().changeValue(
                 userId,
                 (short) -1

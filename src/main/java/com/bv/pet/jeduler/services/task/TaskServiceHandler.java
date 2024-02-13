@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -56,10 +57,16 @@ public class TaskServiceHandler {
     }
 
     @Transactional
-    public void update(String mail, TaskDto taskDto) {
+    public void update(short userId, String mail, TaskDto taskDto) {
         Task updated = taskMapper.toTask(taskDto);
-        Task toUpdate = taskRepository.getReferenceById(taskDto.id());
+        Optional<Task> toUpdateOptional = taskRepository.findByUserIdAndId(userId, taskDto.id());
+        if (toUpdateOptional.isEmpty())
+            throw new ApplicationException(
+                    "Task not found",
+                    HttpStatus.BAD_REQUEST
+            );
 
+        Task toUpdate = toUpdateOptional.get();
         toUpdate.setName(updated.getName());
         toUpdate.setDescription(updated.getDescription());
         toUpdate.setStartsAt(updated.getStartsAt());
@@ -76,9 +83,10 @@ public class TaskServiceHandler {
     }
 
     @Transactional
-    public void delete(int id) {
-        taskRepository.deleteById(id);
-        mailService.removeNotificationFromScheduler(id);
+    public void delete(short userId, int id) {
+        Optional<Task> task = taskRepository.findByUserIdAndId(userId, id);
+        if (task.isPresent())
+            mailService.removeNotificationFromScheduler(id);
     }
 
     private void saveTask(Task task) {

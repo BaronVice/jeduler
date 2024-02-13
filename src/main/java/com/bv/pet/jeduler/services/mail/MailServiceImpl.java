@@ -84,7 +84,7 @@ public class MailServiceImpl {
     public void removeNotificationFromScheduler(int id){
         ScheduledFuture<?> future = futureMap.get(id);
         if (future != null)
-            future.cancel(false);
+            future.cancel(true);
     }
 
     @Transactional(readOnly = true)
@@ -105,8 +105,7 @@ public class MailServiceImpl {
         return message;
     }
 
-    @Transactional
-    public void removeNotification(Task task){
+    private void removeNotification(Task task){
         task.setNotification(null);
         futureMap.remove(task.getId());
         taskRepository.save(task);

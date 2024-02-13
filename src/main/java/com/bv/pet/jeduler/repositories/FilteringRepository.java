@@ -20,13 +20,15 @@ public class FilteringRepository {
     private final EntityManager em;
 
     public List<Task> filterByName(
+            short userId,
             String name,
             int pageNumber,
             OrderType order
     ){
         Query query = em.createNativeQuery(
                 String.format(
-                        "select * from Task t where UPPER(t.name) like '%s' order by t.%s",
+                        "select * from Task t where t.user_id = %d and UPPER(t.name) like '%s' order by t.%s",
+                        userId,
                         "%" + name.toUpperCase() + "%",
                         order.toString()
                 ),
@@ -38,13 +40,15 @@ public class FilteringRepository {
     }
 
     public List<Task> filterByPriorities(
+            short userId,
             List<Short> priorities,
             int pageNumber,
             OrderType order
     ){
         Query query = em.createNativeQuery(
                 String.format(
-                        "select * from Task t where t.priority = %s order by t.%s",
+                        "select * from Task t where t.user_id = %d and t.priority = %s order by t.%s",
+                        userId,
                         SqlFormatter.wrapInAnyValues(priorities),
                         order.toString()
                 ),
@@ -56,6 +60,7 @@ public class FilteringRepository {
     }
 
     public List<Task> filterByCategories(
+            short userId,
             List<Short> categories,
             int pageNumber,
             OrderType order
@@ -64,7 +69,8 @@ public class FilteringRepository {
                 String.format(
                         "select distinct t.id, t.name, t.description, t.task_done, t.priority, t.user_id, t.starts_at, " +
                                 "t.last_changed from Task t inner join task_category tc on t.id = tc.task_id " +
-                                "where tc.category_id = %s order by t.%s",
+                                "where t.user_id = %d and tc.category_id = %s order by t.%s",
+                        userId,
                         SqlFormatter.wrapInAnyValues(categories),
                         order.toString()
                 ),
@@ -76,13 +82,15 @@ public class FilteringRepository {
     }
 
     public List<Task> filterByFrom(
+            short userId,
             Date from,
             int pageNumber,
             OrderType order
     ){
         Query query = em.createNativeQuery(
                 String.format(
-                        "select * from Task t where t.starts_at >= :from order by t.%s",
+                        "select * from Task t where t.user_id = %d and t.starts_at >= :from order by t.%s",
+                        userId,
                         order.toString()
                 ),
                 Task.class
@@ -94,13 +102,15 @@ public class FilteringRepository {
     }
 
     public List<Task> filterByTo(
+            short userId,
             Date to,
             int pageNumber,
             OrderType order
     ){
         Query query = em.createNativeQuery(
                 String.format(
-                        "select * from Task t where t.starts_at <= :to order by t.%s",
+                        "select * from Task t where t.user_id = %d and t.starts_at <= :to order by t.%s",
+                        userId,
                         order.toString()
                 ),
                 Task.class

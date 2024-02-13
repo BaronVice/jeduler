@@ -1,11 +1,17 @@
 package com.bv.pet.jeduler.utils;
 
+import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
-public class Assert {
+@Component
+@RequiredArgsConstructor
+public final class Assert {
+    private final ApplicationInfo applicationInfo;
 
-    public static void assertAllowedCreation(int value, AllowedAmount type){
+    public void allowedCreation(int value, AllowedAmount type){
         if (value + 1 > type.amount)
             throw new ApplicationException(
                     type.message,
@@ -13,20 +19,28 @@ public class Assert {
             );
     }
 
-    public static void assertAllowedAmount(int value, AllowedAmount type){
-        if (value > type.amount)
-            throw new ApplicationException(
-                    type.message,
-                    HttpStatus.BAD_REQUEST
-            );
-    }
-
-    public static void assertNotAdmin(int adminId, short givenId) {
-        if (adminId == givenId){
+    public void notMainAdmin(short givenId) {
+        if (applicationInfo.adminInfo().getId() == givenId){
             throw new ApplicationException(
                     "Break a leg",
                     HttpStatus.BAD_REQUEST
             );
         }
+    }
+
+    public void userExist(short userId){
+        if (!applicationInfo.userInfoTasks().isExist(userId))
+            throw new ApplicationException(
+                    "User not found",
+                    HttpStatus.BAD_REQUEST
+            );
+    }
+
+    public void amountIsPositive(int amount){
+        if (amount <= 0)
+            throw new ApplicationException(
+                    "Limit is reached",
+                    HttpStatus.BAD_REQUEST
+            );
     }
 }

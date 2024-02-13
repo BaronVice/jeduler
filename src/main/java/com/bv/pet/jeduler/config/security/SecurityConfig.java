@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/jeduler/login",
     };
     private final String[] adminRoutes = {
-            "/jeduler/admin/**"
+            "/jeduler/admin/**",
+            "/jeduler/populate/**"
     };
 
     @Bean

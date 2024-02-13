@@ -9,6 +9,7 @@ import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.repositories.*;
 import com.bv.pet.jeduler.services.mail.MailServiceImpl;
 import com.bv.pet.jeduler.services.mock.generators.Generator;
+import com.bv.pet.jeduler.utils.Assert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.Repository;
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,15 +28,18 @@ import java.util.stream.Collectors;
 public class MockService implements IMockService {
     private final ApplicationInfo applicationInfo;
     private final Generators generators;
+    private final MailServiceImpl mailService;
+    private final Assert anAssert;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
-    private final MailServiceImpl mailService;
 
     @Override
     @Transactional
     public void addUsers(int amount) {
         amount = setMaxUsersAmount(amount);
+        anAssert.amountIsPositive(amount);
+
         List<User> users = generators.userGenerator().generate(amount);
         userRepository.saveAll(users);
 
@@ -58,41 +63,6 @@ public class MockService implements IMockService {
                 applicationInfo.userInfoTasks(),
                 applicationInfo.mockInfo().getTaskIds()
         );
-//        amount = setMaxTasksAmount(amount, userId);
-//        if (amount == 0) return;
-//
-//        User user = new User();
-//        user.setId(
-//                applicationInfo.userInfoTasks().isExist(userId) ? userId : null
-//        );
-//
-//        List<Task> tasks = generators.taskGenerator().generate(amount);
-//        tasks.forEach(t -> t.setUser(user));
-//
-//        // REPLACED INSTEAD OF APPEND
-//        if (user.getId() != null){
-//            taskRepository.saveAll(tasks);
-//            applicationInfo.userInfoTasks().changeValue(
-//                    user.getId(),
-//                    (short) amount
-//            );
-//            addIdsOfGeneratedEntities(
-//                    applicationInfo.mockInfo().getTaskIds(),
-//                    tasks.stream().map(Task::getId).collect(Collectors.toList())
-//            );
-//
-//            return;
-//        }
-//
-//        user.setTasks(tasks);
-//        userRepository.save(user);
-//
-//        short id = user.getId();
-//        addMockUser(id);
-//        applicationInfo.userInfoTasks().setValue(
-//                id,
-//                (short) user.getTasks().size()
-//        );
     }
 
     @Override
@@ -106,34 +76,6 @@ public class MockService implements IMockService {
                 applicationInfo.userInfoCategories(),
                 applicationInfo.mockInfo().getCategoryIds()
         );
-//        User user = userRepository.findById(userId).orElse(generators.userGenerator().generateOne());
-//        amount = setMaxCategoriesAmount(amount, userId);
-//
-//        List<Category> categories = generators.categoryGenerator().generate(amount);
-//        categories.forEach(c -> c.setUser(user));
-//
-//        if (user.getId() != null){
-//            categoryRepository.saveAll(categories);
-//            applicationInfo.userInfoCategories().changeValue(
-//                    user.getId(),
-//                    (short) amount
-//            );
-//            addIdsOfGeneratedEntities(
-//                    applicationInfo.mockInfo().getCategoryIds(),
-//                    categories.stream().map(Category::getId).collect(Collectors.toList())
-//            );
-//            return;
-//        }
-//
-//        user.setCategories(categories);
-//        userRepository.save(user);
-//
-//        short id = user.getId();
-//        addMockUser(id);
-//        applicationInfo.userInfoCategories().setValue(
-//                id,
-//                (short) user.getCategories().size()
-//        );
     }
 
     private <T extends UserActivity<ID>, ID extends Number> void addUserActivity(
@@ -144,11 +86,8 @@ public class MockService implements IMockService {
             UserInfo userInfo,
             List<ID> mockInfoIds
     ){
-        if (amount <= 0 || !userInfo.isExist(userId))
-            throw new ApplicationException(
-                    "Limit reached or user not found",
-                    HttpStatus.BAD_REQUEST
-            );
+        anAssert.amountIsPositive(amount);
+        anAssert.userExist(userId);
 
         User user = User.builder().id(userId).build();
 
@@ -170,9 +109,13 @@ public class MockService implements IMockService {
     @Transactional
     public void addSubtasks(int taskId, int amount) {
         Task task = taskRepository.findById(taskId).orElse(generateTaskIfNull());
-        amount = setMaxSubtasksAmount(amount) - listSizeOrZeroIfNull(task.getSubtasks());
+        amount = setMaxSubtasksAmount(amount, task);
+        anAssert.amountIsPositive(amount);
 
         List<Subtask> subtasks = generators.subtaskGenerator().generate(amount);
+        if (task.getSubtasks() == null)
+            task.setSubtasks(new ArrayList<>());
+
         task.getSubtasks().addAll(subtasks);
         subtasks.forEach(s -> s.setTask(task));
 
@@ -235,14 +178,6 @@ public class MockService implements IMockService {
         return true;
     }
 
-    private boolean saveUserIfExist(User user){
-        if (user.getId() != null){
-            userRepository.save(user);
-            return true;
-        }
-        return false;
-    }
-
     private void generateUserForTask(Task task){
         User user = generators.userGenerator().generateOne();
         user.setTasks(List.of(task));
@@ -270,20 +205,30 @@ public class MockService implements IMockService {
     }
 
     private int setMaxUsersAmount(int amount){
-        return Math.min(amount, 1000 - applicationInfo.userAmount().getAmount());
+        return Math.min(
+                Math.min(amount, 1000),
+                1000 - applicationInfo.userAmount().getAmount()
+        );
     }
 
-    // TODO: change all of setMaxFooBar as they are bugged (once again, sure...)
     private int setMaxTasksAmount(int amount, short userId){
-        return Math.min(amount, 10000 - applicationInfo.userInfoTasks().getOrElseZero(userId) /*Minus amount*/);
+        return Math.min(
+                Math.min(amount, 10000),
+                10000 - applicationInfo.userInfoTasks().getOrElseZero(userId)
+        );
     }
 
     private int setMaxCategoriesAmount(int amount, short userId){
-        return Math.min(amount, 20 - applicationInfo.userInfoCategories().getOrElseZero(userId));
+        return Math.min(
+                Math.min(amount, 20),
+                20 - applicationInfo.userInfoCategories().getOrElseZero(userId)
+        );
     }
 
-    @Deprecated(since = "wrong calculations")
-    private int setMaxSubtasksAmount(int amount){
-        return Math.min(amount, 20);
+    private int setMaxSubtasksAmount(int amount, Task task){
+        return Math.min(
+                Math.min(amount, 20),
+                20 - listSizeOrZeroIfNull(task.getSubtasks())
+        );
     }
 }

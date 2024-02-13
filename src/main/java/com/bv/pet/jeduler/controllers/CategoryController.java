@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class CategoryController {
     private final ICategoryService categoryService;
     private final ApplicationInfo applicationInfo;
+    private final Assert anAssert;
 
     @GetMapping
     public ResponseEntity<?> allCategories(
@@ -36,7 +37,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryDto categoryDto
     ) {
         short userId = userDetails.getUserId();
-        Assert.assertAllowedCreation(
+        anAssert.allowedCreation(
                 applicationInfo.userInfoCategories().getInfo().get(userId),
                 AllowedAmount.CATEGORY
         );

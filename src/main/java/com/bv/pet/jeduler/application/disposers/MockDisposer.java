@@ -32,8 +32,8 @@ public class MockDisposer implements DisposableBean {
     }
 
     @Transactional
-    // @Async ?
     public <ID extends Number> void dispose(List<ID> ids, JpaRepository<?, ID> repository){
+        repository.flush();
         repository.deleteAllByIdInBatch(ids);
     }
 }

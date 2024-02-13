@@ -72,8 +72,7 @@ public class Task implements UserActivity<Integer> {
     private Instant startsAt;
 
     private Instant lastChanged;
-
-    @OneToOne(mappedBy = "task", cascade = ALL)
+    @OneToOne(mappedBy = "task", cascade = ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     private Notification notification;
 }

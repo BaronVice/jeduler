@@ -19,17 +19,12 @@ import java.util.Optional;
 @RequestMapping("/jeduler/populate")
 // TODO: return some info back in response
 public class MockController {
-    private final ApplicationInfo applicationInfo;
     private final IMockService mockService;
 
     @PostMapping("/users")
     public ResponseEntity<?> addUser(
             @RequestParam(name = "amount", defaultValue = "1") int amount
     ){
-        Assert.assertAllowedAmount(
-                amount + applicationInfo.userAmount().getAmount(),
-                AllowedAmount.USER
-        );
         mockService.addUsers(
                 amount
         );
@@ -53,7 +48,6 @@ public class MockController {
             @RequestParam(name = "amount", defaultValue = "1") int amount,
             @RequestParam(name = "userid", defaultValue = "-1") short userId
     ){
-        // TODO: assert?
         mockService.addCategories(
                 amount,
                 userId
