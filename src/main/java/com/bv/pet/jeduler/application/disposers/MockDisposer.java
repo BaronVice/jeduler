@@ -6,6 +6,7 @@ import com.bv.pet.jeduler.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +25,15 @@ public class MockDisposer implements DisposableBean {
     @Override
     public void destroy() {
         MockInfo mockInfo = applicationInfo.mockInfo();
-        dispose(mockInfo.getUserIds(), userRepository);
+        dispose(mockInfo.getNotificationIds(), notificationRepository);
+        dispose(mockInfo.getSubtaskIds(), subtaskRepository);
         dispose(mockInfo.getTaskIds(), taskRepository);
         dispose(mockInfo.getCategoryIds(), categoryRepository);
-        dispose(mockInfo.getSubtaskIds(), subtaskRepository);
-        dispose(mockInfo.getNotificationIds(), notificationRepository);
+        dispose(mockInfo.getUserIds(), userRepository);
     }
 
     @Transactional
+    @Async // PostgreSQL should support ACID, so I guess it's alright
     public <ID extends Number> void dispose(List<ID> ids, JpaRepository<?, ID> repository){
         repository.flush();
         repository.deleteAllByIdInBatch(ids);

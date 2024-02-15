@@ -164,7 +164,13 @@ public class TaskServiceHandler {
         toUpdate.setSubtasks(updated.getSubtasks());
     }
 
+    // TODO: this one deserves its place in some separate util class
+
     public void setCategoryIdsForTaskDto(List<TaskDto> taskDtoList) {
+        if (taskDtoList.size() == 0) return;
+
+        // TODO: perhaps I want to collect category names as well and then sort by them
+        //  (easier for frontend, but is it worth it?)
         Map<Integer, TaskDto> map = taskDtoList.stream().collect(Collectors.toMap(TaskDto::id, Function.identity()));
         List<TaskCategory> taskCategories = taskRepository.getCategoryIdsByTaskIds(
                 taskDtoList.stream().map(TaskDto::id).toList()
@@ -173,4 +179,6 @@ public class TaskServiceHandler {
         for (TaskCategory taskCategory : taskCategories)
             map.get(taskCategory.getTaskId()).categoryIds().add(taskCategory.getCategoryId());
     }
+
+
 }

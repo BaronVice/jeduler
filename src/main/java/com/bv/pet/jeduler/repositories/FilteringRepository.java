@@ -9,8 +9,10 @@ import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -19,113 +21,111 @@ public class FilteringRepository {
     @PersistenceContext
     private final EntityManager em;
 
-    public List<Task> filterByName(
+    public List<Task> filterForFuckSake(
             short userId,
             String name,
-            int pageNumber,
-            OrderType order
-    ){
-        Query query = em.createNativeQuery(
-                String.format(
-                        "select * from Task t where t.user_id = %d and UPPER(t.name) like '%s' order by t.%s",
-                        userId,
-                        "%" + name.toUpperCase() + "%",
-                        order.toString()
-                ),
-                Task.class
-        );
-        setPaging(query, pageNumber);
-
-        return query.getResultList();
-    }
-
-    public List<Task> filterByPriorities(
-            short userId,
             List<Short> priorities,
-            int pageNumber,
+            List<Short> categories,
+            Date from,
+            Date to,
+            int page,
             OrderType order
     ){
+        if (priorities == null){
+            priorities = List.of((short) 1, (short) 2, (short) 3);
+        }
+        if (name != null){
+            name = "%" + name + "%";
+        }
+
+        if (categories == null){
+            return filterWithoutCategories(
+                userId,
+                name,
+                priorities,
+                from,
+                to,
+                page,
+                order
+            );
+        }
+
+        Query categoryIdsQuery = em.createNativeQuery(
+                String.format(
+                        "select distinct t.id from Task t inner join task_category tc on t.id = tc.task_id " +
+                                "where tc.category_id = %s",
+                        SqlFormatter.wrapInAnyValues(categories)
+                ),
+                Integer.class
+        );
+        List<Integer> taskIds = categoryIdsQuery.getResultList();
+
+        if (taskIds.size() == 0){
+            return new ArrayList<>();
+        }
+
         Query query = em.createNativeQuery(
                 String.format(
-                        "select * from Task t where t.user_id = %d and t.priority = %s order by t.%s",
-                        userId,
+                        "select * from Task t where " +
+                                "t.user_id = :user_id and " +
+                                "(cast(:name as text) is null or UPPER(t.name) like UPPER(:name)) and " +
+                                "(cast(:from as date) is null or t.starts_at >= :from) and " +
+                                "(cast(:to as date) is null or t.starts_at <= :to) and " +
+                                "t.id = %s and " +
+                                "t.priority = %s order by t.%s",
+                        SqlFormatter.wrapInAnyValues(taskIds),
                         SqlFormatter.wrapInAnyValues(priorities),
                         order.toString()
                 ),
                 Task.class
         );
-        setPaging(query, pageNumber);
 
-        return query.getResultList();
-    }
-
-    public List<Task> filterByCategories(
-            short userId,
-            List<Short> categories,
-            int pageNumber,
-            OrderType order
-    ){
-        Query query = em.createNativeQuery(
-                String.format(
-                        "select distinct t.id, t.name, t.description, t.task_done, t.priority, t.user_id, t.starts_at, " +
-                                "t.last_changed from Task t inner join task_category tc on t.id = tc.task_id " +
-                                "where t.user_id = %d and tc.category_id = %s order by t.%s",
-                        userId,
-                        SqlFormatter.wrapInAnyValues(categories),
-                        order.toString()
-                ),
-                Task.class
-        );
-        setPaging(query, pageNumber);
-
-        return query.getResultList();
-    }
-
-    public List<Task> filterByFrom(
-            short userId,
-            Date from,
-            int pageNumber,
-            OrderType order
-    ){
-        Query query = em.createNativeQuery(
-                String.format(
-                        "select * from Task t where t.user_id = %d and t.starts_at >= :from order by t.%s",
-                        userId,
-                        order.toString()
-                ),
-                Task.class
-        );
+        query.setParameter("user_id", userId);
+        query.setParameter("name", name);
         query.setParameter("from", from);
-        setPaging(query, pageNumber);
+        query.setParameter("to", to);
+        setPaging(query, page);
 
         return query.getResultList();
     }
 
-    public List<Task> filterByTo(
+    private List<Task> filterWithoutCategories(
             short userId,
+            String name,
+            List<Short> priorities,
+            Date from,
             Date to,
-            int pageNumber,
+            int page,
             OrderType order
-    ){
+    ) {
         Query query = em.createNativeQuery(
                 String.format(
-                        "select * from Task t where t.user_id = %d and t.starts_at <= :to order by t.%s",
-                        userId,
+                        "select * from Task t where " +
+                                "t.user_id = :user_id and " +
+                                "(cast(:name as text) is null or UPPER(t.name) like UPPER(:name)) and " +
+                                "(cast(:from as date) is null or t.starts_at >= :from) and " +
+                                "(cast(:to as date) is null or t.starts_at <= :to) and " +
+                                "t.priority = %s order by t.%s",
+                        SqlFormatter.wrapInAnyValues(priorities),
                         order.toString()
                 ),
                 Task.class
         );
+
+        query.setParameter("user_id", userId);
+        query.setParameter("name", name);
+        query.setParameter("from", from);
         query.setParameter("to", to);
-        setPaging(query, pageNumber);
+        setPaging(query, page);
 
         return query.getResultList();
     }
 
     private void setPaging(
             Query query,
-            int pageNumber
+            int page
     ){
-        query.setFirstResult(pageNumber * PAGE_SIZE);
+        query.setFirstResult(page * PAGE_SIZE);
         query.setMaxResults(PAGE_SIZE);
     }
 }

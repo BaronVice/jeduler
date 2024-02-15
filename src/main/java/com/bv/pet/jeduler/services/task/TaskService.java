@@ -42,11 +42,11 @@ public class TaskService implements ITaskService {
     @Transactional
     public List<TaskDto> get(
             short userId,
-            Optional<String> name,
-            Optional<List<Short>> priorities,
-            Optional<List<Short>> categories,
-            Optional<Date> from,
-            Optional<Date> to,
+            String name,
+            List<Short> priorities,
+            List<Short> categories,
+            Date from,
+            Date to,
             int page,
             OrderType order
     ) {
@@ -63,7 +63,6 @@ public class TaskService implements ITaskService {
 
         List<TaskDto> taskDtoList = taskMapper.toTaskDtoList(tasks);
         handler.setCategoryIdsForTaskDto(taskDtoList);
-        // TODO: handler.setSubtasksForTaskDto(taskDtoList);
 
         return taskDtoList;
     }

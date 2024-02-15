@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Subtask {
+public class Subtask implements Comparable<Subtask> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -31,4 +31,9 @@ public class Subtask {
     private boolean isCompleted;
 
     private short orderInList;
+
+    @Override
+    public int compareTo(Subtask o) {
+        return this.orderInList - o.orderInList;
+    }
 }

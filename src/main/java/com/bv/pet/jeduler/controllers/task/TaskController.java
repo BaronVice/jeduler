@@ -33,13 +33,13 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getTask(
+    public ResponseEntity<?> getTasks(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam(name = "name") Optional<String> name,
-            @RequestParam(name = "priorities") Optional<List<Short>> priorities,
-            @RequestParam(name = "categories") Optional<List<Short>> categories,
-            @RequestParam(name = "from") @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Optional<Date> from,
-            @RequestParam(name = "to") @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Optional<Date> to,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "priorities", required = false) List<Short> priorities,
+            @RequestParam(name = "categories", required = false) List<Short> categories,
+            @RequestParam(name = "from", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Date from,
+            @RequestParam(name = "to", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Date to,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "order", defaultValue = "name") OrderType order
     ) {

@@ -22,7 +22,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer>, UserIdColl
     @Query(value = GET_USER_IDS, nativeQuery = true)
     List<Short> getUserIds();
     @Query(value = GET_CATEGORY_IDS_BY_TASK_IDS, nativeQuery = true)
-    List<TaskCategory> getCategoryIdsByTaskIds(@Param("task_ids") List<Integer> taskIds);
+    List<TaskCategory> getCategoryIdsByTaskIds(@Param("task_ids") Iterable<Integer> taskIds);
 
     Optional<Task> findByUserIdAndId(short userId, int id);
 }

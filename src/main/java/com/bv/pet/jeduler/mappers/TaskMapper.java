@@ -8,11 +8,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
     @Mapping(source = "notification", target = "notifyAt", qualifiedByName = "notificationToInstant")
+    @Mapping(target = "categoryIds", defaultExpression = "java(new ArrayList())")
     TaskDto toTaskDto(Task task);
     @Mapping(source = "notifyAt", target = "notification", qualifiedByName = "instantToNotification")
     Task toTask(TaskDto taskDto);

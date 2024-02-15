@@ -13,11 +13,11 @@ public interface ITaskService {
     TaskDto get(int id);
     List<TaskDto> get(
             short userId,
-            Optional<String> name,
-            Optional<List<Short>> priorities,
-            Optional<List<Short>> categories,
-            Optional<Date> from,
-            Optional<Date> to,
+            String name,
+            List<Short> priorities,
+            List<Short> categories,
+            Date from,
+            Date to,
             int page,
             OrderType orderType
     );
