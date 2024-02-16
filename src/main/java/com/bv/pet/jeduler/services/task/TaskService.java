@@ -19,23 +19,15 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class TaskService implements ITaskService {
-    private final TaskMapper taskMapper;
     private final TaskServiceHandler handler;
     private final FilteringHandler filtering;
     private final StatisticsService statistics;
     private final ApplicationInfo applicationInfo;
-    private final CategoryRepository categoryRepository;
-    private final TaskRepository taskRepository;
 
     @Override
     @Transactional(readOnly = true)
     public TaskDto get(int id) {
-        Task task = handler.get(id);
-        task.setCategoryIds(
-                categoryRepository.findIdsByTaskId(task.getId())
-        );
-
-        return taskMapper.toTaskDto(task);
+        return handler.get(id);
     }
 
     @Override
@@ -50,7 +42,7 @@ public class TaskService implements ITaskService {
             int page,
             OrderType order
     ) {
-        List<Task> tasks = filtering.filter(
+        return filtering.get(
                 userId,
                 name,
                 priorities,
@@ -60,11 +52,6 @@ public class TaskService implements ITaskService {
                 page,
                 order
         );
-
-        List<TaskDto> taskDtoList = taskMapper.toTaskDtoList(tasks);
-        handler.setCategoryIdsForTaskDto(taskDtoList);
-
-        return taskDtoList;
     }
 
     @Override

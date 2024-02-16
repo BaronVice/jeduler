@@ -55,7 +55,12 @@ public class Task implements UserActivity<Integer> {
     @Transient
     private List<Short> categoryIds;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "task")
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            cascade = {REFRESH, MERGE, PERSIST, REMOVE},
+            mappedBy = "task",
+            orphanRemoval = true
+    )
     private List<Subtask> subtasks;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -27,11 +27,13 @@ public class TaskController {
     private final ApplicationInfo applicationInfo;
     private final Assert anAssert;
 
+    // Keep in mind that categoryIds and subtasks are unordered
     @GetMapping("/{id}")
     public ResponseEntity<?> getTask(@PathVariable Integer id) {
         return ResponseEntity.ok(taskService.get(id));
     }
 
+    // Keep in mind that categoryIds and subtasks are unordered
     @GetMapping
     public ResponseEntity<?> getTasks(
             @AuthenticationPrincipal UserDetailsImpl userDetails,

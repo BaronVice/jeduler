@@ -8,6 +8,7 @@ import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.TaskMapper;
+import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.SubtaskRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
@@ -29,15 +30,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TaskServiceHandler {
     private final TaskRepository taskRepository;
-    private final SubtaskRepository subtaskRepository;
+    private final CategoryRepository categoryRepository;
     private final NotificationRepository notificationRepository;
     private final MailServiceImpl mailService;
     private final TaskMapper taskMapper;
 
-    public Task get(Integer id){
-        return taskRepository.findById(id).orElseThrow(
+    public TaskDto get(int id){
+        Task task = taskRepository.findById(id).orElseThrow(
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
         );
+        categoryRepository.findIdsByTaskId(task.getId());
+
+        return taskMapper.toTaskDto(task);
     }
 
     @Transactional
@@ -45,7 +49,7 @@ public class TaskServiceHandler {
         Task task = taskMapper.toTask(taskDto);
 
         setUserOnTask(task, userId);
-        setCategoriesOnTask(task, taskDto);
+//        setCategoriesOnTask(task, taskDto);
         setLastChangedAsNow(task);
         setNotificationOnTaskCreate(task, taskDto);
         setSubtasksOnTaskCreate(task);
@@ -72,11 +76,13 @@ public class TaskServiceHandler {
         toUpdate.setStartsAt(updated.getStartsAt());
         toUpdate.setTaskDone(updated.isTaskDone());
         toUpdate.setPriority(updated.getPriority());
+        toUpdate.setCategories(updated.getCategories());
+//        setCategoriesOnTask(toUpdate, taskDto);
 
         setLastChangedAsNow(toUpdate);
-        setCategoriesOnTask(toUpdate, taskDto);
         setNotificationOnTaskUpdate(updated, toUpdate);
         setSubtasksOnTaskUpdate(updated, toUpdate);
+        System.out.println(toUpdate.getSubtasks().size());
 
         saveTask(toUpdate);
         mailService.handNotificationInScheduler(mail, toUpdate);
@@ -95,14 +101,6 @@ public class TaskServiceHandler {
 
     private void setUserOnTask(Task task, short userId){
         task.setUser(User.builder().id(userId).build());
-    }
-
-    private void setCategoriesOnTask(Task task, TaskDto taskDto) {
-        task.setCategories(
-                taskDto.categoryIds().stream().map(
-                        id -> Category.builder().id(id).build()
-                ).collect(Collectors.toList())
-        );
     }
 
     private void setLastChangedAsNow(Task task){
@@ -153,32 +151,44 @@ public class TaskServiceHandler {
     }
 
     private void setSubtasksOnTaskUpdate(Task updated, Task toUpdate){
-        for (short i = 0; i < updated.getSubtasks().size(); i++){
-            Subtask subtask = updated.getSubtasks().get(i);
-            subtask.setTask(toUpdate);
-            subtask.setOrderInList(i);
+//        for (short i = 0; i < updated.getSubtasks().size(); i++){
+//            Subtask subtask = updated.getSubtasks().get(i);
+//            subtask.setTask(toUpdate);
+//            subtask.setOrderInList(i);
+//        }
+//        subtaskRepository.deleteAll(toUpdate.getSubtasks());
+//        subtaskRepository.saveAll(updated.getSubtasks());
+//
+//        toUpdate.setSubtasks(updated.getSubtasks());
+        short i = 0;
+        for (Subtask toReplace: toUpdate.getSubtasks()){
+            if (updated.getSubtasks().size() > i){
+                Subtask subtask = updated.getSubtasks().get(i);
+                toReplace.setName(subtask.getName());
+                toReplace.setOrderInList(i);
+                toReplace.setCompleted(subtask.isCompleted());
+                i++;
+            }
         }
-        subtaskRepository.deleteAll(toUpdate.getSubtasks());
-        subtaskRepository.saveAll(updated.getSubtasks());
 
-        toUpdate.setSubtasks(updated.getSubtasks());
+        int difference = toUpdate.getSubtasks().size() - updated.getSubtasks().size();
+        if (difference > 0){
+            removeLastSubtasks(toUpdate.getSubtasks(), i);
+            return;
+        }
+        while (difference++ != 0){
+            Subtask subtask = updated.getSubtasks().get(i++);
+            subtask.setTask(toUpdate);
+            subtask.setOrderInList((short) toUpdate.getSubtasks().size());
+
+            toUpdate.getSubtasks().add(subtask);
+        }
     }
 
-    // TODO: this one deserves its place in some separate util class
-
-    public void setCategoryIdsForTaskDto(List<TaskDto> taskDtoList) {
-        if (taskDtoList.size() == 0) return;
-
-        // TODO: perhaps I want to collect category names as well and then sort by them
-        //  (easier for frontend, but is it worth it?)
-        Map<Integer, TaskDto> map = taskDtoList.stream().collect(Collectors.toMap(TaskDto::id, Function.identity()));
-        List<TaskCategory> taskCategories = taskRepository.getCategoryIdsByTaskIds(
-                taskDtoList.stream().map(TaskDto::id).toList()
-        );
-
-        for (TaskCategory taskCategory : taskCategories)
-            map.get(taskCategory.getTaskId()).categoryIds().add(taskCategory.getCategoryId());
+    private void removeLastSubtasks(List<Subtask> subtasks, int startIndex){
+        for (int i = startIndex; i < subtasks.size(); i++) {
+            subtasks.get(i).setTask(null);
+        }
+        subtasks.subList(startIndex, subtasks.size()).clear();
     }
-
-
 }

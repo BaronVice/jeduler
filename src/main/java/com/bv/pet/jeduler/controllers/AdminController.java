@@ -33,7 +33,7 @@ public class AdminController {
         return ResponseEntity.ok(applicationInfo.userAmount());
     }
 
-    @PostMapping("/create-user")
+    @PostMapping("/users")
     public ResponseEntity<?> create(@RequestBody UserDto userDto){
         anAssert.allowedCreation(
                 applicationInfo.userAmount().getAmount(),
@@ -44,7 +44,7 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/delete-user/{id}")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<?> delete(@PathVariable Short id){
         anAssert.notMainAdmin(id);
 

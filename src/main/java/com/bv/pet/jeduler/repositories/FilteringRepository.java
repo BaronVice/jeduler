@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -21,7 +20,7 @@ public class FilteringRepository {
     @PersistenceContext
     private final EntityManager em;
 
-    public List<Task> filterForFuckSake(
+    public List<Task> filter(
             short userId,
             String name,
             List<Short> priorities,
