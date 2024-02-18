@@ -55,25 +55,11 @@ public class MockController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/subtasks")
-    public ResponseEntity<?> addSubtasks(
-            @RequestParam(name = "taskid", defaultValue = "-1") int taskId,
-            @RequestParam(name = "amount", defaultValue = "1") int amount
-    ){
-        mockService.addSubtasks(
-                taskId,
-                amount
-        );
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/notification")
     public ResponseEntity<?> addNotification(
-            @RequestParam(name = "taskid", defaultValue = "-1") int taskId,
             @RequestParam(name = "date") Optional<Date> date
     ){
         mockService.addNotification(
-                taskId,
                 date.orElse(new Date(System.currentTimeMillis() + 10000))
         );
         return ResponseEntity.ok().build();

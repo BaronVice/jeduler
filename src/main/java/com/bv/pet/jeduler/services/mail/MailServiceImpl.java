@@ -7,6 +7,7 @@ import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.repositories.UserRepository;
+import com.bv.pet.jeduler.services.mock.pools.TaskPool;
 import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class MailServiceImpl {
     private final JavaMailSender javaMailSender;
     private final ThreadPoolTaskScheduler scheduler;
     private final Map<Integer, ScheduledFuture<?>> futureMap;
+    private final TaskPool taskPool;
 
     @Transactional(readOnly = true)
     public void sendTextEmail(String mail, int taskId){
@@ -106,8 +108,10 @@ public class MailServiceImpl {
     }
 
     private void removeNotification(Task task){
+        task.getNotification().setTask(null);
         task.setNotification(null);
         futureMap.remove(task.getId());
         taskRepository.save(task);
+        taskPool.checkIn(task);
     }
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(
@@ -47,5 +48,17 @@ public class Category implements UserActivity<Short> {
         for (Task task : this.tasks){
             task.getCategories().remove(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Category category)) return false;
+        return Objects.equals(getName(), category.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

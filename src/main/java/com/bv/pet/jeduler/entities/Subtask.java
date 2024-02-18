@@ -3,6 +3,8 @@ package com.bv.pet.jeduler.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 @Table
 @Getter
@@ -10,7 +12,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Subtask implements Comparable<Subtask> {
+public class Subtask implements Comparable<Subtask>, ApplicationEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -35,5 +37,17 @@ public class Subtask implements Comparable<Subtask> {
     @Override
     public int compareTo(Subtask o) {
         return this.orderInList - o.orderInList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Subtask subtask)) return false;
+        return isCompleted() == subtask.isCompleted() && getOrderInList() == subtask.getOrderInList() && Objects.equals(getId(), subtask.getId()) && Objects.equals(getTask(), subtask.getTask()) && Objects.equals(getName(), subtask.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), isCompleted(), getOrderInList());
     }
 }

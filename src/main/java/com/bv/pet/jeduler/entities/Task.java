@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import static jakarta.persistence.CascadeType.*;
 
@@ -13,7 +14,6 @@ import static jakarta.persistence.CascadeType.*;
 @Table
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -58,8 +58,8 @@ public class Task implements UserActivity<Integer> {
     @OneToMany(
             fetch = FetchType.EAGER,
             cascade = {REFRESH, MERGE, PERSIST, REMOVE},
-            mappedBy = "task",
-            orphanRemoval = true
+            mappedBy = "task"/*,
+            orphanRemoval = true*/
     )
     private List<Subtask> subtasks;
 
@@ -80,4 +80,16 @@ public class Task implements UserActivity<Integer> {
     @OneToOne(mappedBy = "task", cascade = ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     private Notification notification;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Task task)) return false;
+        return isTaskDone() == task.isTaskDone() && getPriority() == task.getPriority() && Objects.equals(getId(), task.getId()) && Objects.equals(getName(), task.getName()) && Objects.equals(getDescription(), task.getDescription()) && Objects.equals(getCategories(), task.getCategories()) && Objects.equals(getCategoryIds(), task.getCategoryIds()) && Objects.equals(getSubtasks(), task.getSubtasks()) && Objects.equals(getUser(), task.getUser()) && Objects.equals(getStartsAt(), task.getStartsAt()) && Objects.equals(getLastChanged(), task.getLastChanged()) && Objects.equals(getNotification(), task.getNotification());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getDescription(), isTaskDone(), getPriority(), getStartsAt(), getLastChanged());
+    }
 }

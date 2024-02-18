@@ -10,11 +10,11 @@ import java.time.Instant;
 @Table
 @Getter
 @Setter
-@ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Notification {
+public class Notification implements ApplicationEntity<Integer> {
     @Id
     @Column(name = "task_id")
     private Integer id;

@@ -1,11 +1,13 @@
 package com.bv.pet.jeduler.entities.user;
 
+import com.bv.pet.jeduler.entities.ApplicationEntity;
 import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.entities.Task;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 import static jakarta.persistence.CascadeType.*;
 
@@ -23,7 +25,7 @@ import static jakarta.persistence.CascadeType.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User implements ApplicationEntity<Short> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Short id;
@@ -45,5 +47,17 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return getUsername().equals(user.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername());
     }
 }
