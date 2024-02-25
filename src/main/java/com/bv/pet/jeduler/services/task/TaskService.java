@@ -37,9 +37,11 @@ public class TaskService implements ITaskService {
             String name,
             List<Short> priorities,
             List<Short> categories,
+            boolean categoriesAny,
             Date from,
             Date to,
             int page,
+            int size,
             OrderType order
     ) {
         return filtering.get(
@@ -47,9 +49,11 @@ public class TaskService implements ITaskService {
                 name,
                 priorities,
                 categories,
+                categoriesAny,
                 from,
                 to,
                 page,
+                size,
                 order
         );
     }

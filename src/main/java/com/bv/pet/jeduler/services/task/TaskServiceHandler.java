@@ -39,7 +39,7 @@ public class TaskServiceHandler {
         Task task = taskRepository.findById(id).orElseThrow(
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
         );
-        categoryRepository.findIdsByTaskId(task.getId());
+        task.setCategoryIds(categoryRepository.findIdsByTaskId(task.getId()));
 
         return taskMapper.toTaskDto(task);
     }
@@ -47,9 +47,9 @@ public class TaskServiceHandler {
     @Transactional
     public Task create(short userId, String mail, TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
+        System.out.println();
 
         setUserOnTask(task, userId);
-//        setCategoriesOnTask(task, taskDto);
         setLastChangedAsNow(task);
         setNotificationOnTaskCreate(task, taskDto);
         setSubtasksOnTaskCreate(task);

@@ -11,7 +11,14 @@ import java.util.Objects;
 import static jakarta.persistence.CascadeType.*;
 
 @Entity
-@Table
+@Table(
+        indexes = {
+                @Index(name = "name_idx", columnList = "name"),
+                @Index(name = "starts_at_idx", columnList = "startsAt"),
+                @Index(name = "priority_idx", columnList = "priority"),
+                @Index(name = "user_id_idx", columnList = "user_id")
+        }
+)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -48,7 +55,11 @@ public class Task implements UserActivity<Integer> {
                             name = "FK_CATEGORY_TASK_ID",
                             foreignKeyDefinition = "foreign key (category_id) references category(id) on delete cascade"
                     )
-            )
+            ),
+            indexes = {
+                    @Index(name = "category_id_idx", columnList = "category_id"),
+                    @Index(name = "task_id_idx", columnList = "task_id")
+            }
     )
     private List<Category> categories;
 

@@ -29,7 +29,7 @@ public class UserPool extends ObjectPool<User> {
                 "$argon2id$v=19$m=16384,t=2,p=1$ucTBGBGVW2SmbpmGEQlkJw$P61VQNQilS+zeoU9Zyg8joaSkM8nUwHG+HcyJprBDSQ";
 
         List<Category> categories = getEntities(categoryPool, 5, 10);
-        List<Task> tasks = getEntities(taskPool, 4, 30);
+        List<Task> tasks = getEntities(taskPool, 50, 100);
         User user = User.builder()
                 .username(name)
                 .password(MOCK_USER_PASSWORD)

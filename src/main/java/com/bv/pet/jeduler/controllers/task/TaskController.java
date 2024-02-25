@@ -40,20 +40,26 @@ public class TaskController {
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "priorities", required = false) List<Short> priorities,
             @RequestParam(name = "categories", required = false) List<Short> categories,
+            @RequestParam(name = "c_any", defaultValue = "0") boolean categoriesAny, // TODO: in next update perhaps
             @RequestParam(name = "from", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Date from,
             @RequestParam(name = "to", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Date to,
             @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "order", defaultValue = "name") OrderType order
     ) {
+        size = Math.min(size, 20);
+
         return ResponseEntity.ok(
                 taskService.get(
                         userDetails.getUserId(),
                         name,
                         priorities,
                         categories,
+                        categoriesAny,
                         from,
                         to,
                         page,
+                        size,
                         order
                 )
         );

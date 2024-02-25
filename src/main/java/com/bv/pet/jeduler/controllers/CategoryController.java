@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/jeduler/category")
+@RequestMapping("/jeduler/categories")
 public class CategoryController {
     private final ICategoryService categoryService;
     private final ApplicationInfo applicationInfo;

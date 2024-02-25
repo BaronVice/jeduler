@@ -16,9 +16,11 @@ public interface ITaskService {
             String name,
             List<Short> priorities,
             List<Short> categories,
+            boolean categoriesAny,
             Date from,
             Date to,
             int page,
+            int size,
             OrderType orderType
     );
     Integer create(short userId, String mail, TaskDto taskDto);

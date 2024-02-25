@@ -26,9 +26,11 @@ public class FilteringHandler {
             String name,
             List<Short> priorities,
             List<Short> categories,
+            boolean categoriesAny,
             Date from,
             Date to,
             int page,
+            int size,
             OrderType order
     ) {
         List<TaskDto> taskDtos = taskMapper.toTaskDtoList(
@@ -37,9 +39,11 @@ public class FilteringHandler {
                         name,
                         priorities,
                         categories,
+                        categoriesAny,
                         from,
                         to,
                         page,
+                        size,
                         order
                 )
         );

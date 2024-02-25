@@ -16,7 +16,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class FilteringRepository {
-    private static final int PAGE_SIZE = 10;
     @PersistenceContext
     private final EntityManager em;
 
@@ -25,29 +24,46 @@ public class FilteringRepository {
             String name,
             List<Short> priorities,
             List<Short> categories,
+            boolean categoriesAny,
             Date from,
             Date to,
             int page,
+            int size,
             OrderType order
     ){
-        if (priorities == null){
-            priorities = List.of((short) 1, (short) 2, (short) 3);
-        }
-        if (name != null){
-            name = "%" + name + "%";
-        }
+        StringBuilder queryBuilder = new StringBuilder("select * from Task t where t.user_id = :user_id");
+        filterFrom(queryBuilder, from);
+        filterTo(queryBuilder, to);
+        filterPriorities(queryBuilder, priorities);
+        filterName(queryBuilder, name);
+        filterCategories(queryBuilder, categories);
+        queryBuilder.append(" order by :order");
 
-        if (categories == null){
-            return filterWithoutCategories(
-                userId,
-                name,
-                priorities,
-                from,
-                to,
-                page,
-                order
-            );
+        Query filterQuery = em.createNativeQuery(
+                queryBuilder.toString(),
+                Task.class
+        );
+
+        filterQuery.setParameter("user_id", userId);
+        filterQuery.setParameter("order", order.toString());
+        setParameter(filterQuery, "name", name);
+        setParameter(filterQuery, "from", from);
+        setParameter(filterQuery, "to", to);
+        setPaging(filterQuery, page, size);
+
+        return filterQuery.getResultList();
+    }
+
+    private void setParameter(Query query, String name, Object value){
+        try {
+            query.setParameter(name, value);
+        } catch (IllegalArgumentException ignored){
         }
+    }
+
+    private void filterCategories(StringBuilder queryBuilder, List<Short> categories) {
+        if (categories == null)
+            return;
 
         Query categoryIdsQuery = em.createNativeQuery(
                 String.format(
@@ -59,72 +75,46 @@ public class FilteringRepository {
         );
         List<Integer> taskIds = categoryIdsQuery.getResultList();
 
-        if (taskIds.size() == 0){
-            return new ArrayList<>();
-        }
+        if (taskIds.size() == 0)
+            return;
 
-        Query query = em.createNativeQuery(
-                String.format(
-                        "select * from Task t where " +
-                                "t.user_id = :user_id and " +
-                                "(cast(:name as text) is null or UPPER(t.name) like UPPER(:name)) and " +
-                                "(cast(:from as date) is null or t.starts_at >= :from) and " +
-                                "(cast(:to as date) is null or t.starts_at <= :to) and " +
-                                "t.id = %s and " +
-                                "t.priority = %s order by t.%s",
-                        SqlFormatter.wrapInAnyValues(taskIds),
-                        SqlFormatter.wrapInAnyValues(priorities),
-                        order.toString()
-                ),
-                Task.class
-        );
-
-        query.setParameter("user_id", userId);
-        query.setParameter("name", name);
-        query.setParameter("from", from);
-        query.setParameter("to", to);
-        setPaging(query, page);
-
-        return query.getResultList();
+        queryBuilder.append(" and t.id = ").append(SqlFormatter.wrapInAnyValues(taskIds));
     }
 
-    private List<Task> filterWithoutCategories(
-            short userId,
-            String name,
-            List<Short> priorities,
-            Date from,
-            Date to,
-            int page,
-            OrderType order
-    ) {
-        Query query = em.createNativeQuery(
-                String.format(
-                        "select * from Task t where " +
-                                "t.user_id = :user_id and " +
-                                "(cast(:name as text) is null or UPPER(t.name) like UPPER(:name)) and " +
-                                "(cast(:from as date) is null or t.starts_at >= :from) and " +
-                                "(cast(:to as date) is null or t.starts_at <= :to) and " +
-                                "t.priority = %s order by t.%s",
-                        SqlFormatter.wrapInAnyValues(priorities),
-                        order.toString()
-                ),
-                Task.class
-        );
+    private void filterName(StringBuilder queryBuilder, String name) {
+        if (name == null)
+            return;
 
-        query.setParameter("user_id", userId);
-        query.setParameter("name", name);
-        query.setParameter("from", from);
-        query.setParameter("to", to);
-        setPaging(query, page);
+        queryBuilder.append(" and UPPER(t.name) like CONCAT('%',UPPER(:name),'%')");
+    }
 
-        return query.getResultList();
+    private void filterPriorities(StringBuilder queryBuilder, List<Short> priorities) {
+        if (priorities == null)
+            return;
+
+        queryBuilder.append(" and t.priority = ").append(SqlFormatter.wrapInAnyValues(priorities));
+    }
+
+    private void filterTo(StringBuilder queryBuilder, Date to) {
+        if (to == null)
+            return;
+
+        queryBuilder.append(" and t.starts_at <= :to");
+    }
+
+    private void filterFrom(StringBuilder queryBuilder, Date from) {
+        if (from == null)
+            return;
+
+        queryBuilder.append(" and t.starts_at >= :from");
     }
 
     private void setPaging(
             Query query,
-            int page
+            int page,
+            int size
     ){
-        query.setFirstResult(page * PAGE_SIZE);
-        query.setMaxResults(PAGE_SIZE);
+        query.setFirstResult(page * size);
+        query.setMaxResults(size);
     }
 }

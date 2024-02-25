@@ -18,7 +18,7 @@ import static jakarta.persistence.CascadeType.*;
  */
 @Table(
         name = "users",
-        uniqueConstraints = @UniqueConstraint(columnNames = "username")
+        uniqueConstraints = @UniqueConstraint(columnNames = "username", name = "username_unique")
 )
 @Getter
 @Setter

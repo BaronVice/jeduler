@@ -6,7 +6,11 @@ import lombok.*;
 import java.util.Objects;
 
 @Entity
-@Table
+@Table(
+        indexes = {
+                @Index(name = "task_id_idx", columnList = "task_id")
+        }
+)
 @Getter
 @Setter
 @Builder

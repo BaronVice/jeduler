@@ -10,7 +10,10 @@ import com.bv.pet.jeduler.services.mail.MailServiceImpl;
 import com.bv.pet.jeduler.services.mock.pools.ObjectPool;
 import com.bv.pet.jeduler.utils.Assert;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
