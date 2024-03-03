@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -41,6 +42,7 @@ public class MailServiceImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender javaMailSender;
+    @Qualifier("telegramSender")
     private final ThreadPoolTaskScheduler scheduler;
     private final Map<Integer, ScheduledFuture<?>> futureMap;
     private final TaskPool taskPool;

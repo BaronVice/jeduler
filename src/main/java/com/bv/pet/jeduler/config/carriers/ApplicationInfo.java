@@ -3,6 +3,7 @@ package com.bv.pet.jeduler.config.carriers;
 import com.bv.pet.jeduler.application.cache.*;
 
 import java.util.List;
+import java.util.Map;
 
 public record ApplicationInfo(
         AdminInfo adminInfo,

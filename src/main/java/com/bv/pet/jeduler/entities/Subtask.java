@@ -7,9 +7,9 @@ import java.util.Objects;
 
 @Entity
 @Table(
-        indexes = {
-                @Index(name = "task_id_idx", columnList = "task_id")
-        }
+//        indexes = {
+//                @Index(name = "task_id_idx", columnList = "task_id")
+//        }
 )
 @Getter
 @Setter
@@ -26,7 +26,7 @@ public class Subtask implements Comparable<Subtask>, ApplicationEntity<Integer> 
             name = "task_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
-                    name = "FK_SUBTASK_IDS",
+                    name = "FK_TASK_IDS",
                     foreignKeyDefinition = "foreign key (task_id) references task(id) on delete cascade"
             )
     )

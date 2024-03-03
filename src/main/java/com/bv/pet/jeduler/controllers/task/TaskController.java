@@ -1,7 +1,7 @@
 package com.bv.pet.jeduler.controllers.task;
 
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
-import com.bv.pet.jeduler.datacarriers.CreateResponse;
+import com.bv.pet.jeduler.datacarriers.SingleValueResponse;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
 import com.bv.pet.jeduler.services.task.ITaskService;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -79,7 +78,7 @@ public class TaskController {
         );
 
         Integer id = taskService.create(userId, mail, taskDto);
-        return ResponseEntity.ok(new CreateResponse<>(id));
+        return ResponseEntity.ok(new SingleValueResponse<>(id));
     }
 
     @PatchMapping

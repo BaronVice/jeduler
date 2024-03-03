@@ -16,6 +16,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Order(2)
+// TODO: adapt to telegram
 public class SchedulerRunner implements ApplicationRunner {
     private final MailServiceImpl mailService;
     private final NotificationRepository notificationRepository;

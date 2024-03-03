@@ -3,6 +3,7 @@ package com.bv.pet.jeduler.entities.user;
 import com.bv.pet.jeduler.entities.ApplicationEntity;
 import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.entities.Task;
+import com.bv.pet.jeduler.entities.TelegramChat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +37,9 @@ public class User implements ApplicationEntity<Short> {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "user")
+    private TelegramChat telegramChat;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "user")
     private List<Category> categories;

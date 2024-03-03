@@ -10,8 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdminInfo {
     private short id;
-    @Value("${custom.admin.username}")
+    // TODO: Shouldn't they be final?
+    //  move to config as bean?
     private String username;
-    @Value("${custom.admin.password}")
-    private String password;
 }

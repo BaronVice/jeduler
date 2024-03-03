@@ -28,15 +28,15 @@ public class UserPool extends ObjectPool<User> {
         String MOCK_USER_PASSWORD =
                 "$argon2id$v=19$m=16384,t=2,p=1$ucTBGBGVW2SmbpmGEQlkJw$P61VQNQilS+zeoU9Zyg8joaSkM8nUwHG+HcyJprBDSQ";
 
-        List<Category> categories = getEntities(categoryPool, 5, 10);
-        List<Task> tasks = getEntities(taskPool, 50, 100);
+//        List<Category> categories = getEntities(categoryPool, 5, 10);
+        List<Task> tasks = getEntities(taskPool, 100, 101);
         User user = User.builder()
                 .username(name)
                 .password(MOCK_USER_PASSWORD)
                 .role(Role.USER)
                 .build();
 
-        connectEntities(user, categories, tasks);
+        connectEntities(user, /*categories,*/ tasks);
         return user;
     }
 
@@ -53,18 +53,18 @@ public class UserPool extends ObjectPool<User> {
         );
     }
 
-    private void connectEntities(User user, List<Category> categories, List<Task> tasks) {
-        user.setCategories(categories);
+    private void connectEntities(User user, /*List<Category> categories,*/ List<Task> tasks) {
+//        user.setCategories(categories);
         user.setTasks(tasks);
-        categories.forEach(
-                c -> {
-                    c.setTasks(tasks);
-                    c.setUser(user);
-                }
-        );
+//        categories.forEach(
+//                c -> {
+//                    c.setTasks(tasks);
+//                    c.setUser(user);
+//                }
+//        );
         tasks.forEach(
                 t -> {
-                    t.setCategories(categories);
+//                    t.setCategories(categories);
                     t.setUser(user);
                 }
         );

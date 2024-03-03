@@ -10,12 +10,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 public class MailServiceConfig {
-    @Bean
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
+    @Bean(name = "telegramSender")
+    public ThreadPoolTaskScheduler notificationSender(){
+        return taskSchedulerCreator(3, "NotificationSenderThread");
+    }
+
+    @Bean(name = "tokenDisposerScheduler")
+    public ThreadPoolTaskScheduler oneTimeTokenDisposer(){
+        return taskSchedulerCreator(2, "OneTimeTokenCleanerThread");
+    }
+
+    private ThreadPoolTaskScheduler taskSchedulerCreator(int poolSize, String threadPrefix){
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(10);
+        threadPoolTaskScheduler.setPoolSize(poolSize);
         threadPoolTaskScheduler.setRemoveOnCancelPolicy(true);
-        threadPoolTaskScheduler.setThreadNamePrefix("MailServiceTaskScheduler");
+        threadPoolTaskScheduler.setThreadNamePrefix(threadPrefix);
 
         return threadPoolTaskScheduler;
     }

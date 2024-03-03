@@ -3,7 +3,7 @@ server:
   ssl:
     enabled: false # TODO: CHANGE TO TRUE AFTER CONFIGURING POSTMAN SSL
     key-store-type: PKCS12
-    key-store: ***
+    key-store: classpath:ssl/***.p12
     key-store-password: ***
 
   servlet:
@@ -32,15 +32,15 @@ spring:
           starttls.enable: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/jeduler
+    url: jdbc:postgresql://localhost:5432/***
     username: ***
     password: ***
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
-    # show-sql: true
+      ddl-auto: create-drop
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -58,11 +58,13 @@ spring:
 
 custom:
   admin:
-    # Username is mail
-    username: maestrovice@duck.com
+    username: ***
     # 123
     password: $argon2id$v=19$m=16384,t=2,p=1$ucTBGBGVW2SmbpmGEQlkJw$P61VQNQilS+zeoU9Zyg8joaSkM8nUwHG+HcyJprBDSQ
   generated:
     user:
       #123 as well
       password: $argon2id$v=19$m=16384,t=2,p=1$ucTBGBGVW2SmbpmGEQlkJw$P61VQNQilS+zeoU9Zyg8joaSkM8nUwHG+HcyJprBDSQ
+    bot:
+      name: ***
+      token: ***

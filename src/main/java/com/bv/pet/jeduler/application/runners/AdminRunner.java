@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import static com.bv.pet.jeduler.entities.user.Role.ADMIN;
 public class AdminRunner implements ApplicationRunner {
     private final UserRepository userRepository;
     private final AdminInfo adminInfo;
+    private final Environment env;
 
     @Override
     @Transactional
@@ -28,15 +30,20 @@ public class AdminRunner implements ApplicationRunner {
     }
 
     private void createAdmin() {
-        Optional<User> admin = userRepository.findByUsername(adminInfo.getUsername());
+        String username = env.getProperty("custom.admin.username");
+        String password = env.getProperty("custom.admin.password");
+
+        adminInfo.setUsername(username);
+
+        Optional<User> admin = userRepository.findByUsername(username);
         if (admin.isPresent()){
             adminInfo.setId(admin.get().getId());
             return;
         }
 
         User user = new User(
-                adminInfo.getUsername(),
-                adminInfo.getPassword(),
+                username,
+                password,
                 ADMIN
         );
 

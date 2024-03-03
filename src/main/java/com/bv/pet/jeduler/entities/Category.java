@@ -12,10 +12,10 @@ import java.util.Objects;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(name = "UniqueName", columnNames = {"name", "user_id"})
-        },
+        }/*,
         indexes = {
                 @Index(name = "user_id_idx", columnList = "user_id")
-        }
+        }*/
 )
 @AllArgsConstructor
 @NoArgsConstructor

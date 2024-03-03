@@ -1,12 +1,11 @@
 package com.bv.pet.jeduler.application.runners;
 
-import com.bv.pet.jeduler.application.cache.UserAmount;
-import com.bv.pet.jeduler.application.cache.UserInfo;
-import com.bv.pet.jeduler.application.cache.UserInfoCategories;
-import com.bv.pet.jeduler.application.cache.UserInfoTasks;
+import com.bv.pet.jeduler.application.cache.*;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
+import com.bv.pet.jeduler.repositories.TelegramChatRepository;
 import com.bv.pet.jeduler.repositories.UserRepository;
+import com.bv.pet.jeduler.repositories.projections.chat.UserChat;
 import com.bv.pet.jeduler.repositories.projections.user.UserIdCollector;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -20,13 +19,16 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Order(2)
-public class UserInfoRunner implements ApplicationRunner {
+public class InfoRunner implements ApplicationRunner {
     private final UserInfoCategories userInfoCategories;
     private final UserInfoTasks userInfoTasks;
     private final UserAmount userAmount;
+    private final TelegramInfo telegramInfo;
+
     private final CategoryRepository categoryRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final TelegramChatRepository telegramChatRepository;
 
     @Override
     @Transactional
@@ -35,6 +37,7 @@ public class UserInfoRunner implements ApplicationRunner {
         populate(userInfoCategories, categoryRepository);
         populate(userInfoTasks, taskRepository);
         countUsers();
+        collectChatIds();
     }
 
     public void insertUserId(UserInfo... userInfos){
@@ -56,6 +59,13 @@ public class UserInfoRunner implements ApplicationRunner {
     private void countUsers() {
         userAmount.setAmount(
                 (short) userRepository.count()
+        );
+    }
+
+    private void collectChatIds() {
+        List<UserChat> userChatList = telegramChatRepository.getAllBy();
+        userChatList.forEach(
+                pair -> telegramInfo.getUsersChatId().put(pair.getUserId(), pair.getId())
         );
     }
 }
