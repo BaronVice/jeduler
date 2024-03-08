@@ -2,7 +2,7 @@ package com.bv.pet.jeduler.controllers;
 
 import com.bv.pet.jeduler.datacarriers.SingleValueResponse;
 import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
-import com.bv.pet.jeduler.services.telegram.token.TokenGenerator;
+import com.bv.pet.jeduler.services.notificationsenders.telegram.token.TokenGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

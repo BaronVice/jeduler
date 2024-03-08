@@ -16,12 +16,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryService implements ICategoryService {
+public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ApplicationInfo applicationInfo;
 
-    @Override
     @Transactional(readOnly = true)
     public List<CategoryDto> all(short userId) {
         return categoryMapper.toCategoryDtoList(
@@ -29,7 +28,6 @@ public class CategoryService implements ICategoryService {
         );
     }
 
-    @Override
     @Transactional
     public Short create(short userId, CategoryDto categoryDto) {
         Category category = categoryMapper.toCategory(categoryDto);
@@ -41,7 +39,6 @@ public class CategoryService implements ICategoryService {
         return category.getId();
     }
 
-    @Override
     @Transactional
     public void update(CategoryDto categoryDto) {
         Category toUpdate = categoryRepository.findById(categoryDto.id()).orElseThrow(
@@ -55,7 +52,6 @@ public class CategoryService implements ICategoryService {
         categoryRepository.save(toUpdate);
     }
 
-    @Override
     @Transactional
     public void delete(short userId, short id) {
         categoryRepository.deleteById(id);

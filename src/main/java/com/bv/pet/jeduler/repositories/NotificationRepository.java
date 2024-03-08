@@ -11,9 +11,7 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
     String GET_MAIL_NOTIFICATION =
-            "select u.username, j.id, j.notify_at from " +
-            "(select t.id, t.user_id, n.notify_at from task t inner join notification n on t.id = n.task_id) j " +
-            "inner join users u on u.id = j.user_id";
+            "select t.id, t.user_id, n.notify_at from task t inner join notification n on t.id = n.task_id";
 
     @Query(value = GET_MAIL_NOTIFICATION, nativeQuery = true)
     List<MailTask> getMailNotifications();

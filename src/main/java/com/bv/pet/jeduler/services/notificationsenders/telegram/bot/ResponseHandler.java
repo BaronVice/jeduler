@@ -1,13 +1,11 @@
-package com.bv.pet.jeduler.services.telegram.bot;
+package com.bv.pet.jeduler.services.notificationsenders.telegram.bot;
 
-import com.bv.pet.jeduler.services.telegram.token.TokenConnector;
+import com.bv.pet.jeduler.services.notificationsenders.telegram.token.TokenConnector;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
-
-import static com.bv.pet.jeduler.services.telegram.bot.UserState.*;
 
 import java.util.Map;
 import java.util.Objects;
@@ -23,8 +21,7 @@ public class ResponseHandler {
         chatStates = db.getMap(Constants.CHAT_STATES);
     }
 
-    public void replyToStart(Long chatId) {
-        System.out.println(chatId);
+    public void replyToStart(long chatId) {
         if (connector.isConnected(chatId)){
             changeToConnectedState(chatId);
             return;
@@ -34,10 +31,11 @@ public class ResponseHandler {
         message.setChatId(chatId);
         message.setText(Constants.START_TEXT);
         sender.execute(message);
-        chatStates.put(chatId, AWAITING_TOKEN);
+        chatStates.put(chatId, UserState.AWAITING_TOKEN);
     }
 
     public void replyToButtons(long chatId, Message message) {
+        System.out.println(chatId);
         if (message.getText() == null)
             return;
 
@@ -45,13 +43,12 @@ public class ResponseHandler {
             stopChat(chatId);
         }
 
-        if (Objects.requireNonNull(chatStates.get(chatId)) == AWAITING_TOKEN) {
+        if (Objects.requireNonNull(chatStates.get(chatId)) == UserState.AWAITING_TOKEN) {
             replyToToken(chatId, message);
         }
     }
 
     private void replyToToken(long chatId, Message token) {
-        // There is some logic to check code and connect if match
         if (! connector.connect(chatId, token.getText()))
             return;
 
@@ -63,7 +60,7 @@ public class ResponseHandler {
         message.setChatId(chatId);
         message.setText(Constants.CONNECTED_TEXT);
         sender.execute(message);
-        chatStates.put(chatId, CONNECTED);
+        chatStates.put(chatId, UserState.CONNECTED);
     }
 
     private void stopChat(long chatId) {

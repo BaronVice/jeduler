@@ -1,5 +1,6 @@
 package com.bv.pet.jeduler.services.user;
 
+import com.bv.pet.jeduler.application.cache.TelegramInfo;
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.dtos.UserDto;
 import com.bv.pet.jeduler.entities.user.User;
@@ -13,13 +14,12 @@ import static com.bv.pet.jeduler.entities.user.Role.USER;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements IUserService {
+public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final ApplicationInfo applicationInfo;
+    private final TelegramInfo telegramInfo;
 
-
-    @Override
     @Transactional
     public void save(UserDto userDto) {
         User user = new User(
@@ -32,10 +32,11 @@ public class UserService implements IUserService {
         applicationInfo.addUser(user.getId());
     }
 
-    @Override
     @Transactional
     public void delete(Short id) {
         userRepository.deleteById(id);
         applicationInfo.deleteUser(id);
+        telegramInfo.getUsersChatId().remove(id);
+        telegramInfo.getTokenHolder().values().remove(id);
     }
 }

@@ -1,9 +1,6 @@
 package com.bv.pet.jeduler.controllers;
 
-import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
-import com.bv.pet.jeduler.services.mock.IMockService;
-import com.bv.pet.jeduler.utils.AllowedAmount;
-import com.bv.pet.jeduler.utils.Assert;
+import com.bv.pet.jeduler.services.mock.MockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +16,7 @@ import java.util.Optional;
 @RequestMapping("/jeduler/populate")
 // TODO: return some info back in response
 public class MockController {
-    private final IMockService mockService;
+    private final MockService mockService;
 
     @PostMapping("/users")
     public ResponseEntity<?> addUser(

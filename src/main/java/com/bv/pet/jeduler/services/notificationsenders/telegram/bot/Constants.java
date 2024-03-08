@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.telegram.bot;
+package com.bv.pet.jeduler.services.notificationsenders.telegram.bot;
 
 public final class Constants {
     public static final String START_DESCRIPTION = "Starts the bot";

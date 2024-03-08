@@ -4,7 +4,7 @@ import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.SingleValueResponse;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
-import com.bv.pet.jeduler.services.task.ITaskService;
+import com.bv.pet.jeduler.services.task.TaskService;
 import com.bv.pet.jeduler.utils.AllowedAmount;
 import com.bv.pet.jeduler.utils.Assert;
 import jakarta.validation.Valid;
@@ -22,14 +22,17 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/jeduler/tasks")
 public class TaskController {
-    private final ITaskService taskService;
+    private final TaskService taskService;
     private final ApplicationInfo applicationInfo;
     private final Assert anAssert;
 
     // Keep in mind that categoryIds and subtasks are unordered
     @GetMapping("/{id}")
-    public ResponseEntity<?> getTask(@PathVariable Integer id) {
-        return ResponseEntity.ok(taskService.get(id));
+    public ResponseEntity<?> getTask(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Integer id
+    ) {
+        return ResponseEntity.ok(taskService.get(userDetails.getUserId(), id));
     }
 
     // Keep in mind that categoryIds and subtasks are unordered
@@ -70,14 +73,13 @@ public class TaskController {
             @Valid @RequestBody TaskDto taskDto
     ) {
         short userId = userDetails.getUserId();
-        String mail = userDetails.getUsername();
 
         anAssert.allowedCreation(
                 applicationInfo.userInfoTasks().getInfo().get(userId),
                 AllowedAmount.TASK
         );
 
-        Integer id = taskService.create(userId, mail, taskDto);
+        Integer id = taskService.create(userId, taskDto);
         return ResponseEntity.ok(new SingleValueResponse<>(id));
     }
 
@@ -86,11 +88,9 @@ public class TaskController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody TaskDto taskDto
     ) {
-        String mail = userDetails.getUsername();
         short userId = userDetails.getUserId();
         taskService.update(
                 userId,
-                mail,
                 taskDto
         );
         return ResponseEntity.ok().build();

@@ -1,6 +1,9 @@
-package com.bv.pet.jeduler.services.telegram.bot;
+package com.bv.pet.jeduler.services.notificationsenders.telegram.bot;
 
-import com.bv.pet.jeduler.services.telegram.token.TokenConnector;
+import com.bv.pet.jeduler.application.cache.TelegramInfo;
+import com.bv.pet.jeduler.services.notificationsenders.telegram.token.TokenConnector;
+import com.bv.pet.jeduler.services.notificationsenders.NotificationMessageBuilder;
+import com.bv.pet.jeduler.services.notificationsenders.NotificationSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -19,23 +22,29 @@ import static org.telegram.abilitybots.api.util.AbilityUtils.getChatId;
 
 @Component
 // https://web.telegram.org/k/#@JedulerBot
-public class JedulerBot extends AbilityBot {
+public class JedulerBot extends AbilityBot implements NotificationSender {
     private final ResponseHandler responseHandler;
-    // TODO: private final NotificationSender sender; ?
+    private final TelegramNotificationSender sender;
 
     @Autowired
-    public JedulerBot(Environment env, TokenConnector connector){
+    public JedulerBot(
+            Environment env,
+            TokenConnector connector,
+            NotificationMessageBuilder messageBuilder,
+            TelegramInfo telegramInfo
+    ){
         super(
                 env.getProperty("custom.bot.token"),
                 env.getProperty("custom.bot.name")
         );
 
         responseHandler = new ResponseHandler(silent, db, connector);
+        sender = new TelegramNotificationSender(silent, telegramInfo.getUsersChatId(), db, messageBuilder);
     }
 
     @Override
     public long creatorId() {
-        return 1L;
+        return 565341892L;
     }
 
     public Ability startBot(){
@@ -52,5 +61,10 @@ public class JedulerBot extends AbilityBot {
     public Reply replyToButtons() {
         BiConsumer<BaseAbilityBot, Update> action = (abilityBot, upd) -> responseHandler.replyToButtons(getChatId(upd), upd.getMessage());
         return Reply.of(action, Flag.TEXT, upd -> responseHandler.userIsActive(getChatId(upd)));
+    }
+
+    @Override
+    public void send(int taskId, short userId) {
+        sender.send(taskId, userId);
     }
 }

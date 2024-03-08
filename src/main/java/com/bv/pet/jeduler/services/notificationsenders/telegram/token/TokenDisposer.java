@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.telegram.token;
+package com.bv.pet.jeduler.services.notificationsenders.telegram.token;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;

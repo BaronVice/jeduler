@@ -1,7 +1,6 @@
 package com.bv.pet.jeduler.services.task;
 
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
-import com.bv.pet.jeduler.entities.Category;
 import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Subtask;
 import com.bv.pet.jeduler.entities.Task;
@@ -10,10 +9,8 @@ import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.NotificationRepository;
-import com.bv.pet.jeduler.repositories.SubtaskRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
-import com.bv.pet.jeduler.repositories.projections.task.TaskCategory;
-import com.bv.pet.jeduler.services.mail.MailServiceImpl;
+import com.bv.pet.jeduler.services.notificationsenders.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -21,22 +18,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+// I wasn't drunk when I wrote this. Yet, this crap is crying for TODO: refactored
 public class TaskServiceHandler {
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
     private final NotificationRepository notificationRepository;
-    private final MailServiceImpl mailService;
+    private final NotificationService notificationService;
     private final TaskMapper taskMapper;
 
-    public TaskDto get(int id){
-        Task task = taskRepository.findById(id).orElseThrow(
+    public TaskDto get(short userId, int id){
+        Task task = taskRepository.findByUserIdAndId(userId, id).orElseThrow(
                 () -> new ApplicationException("Task not found", HttpStatus.NOT_FOUND)
         );
         task.setCategoryIds(categoryRepository.findIdsByTaskId(task.getId()));
@@ -45,7 +40,7 @@ public class TaskServiceHandler {
     }
 
     @Transactional
-    public Task create(short userId, String mail, TaskDto taskDto) {
+    public Task create(short userId, TaskDto taskDto) {
         Task task = taskMapper.toTask(taskDto);
         System.out.println();
 
@@ -55,13 +50,13 @@ public class TaskServiceHandler {
         setSubtasksOnTaskCreate(task);
 
         saveTask(task);
-        mailService.handNotificationInScheduler(mail, task);
+        notificationService.handNotificationInScheduler(userId, task);
 
         return task;
     }
 
     @Transactional
-    public void update(short userId, String mail, TaskDto taskDto) {
+    public void update(short userId, TaskDto taskDto) {
         Task updated = taskMapper.toTask(taskDto);
         Optional<Task> toUpdateOptional = taskRepository.findByUserIdAndId(userId, taskDto.id());
         if (toUpdateOptional.isEmpty())
@@ -85,14 +80,16 @@ public class TaskServiceHandler {
         System.out.println(toUpdate.getSubtasks().size());
 
         saveTask(toUpdate);
-        mailService.handNotificationInScheduler(mail, toUpdate);
+        notificationService.handNotificationInScheduler(userId, toUpdate);
     }
 
     @Transactional
     public void delete(short userId, int id) {
         Optional<Task> task = taskRepository.findByUserIdAndId(userId, id);
-        if (task.isPresent())
-            mailService.removeNotificationFromScheduler(id);
+        if (task.isPresent()){
+            notificationService.cancelNotification(id);
+            taskRepository.deleteById(id);
+        }
     }
 
     private void saveTask(Task task) {
@@ -130,7 +127,7 @@ public class TaskServiceHandler {
 
     private void setNotificationOnTaskUpdate(Task updated, Task toUpdate) {
         if (updated.getNotification() == null){
-            mailService.removeNotificationFromScheduler(toUpdate.getId());
+            notificationService.cancelNotification(toUpdate.getId());
             toUpdate.setNotification(null);
         } else {
             changeTaskNotification(updated, toUpdate);
@@ -142,7 +139,7 @@ public class TaskServiceHandler {
             toUpdate.setNotification(new Notification());
             toUpdate.getNotification().setTask(toUpdate);
         } else {
-            mailService.removeNotificationFromScheduler(toUpdate.getId());
+            notificationService.cancelNotification(toUpdate.getId());
         }
         toUpdate.getNotification().setNotifyAt(
                 updated.getNotification().getNotifyAt()

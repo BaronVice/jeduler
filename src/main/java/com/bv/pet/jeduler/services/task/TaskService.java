@@ -18,19 +18,17 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class TaskService implements ITaskService {
+public class TaskService {
     private final TaskServiceHandler handler;
     private final FilteringHandler filtering;
     private final StatisticsService statistics;
     private final ApplicationInfo applicationInfo;
 
-    @Override
     @Transactional(readOnly = true)
-    public TaskDto get(int id) {
-        return handler.get(id);
+    public TaskDto get(short userId, int id) {
+        return handler.get(userId, id);
     }
 
-    @Override
     @Transactional
     public List<TaskDto> get(
             short userId,
@@ -58,9 +56,8 @@ public class TaskService implements ITaskService {
         );
     }
 
-    @Override
-    public Integer create(short userId, String mail, TaskDto taskDto) {
-        Task task = handler.create(userId, mail, taskDto);
+    public Integer create(short userId, TaskDto taskDto) {
+        Task task = handler.create(userId, taskDto);
 
         applicationInfo.userInfoTasks().changeValue(
                 userId,
@@ -71,20 +68,17 @@ public class TaskService implements ITaskService {
         return task.getId();
     }
 
-    @Override
-    public void update(short userId, String mail, TaskDto taskDto) {
+    public void update(short userId, TaskDto taskDto) {
 //        Task updated = taskMapper.toTask(taskDto);
 //        Task toUpdate = handler.get(taskDto.getId());
 //        boolean wasDone = toUpdate.isTaskDone();
 //        Instant previousDate = toUpdate.getStartsAt();
 
-        handler.update(userId, mail, taskDto);
+        handler.update(userId, taskDto);
         // statistics.onTaskUpdate(updated, wasDone, previousDate);
     }
 
-    @Override
     public void delete(short userId, Integer id) {
-        // TODO: check if user owns task with such id
         handler.delete(userId, id);
         applicationInfo.userInfoTasks().changeValue(
                 userId,

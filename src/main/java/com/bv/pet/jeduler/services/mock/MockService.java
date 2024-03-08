@@ -6,14 +6,12 @@ import com.bv.pet.jeduler.config.carriers.Pools;
 import com.bv.pet.jeduler.entities.*;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.repositories.*;
-import com.bv.pet.jeduler.services.mail.MailServiceImpl;
 import com.bv.pet.jeduler.services.mock.pools.ObjectPool;
+import com.bv.pet.jeduler.services.notificationsenders.NotificationService;
 import com.bv.pet.jeduler.utils.Assert;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,16 +23,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MockService implements IMockService {
+public class MockService {
     private final ApplicationInfo applicationInfo;
     private final Pools pools;
-    private final MailServiceImpl mailService;
+    private final NotificationService notificationService;
     private final Assert anAssert;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
 
-    @Override
     public void addUsers(int amount) {
         amount = setMaxUsersAmount(amount);
         anAssert.amountIsPositive(amount);
@@ -56,7 +53,6 @@ public class MockService implements IMockService {
         );
     }
 
-    @Override
     @Transactional
     public void addTasks(int amount, short userId) {
         addUserActivity(
@@ -69,7 +65,6 @@ public class MockService implements IMockService {
         );
     }
 
-    @Override
     @Transactional
     public void addCategories(int amount, short userId) {
         addUserActivity(
@@ -110,7 +105,6 @@ public class MockService implements IMockService {
         pool.checkIn(userActivities);
     }
 
-    @Override
     @Transactional
     public void addNotification(Date date) {
         Task task = pools.taskPool().checkOut();
@@ -133,8 +127,8 @@ public class MockService implements IMockService {
     }
 
     private void addNotificationInScheduler(Task task) {
-        mailService.handNotificationInScheduler(
-                applicationInfo.adminInfo().getUsername(),
+        notificationService.handNotificationInScheduler(
+                applicationInfo.adminInfo().getId(),
                 task
         );
     }

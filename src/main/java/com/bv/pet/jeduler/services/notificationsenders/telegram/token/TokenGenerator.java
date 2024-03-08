@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.telegram.token;
+package com.bv.pet.jeduler.services.notificationsenders.telegram.token;
 
 import com.bv.pet.jeduler.application.cache.TelegramInfo;
 import com.bv.pet.jeduler.exceptions.ApplicationException;

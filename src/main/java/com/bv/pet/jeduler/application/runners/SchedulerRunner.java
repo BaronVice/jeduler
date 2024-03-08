@@ -2,8 +2,8 @@ package com.bv.pet.jeduler.application.runners;
 
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.projections.mailtask.MailTask;
-import com.bv.pet.jeduler.services.mail.MailServiceImpl;
-import com.bv.pet.jeduler.services.mail.SendEmailTask;
+import com.bv.pet.jeduler.services.notificationsenders.NotificationService;
+import com.bv.pet.jeduler.services.notificationsenders.SendNotificationTask;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,22 +16,21 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Order(2)
-// TODO: adapt to telegram
 public class SchedulerRunner implements ApplicationRunner {
-    private final MailServiceImpl mailService;
+    private final NotificationService notificationService;
     private final NotificationRepository notificationRepository;
 
     @Override
     public void run(ApplicationArguments args) {
-        ThreadPoolTaskScheduler scheduler = mailService.getScheduler();
+        ThreadPoolTaskScheduler scheduler = notificationService.getScheduler();
         List<MailTask> tasks = notificationRepository.getMailNotifications();
 
         for (MailTask task : tasks) {
             scheduler.schedule(
-                    new SendEmailTask(
-                            task.getUsername(),
-                            task.getId(),
-                            mailService
+                    new SendNotificationTask(
+                            notificationService,
+                            task.getUserId(),
+                            task.getId()
                     ),
                     task.getNotifyAt()
             );

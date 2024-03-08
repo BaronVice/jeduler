@@ -4,7 +4,7 @@ import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.SingleValueResponse;
 import com.bv.pet.jeduler.datacarriers.dtos.CategoryDto;
 import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
-import com.bv.pet.jeduler.services.category.ICategoryService;
+import com.bv.pet.jeduler.services.category.CategoryService;
 import com.bv.pet.jeduler.utils.AllowedAmount;
 import com.bv.pet.jeduler.utils.Assert;
 import jakarta.validation.Valid;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/jeduler/categories")
 public class CategoryController {
-    private final ICategoryService categoryService;
+    private final CategoryService categoryService;
     private final ApplicationInfo applicationInfo;
     private final Assert anAssert;
 

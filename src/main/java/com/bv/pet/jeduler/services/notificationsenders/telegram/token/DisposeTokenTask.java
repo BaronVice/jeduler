@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.telegram.token;
+package com.bv.pet.jeduler.services.notificationsenders.telegram.token;
 
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ public class DisposeTokenTask implements Runnable{
     public void run() {
         Short userId = codeToUser.get(token);
         logger.info(
-                (userId == null ? "token " + token + " has been activated" : "token disposed: " + token + " " + userId)
+                ("token " + token + " has" + (userId == null ? "" : " not") + " been activated, disposing")
         );
         codeToUser.remove(token);
     }

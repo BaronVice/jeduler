@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import java.time.Instant;
 
 public interface MailTask {
-    String getUsername();
-    Short getId();
+    Integer getId();
+    @Value("#{target.user_id}")
+    Short getUserId();
     @Value("#{target.notify_at}")
     Instant getNotifyAt();
 }
