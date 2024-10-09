@@ -7,9 +7,9 @@ import java.util.Objects;
 
 @Entity
 @Table(
-//        indexes = {
-//                @Index(name = "task_id_idx", columnList = "task_id")
-//        }
+        indexes = {
+                @Index(name = "task_id_idx", columnList = "task_id")
+        }
 )
 @Getter
 @Setter

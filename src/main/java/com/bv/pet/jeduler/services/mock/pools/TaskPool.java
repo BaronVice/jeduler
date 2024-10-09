@@ -24,7 +24,6 @@ public class TaskPool extends ObjectPool<Task> {
         short priority = (short) random.nextInt(1, 3);
         Instant startsAt = Instant.now().plusSeconds(random.nextInt(1000, 10000));
         Instant lastChanged = Instant.now().minusSeconds(random.nextInt(1, 10000));
-        List<Subtask> subtasks = new ArrayList<>();
 
         Task task = Task.builder()
                 .name(name)
