@@ -43,6 +43,9 @@ spring:
       mode: always
 
 custom:
+  firebase:
+    path: path_to_json
+
   admin:
     username: ***
     # 123

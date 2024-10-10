@@ -26,6 +26,7 @@ public class FilteringRepository {
             List<Short> priorities,
             List<Short> categories,
             boolean categoriesAny,
+            String taskDone,
             Date from,
             Date to,
             int page,

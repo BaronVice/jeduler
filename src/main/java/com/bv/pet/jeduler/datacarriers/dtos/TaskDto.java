@@ -22,10 +22,10 @@ public record TaskDto (
         @Size(max = 20, message = "Subtasks limit is 20")
         List<SubtaskDto> subtasks,
 
-        @JsonFormat(pattern = "dd.MM.yyyy+HH:mm", timezone = "UTC")
+        @JsonFormat(pattern = "dd.MM.yyyy-HH:mm", timezone = "UTC")
         Instant startsAt,
 
-        @JsonFormat(pattern = "dd.MM.yyyy+HH:mm", timezone = "UTC")
+        @JsonFormat(pattern = "dd.MM.yyyy-HH:mm", timezone = "UTC")
         Instant notifyAt
 ){
 }
