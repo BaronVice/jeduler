@@ -36,6 +36,7 @@ public class FilteringRepository {
         StringBuilder queryBuilder = new StringBuilder("select * from Task t where t.user_id = :user_id");
         filterFrom(queryBuilder, from);
         filterTo(queryBuilder, to);
+        filterTaskDone(queryBuilder, taskDone);
         filterPriorities(queryBuilder, priorities);
         filterName(queryBuilder, name);
         filterCategories(queryBuilder, categories);
@@ -49,6 +50,7 @@ public class FilteringRepository {
         filterQuery.setParameter("user_id", userId);
         filterQuery.setParameter("order", order.toString());
         setParameter(filterQuery, "name", name);
+        setParameter(filterQuery, "task_done", taskDone.equals("Yes"));
         setParameter(filterQuery, "from", from);
         setParameter(filterQuery, "to", to);
         setPaging(filterQuery, page, size);
@@ -109,6 +111,13 @@ public class FilteringRepository {
             return;
 
         queryBuilder.append(" and t.starts_at >= :from");
+    }
+
+    private void filterTaskDone(StringBuilder queryBuilder, String taskDone){
+        if (taskDone.equals("Any"))
+            return;
+
+        queryBuilder.append(" and t.task_done = :task_done");
     }
 
     private void setPaging(

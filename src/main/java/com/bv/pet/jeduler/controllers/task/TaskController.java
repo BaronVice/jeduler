@@ -26,6 +26,12 @@ public class TaskController {
     private final ApplicationInfo applicationInfo;
     private final Assert anAssert;
 
+    @GetMapping("/aboba")
+    public ResponseEntity<?> gegege(){
+        return ResponseEntity.ok().build();
+    }
+
+
     // Keep in mind that categoryIds and subtasks are unordered
     @GetMapping("/{id}")
     public ResponseEntity<?> getTask(

@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@RestController
-@RequestMapping("/jeduler/admin")
+//@RestController
+//@RequestMapping("/jeduler/admin")
 @RequiredArgsConstructor
 public class AdminController {
     private final UserService userService;

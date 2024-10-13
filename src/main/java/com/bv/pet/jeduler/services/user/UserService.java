@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.bv.pet.jeduler.entities.user.Role.USER;
 
-@Service
+//@Service
 @RequiredArgsConstructor
 public class UserService {
     private final PasswordEncoder passwordEncoder;
