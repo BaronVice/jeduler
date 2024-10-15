@@ -3,8 +3,8 @@ package com.bv.pet.jeduler.controllers.task;
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.SingleValueResponse;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
-import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
 import com.bv.pet.jeduler.services.task.TaskService;
+import com.bv.pet.jeduler.services.user.UserService;
 import com.bv.pet.jeduler.utils.AllowedAmount;
 import com.bv.pet.jeduler.utils.Assert;
 import jakarta.validation.Valid;
@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
@@ -23,28 +24,37 @@ import java.util.List;
 @RequestMapping("/jeduler/tasks")
 public class TaskController {
     private final TaskService taskService;
+    private final UserService userService;
     private final ApplicationInfo applicationInfo;
     private final Assert anAssert;
 
     @GetMapping("/aboba")
-    public ResponseEntity<?> gegege(){
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> gegege(
+            Principal principal
+    ){
+        return ResponseEntity.ok(
+                principal
+        );
     }
 
 
     // Keep in mind that categoryIds and subtasks are unordered
     @GetMapping("/{id}")
     public ResponseEntity<?> getTask(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Principal principal,
             @PathVariable Integer id
     ) {
-        return ResponseEntity.ok(taskService.get(userDetails.getUserId(), id));
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
+
+        return ResponseEntity.ok(
+                taskService.get(userId, id)
+        );
     }
 
     // Keep in mind that categoryIds and subtasks are unordered
     @GetMapping
     public ResponseEntity<?> getTasks(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Principal principal,
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "priorities", required = false) List<Short> priorities,
             @RequestParam(name = "categories", required = false) List<Short> categories,
@@ -57,10 +67,11 @@ public class TaskController {
             @RequestParam(name = "order", defaultValue = "name") OrderType order
     ) {
         size = Math.min(size, 20);
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
 
         return ResponseEntity.ok(
                 taskService.get(
-                        userDetails.getUserId(),
+                        userId,
                         name,
                         priorities,
                         categories,
@@ -77,10 +88,10 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<?> createTask(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Principal principal,
             @Valid @RequestBody TaskDto taskDto
     ) {
-        short userId = userDetails.getUserId();
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
 
         anAssert.allowedCreation(
                 applicationInfo.userInfoTasks().getInfo().get(userId),
@@ -93,10 +104,11 @@ public class TaskController {
 
     @PatchMapping
     public ResponseEntity<?> updateTask(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Principal principal,
             @Valid @RequestBody TaskDto taskDto
     ) {
-        short userId = userDetails.getUserId();
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
+
         taskService.update(
                 userId,
                 taskDto
@@ -106,10 +118,15 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTask(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Principal principal,
             @PathVariable Integer id
     ) {
-        taskService.delete(userDetails.getUserId(), id);
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
+
+        taskService.delete(
+                userId,
+                id
+        );
         return ResponseEntity.ok().build();
     }
 }

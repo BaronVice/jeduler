@@ -23,16 +23,12 @@ public class UserPool extends ObjectPool<User> {
 
     @Override
     protected User create() {
-        String name = createName();
-        // 123
-        String MOCK_USER_PASSWORD =
-                "$argon2id$v=19$m=16384,t=2,p=1$ucTBGBGVW2SmbpmGEQlkJw$P61VQNQilS+zeoU9Zyg8joaSkM8nUwHG+HcyJprBDSQ";
+        String name = createName() + createName();
 
         List<Category> categories = getEntities(categoryPool, 1,10);
         List<Task> tasks = getEntities(taskPool, 1, 1001);
         User user = User.builder()
-                .username(name)
-                .password(MOCK_USER_PASSWORD)
+                .uuid(name)
                 .role(Role.USER)
                 .build();
 
@@ -102,7 +98,7 @@ public class UserPool extends ObjectPool<User> {
 
     @Override
     protected void nullIds(User o) {
-        o.setUsername(createName());
+        o.setUuid(createName());
         o.setId(null);
         o.getCategories().forEach(categoryPool::nullIds);
         o.getTasks().forEach(taskPool::nullIds);

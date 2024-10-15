@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-//@RestController
-//@RequestMapping("/jeduler/admin")
+@RestController
+@RequestMapping("/jeduler/admin")
 @RequiredArgsConstructor
 public class AdminController {
     private final UserService userService;
@@ -31,24 +31,5 @@ public class AdminController {
     @GetMapping("/amount")
     public ResponseEntity<?> amountInfo(){
         return ResponseEntity.ok(applicationInfo.userAmount());
-    }
-
-    @PostMapping("/users")
-    public ResponseEntity<?> create(@RequestBody UserDto userDto){
-        anAssert.allowedCreation(
-                applicationInfo.userAmount().getAmount(),
-                AllowedAmount.USER
-        );
-
-        userService.save(userDto);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> delete(@PathVariable Short id){
-        anAssert.notMainAdmin(id);
-
-        userService.delete(id);
-        return ResponseEntity.ok().build();
     }
 }

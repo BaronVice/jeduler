@@ -19,7 +19,7 @@ import static jakarta.persistence.CascadeType.*;
  */
 @Table(
         name = "users",
-        uniqueConstraints = @UniqueConstraint(columnNames = "username", name = "username_unique")
+        uniqueConstraints = @UniqueConstraint(columnNames = "uuid", name = "username_unique")
 )
 @Getter
 @Setter
@@ -31,9 +31,7 @@ public class User implements ApplicationEntity<Short> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Short id;
 
-    private String username;
-
-    private String password;
+    private String uuid;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -47,9 +45,8 @@ public class User implements ApplicationEntity<Short> {
     @OneToMany(fetch = FetchType.LAZY, cascade = {REFRESH, MERGE, PERSIST, REMOVE}, mappedBy = "user")
     private List<Task> tasks;
 
-    public User(String username, String password, Role role) {
-        this.username = username;
-        this.password = password;
+    public User(String uuid, Role role) {
+        this.uuid = uuid;
         this.role = role;
     }
 
@@ -57,11 +54,11 @@ public class User implements ApplicationEntity<Short> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
-        return getUsername().equals(user.getUsername());
+        return getUuid().equals(user.getUuid());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUsername());
+        return Objects.hash(getUuid());
     }
 }

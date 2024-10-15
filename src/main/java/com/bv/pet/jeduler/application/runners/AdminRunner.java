@@ -30,20 +30,18 @@ public class AdminRunner implements ApplicationRunner {
     }
 
     private void createAdmin() {
-        String username = env.getProperty("custom.admin.username");
-        String password = env.getProperty("custom.admin.password");
+        String uuid = env.getProperty("custom.admin.uuid");
 
-        adminInfo.setUsername(username);
+        adminInfo.setUuid(uuid);
 
-        Optional<User> admin = userRepository.findByUsername(username);
+        Optional<User> admin = userRepository.findByUuid(uuid);
         if (admin.isPresent()){
             adminInfo.setId(admin.get().getId());
             return;
         }
 
         User user = new User(
-                username,
-                password,
+                uuid,
                 ADMIN
         );
 

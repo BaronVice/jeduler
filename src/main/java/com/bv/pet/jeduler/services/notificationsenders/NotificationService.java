@@ -8,7 +8,6 @@ import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.repositories.UserRepository;
 import com.bv.pet.jeduler.services.mock.pools.TaskPool;
-import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -28,7 +27,6 @@ import java.util.concurrent.ScheduledFuture;
 @Getter
 @Setter
 public class NotificationService implements NotificationSender {
-    private final StatisticsService statisticsService;
     private final NotificationRepository notificationRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;

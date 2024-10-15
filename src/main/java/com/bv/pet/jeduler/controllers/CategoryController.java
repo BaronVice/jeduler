@@ -3,15 +3,16 @@ package com.bv.pet.jeduler.controllers;
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.SingleValueResponse;
 import com.bv.pet.jeduler.datacarriers.dtos.CategoryDto;
-import com.bv.pet.jeduler.services.authentication.userdetails.UserDetailsImpl;
 import com.bv.pet.jeduler.services.category.CategoryService;
+import com.bv.pet.jeduler.services.user.UserService;
 import com.bv.pet.jeduler.utils.AllowedAmount;
 import com.bv.pet.jeduler.utils.Assert;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 
 @RestController
@@ -19,24 +20,27 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/jeduler/categories")
 public class CategoryController {
     private final CategoryService categoryService;
+    private final UserService userService;
     private final ApplicationInfo applicationInfo;
     private final Assert anAssert;
 
     @GetMapping
     public ResponseEntity<?> allCategories(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            Principal principal
     ) {
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
+
         return ResponseEntity.ok(
-                categoryService.all(userDetails.getUserId())
+                categoryService.all(userId)
         );
     }
 
     @PostMapping
     public ResponseEntity<?> createCategory(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Principal principal,
             @Valid @RequestBody CategoryDto categoryDto
     ) {
-        short userId = userDetails.getUserId();
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
         anAssert.allowedCreation(
                 applicationInfo.userInfoCategories().getInfo().get(userId),
                 AllowedAmount.CATEGORY
@@ -47,17 +51,27 @@ public class CategoryController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateCategory(@Valid @RequestBody CategoryDto categoryDto) {
-        categoryService.update(categoryDto);
+    public ResponseEntity<?> updateCategory(
+            Principal principal,
+            @Valid @RequestBody CategoryDto categoryDto
+    ) {
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
+        categoryService.update(
+                userId,
+                categoryDto
+        );
+
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Principal principal,
             @PathVariable Short id
     ) {
-        categoryService.delete(userDetails.getUserId(), id);
+        short userId = userService.getIdOrElseCreateAndGet(principal.getName());
+        categoryService.delete(userId, id);
+
         return ResponseEntity.ok().build();
     }
 }

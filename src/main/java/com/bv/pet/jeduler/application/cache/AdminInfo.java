@@ -12,5 +12,5 @@ public class AdminInfo {
     private short id;
     // TODO: Shouldn't they be final?
     //  move to config as bean?
-    private String username;
+    private String uuid;
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Short> {
     String ALL_ID = "select id from users";
 
-    Optional<User> findByUsername(String username);
+    Optional<User> findByUuid(String uuid);
     @Query(value = ALL_ID, nativeQuery = true)
     List<Short> findIds();
 }

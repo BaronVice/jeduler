@@ -4,10 +4,6 @@ import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.controllers.task.OrderType;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.entities.Task;
-import com.bv.pet.jeduler.mappers.TaskMapper;
-import com.bv.pet.jeduler.repositories.CategoryRepository;
-import com.bv.pet.jeduler.repositories.TaskRepository;
-import com.bv.pet.jeduler.services.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -21,7 +17,6 @@ import java.util.*;
 public class TaskService {
     private final TaskServiceHandler handler;
     private final FilteringHandler filtering;
-    private final StatisticsService statistics;
     private final ApplicationInfo applicationInfo;
 
     @Transactional(readOnly = true)

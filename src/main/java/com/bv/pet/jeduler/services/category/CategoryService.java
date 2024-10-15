@@ -3,6 +3,7 @@ package com.bv.pet.jeduler.services.category;
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.dtos.CategoryDto;
 import com.bv.pet.jeduler.entities.Category;
+import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
 import com.bv.pet.jeduler.mappers.CategoryMapper;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +42,11 @@ public class CategoryService {
     }
 
     @Transactional
-    public void update(CategoryDto categoryDto) {
-        Category toUpdate = categoryRepository.findById(categoryDto.id()).orElseThrow(
+    public void update(
+            short userId,
+            CategoryDto categoryDto
+    ) {
+        Category toUpdate = categoryRepository.findByUserIdAndId(userId, categoryDto.id()).orElseThrow(
                 () -> new ApplicationException("Category not found", HttpStatus.NOT_FOUND)
         );
 
@@ -54,7 +59,10 @@ public class CategoryService {
 
     @Transactional
     public void delete(short userId, short id) {
-        categoryRepository.deleteById(id);
-        applicationInfo.userInfoCategories().changeValue(userId, (short) -1);
+        Optional<Category> category = categoryRepository.findByUserIdAndId(userId, id);
+        if (category.isPresent()){
+            categoryRepository.deleteById(id);
+            applicationInfo.userInfoCategories().changeValue(userId, (short) -1);
+        }
     }
 }
