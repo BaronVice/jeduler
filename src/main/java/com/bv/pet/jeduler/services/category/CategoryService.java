@@ -60,6 +60,7 @@ public class CategoryService {
     @Transactional
     public void delete(short userId, short id) {
         Optional<Category> category = categoryRepository.findByUserIdAndId(userId, id);
+        System.out.println(category.isPresent());
         if (category.isPresent()){
             categoryRepository.deleteById(id);
             applicationInfo.userInfoCategories().changeValue(userId, (short) -1);

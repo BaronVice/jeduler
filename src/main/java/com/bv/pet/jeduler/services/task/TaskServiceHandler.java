@@ -148,22 +148,13 @@ public class TaskServiceHandler {
     }
 
     private void setSubtasksOnTaskUpdate(Task updated, Task toUpdate){
-//        for (short i = 0; i < updated.getSubtasks().size(); i++){
-//            Subtask subtask = updated.getSubtasks().get(i);
-//            subtask.setTask(toUpdate);
-//            subtask.setOrderInList(i);
-//        }
-//        subtaskRepository.deleteAll(toUpdate.getSubtasks());
-//        subtaskRepository.saveAll(updated.getSubtasks());
-//
-//        toUpdate.setSubtasks(updated.getSubtasks());
         short i = 0;
         for (Subtask toReplace: toUpdate.getSubtasks()){
             if (updated.getSubtasks().size() > i){
                 Subtask subtask = updated.getSubtasks().get(i);
                 toReplace.setName(subtask.getName());
                 toReplace.setOrderInList(i);
-                toReplace.setCompleted(subtask.isCompleted());
+                toReplace.setIsCompleted(subtask.getIsCompleted());
                 i++;
             }
         }

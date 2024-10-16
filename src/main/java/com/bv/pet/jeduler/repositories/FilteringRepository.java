@@ -40,15 +40,14 @@ public class FilteringRepository {
         filterPriorities(queryBuilder, priorities);
         filterName(queryBuilder, name);
         filterCategories(queryBuilder, categories);
-        queryBuilder.append(" order by :order");
+        queryBuilder.append(" order by ").append(order.toString());
 
         Query filterQuery = em.createNativeQuery(
                 queryBuilder.toString(),
                 Task.class
         );
-
+        System.out.println(queryBuilder);
         filterQuery.setParameter("user_id", userId);
-        filterQuery.setParameter("order", order.toString());
         setParameter(filterQuery, "name", name);
         setParameter(filterQuery, "task_done", taskDone.equals("Yes"));
         setParameter(filterQuery, "from", from);

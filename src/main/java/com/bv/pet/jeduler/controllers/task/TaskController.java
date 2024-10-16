@@ -2,6 +2,7 @@ package com.bv.pet.jeduler.controllers.task;
 
 import com.bv.pet.jeduler.config.carriers.ApplicationInfo;
 import com.bv.pet.jeduler.datacarriers.SingleValueResponse;
+import com.bv.pet.jeduler.datacarriers.dtos.SubtaskDto;
 import com.bv.pet.jeduler.datacarriers.dtos.TaskDto;
 import com.bv.pet.jeduler.services.task.TaskService;
 import com.bv.pet.jeduler.services.user.UserService;
@@ -15,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -27,16 +29,6 @@ public class TaskController {
     private final UserService userService;
     private final ApplicationInfo applicationInfo;
     private final Assert anAssert;
-
-    @GetMapping("/aboba")
-    public ResponseEntity<?> gegege(
-            Principal principal
-    ){
-        return ResponseEntity.ok(
-                principal
-        );
-    }
-
 
     // Keep in mind that categoryIds and subtasks are unordered
     @GetMapping("/{id}")
@@ -69,21 +61,31 @@ public class TaskController {
         size = Math.min(size, 20);
         short userId = userService.getIdOrElseCreateAndGet(principal.getName());
 
-        return ResponseEntity.ok(
-                taskService.get(
-                        userId,
-                        name,
-                        priorities,
-                        categories,
-                        categoriesAny,
-                        taskDone,
-                        from,
-                        to,
-                        page,
-                        size,
-                        order
-                )
+        List<TaskDto> tasks = taskService.get(
+                userId,
+                name,
+                priorities,
+                categories,
+                categoriesAny,
+                taskDone,
+                from,
+                to,
+                page,
+                size,
+                order
         );
+
+        for(TaskDto t : tasks){
+            t.subtasks().sort(Comparator.comparingInt(SubtaskDto::orderInList));
+            if (t.id() == 103) {
+                System.out.println(t.subtasks().size());
+                t.subtasks().forEach(s ->
+                        System.out.println(s.name() + " " + s.isCompleted())
+                );
+            }
+        }
+
+        return ResponseEntity.ok(tasks);
     }
 
     @PostMapping
@@ -108,6 +110,9 @@ public class TaskController {
             @Valid @RequestBody TaskDto taskDto
     ) {
         short userId = userService.getIdOrElseCreateAndGet(principal.getName());
+        taskDto.subtasks().forEach(s ->
+                System.out.println(s.name() + " " + s.isCompleted())
+        );
 
         taskService.update(
                 userId,

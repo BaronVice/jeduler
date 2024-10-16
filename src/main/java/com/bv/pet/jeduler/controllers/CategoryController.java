@@ -70,6 +70,7 @@ public class CategoryController {
             @PathVariable Short id
     ) {
         short userId = userService.getIdOrElseCreateAndGet(principal.getName());
+        System.out.println("HEEEEEE");
         categoryService.delete(userId, id);
 
         return ResponseEntity.ok().build();

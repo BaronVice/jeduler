@@ -45,7 +45,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Firebase ID-Token");
-            System.out.println(-2);
+            System.out.println(idToken);
             return;
         }
 
