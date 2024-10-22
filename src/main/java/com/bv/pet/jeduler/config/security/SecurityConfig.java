@@ -29,6 +29,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorizeRequests -> authorizeRequests
                                 .requestMatchers(
+                                        "images/image"
+                                ).permitAll()
+                                .requestMatchers(
                                         WebConstants.API_BASE_PATH.getS()
                                 ).authenticated()
                 );

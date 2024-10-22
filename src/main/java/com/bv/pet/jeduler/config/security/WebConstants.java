@@ -1,7 +1,7 @@
 package com.bv.pet.jeduler.config.security;
 
 public enum WebConstants {
-    API_BASE_PATH("/**"),
+    API_BASE_PATH("jeduler/**"),
     AUTHORIZATION_HEADER("Token");
 
     private String s;

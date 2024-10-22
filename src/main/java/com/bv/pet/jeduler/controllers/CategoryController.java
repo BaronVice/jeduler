@@ -47,7 +47,8 @@ public class CategoryController {
         );
 
         Short id = categoryService.create(userId, categoryDto);
-        return ResponseEntity.ok(new SingleValueResponse<>(id));
+        System.out.println(id);
+        return ResponseEntity.ok(id);
     }
 
     @PatchMapping

@@ -50,7 +50,7 @@ public class TaskController {
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "priorities", required = false) List<Short> priorities,
             @RequestParam(name = "categories", required = false) List<Short> categories,
-            @RequestParam(name = "task_done", defaultValue = "Any") String taskDone,
+            @RequestParam(name = "taskdone", defaultValue = "Any") String taskDone,
             @RequestParam(name = "c_any", defaultValue = "0") boolean categoriesAny, // TODO: in next update perhaps
             @RequestParam(name = "from", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Date from,
             @RequestParam(name = "to", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy-HH:mm") Date to,
@@ -100,8 +100,9 @@ public class TaskController {
                 AllowedAmount.TASK
         );
 
+
         Integer id = taskService.create(userId, taskDto);
-        return ResponseEntity.ok(new SingleValueResponse<>(id));
+        return ResponseEntity.ok(id);
     }
 
     @PatchMapping
