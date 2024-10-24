@@ -10,7 +10,7 @@ import com.bv.pet.jeduler.mappers.TaskMapper;
 import com.bv.pet.jeduler.repositories.CategoryRepository;
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
-import com.bv.pet.jeduler.services.notificationsenders.NotificationService;
+import com.bv.pet.jeduler.services.notificationsenders.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

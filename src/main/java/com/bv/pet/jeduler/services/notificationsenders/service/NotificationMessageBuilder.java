@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.notificationsenders;
+package com.bv.pet.jeduler.services.notificationsenders.service;
 
 import com.bv.pet.jeduler.entities.Task;
 import com.bv.pet.jeduler.exceptions.ApplicationException;
@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class NotificationMessageBuilder {
-    private static final String prefix = "http://localhost:8080/jeduler/tasks/";
+    private static final String prefix = "https://touching-beloved-ibex.ngrok-free.app/jeduler/tasks/";
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
 

@@ -1,11 +1,11 @@
-package com.bv.pet.jeduler.services.notificationsenders;
+package com.bv.pet.jeduler.services.notificationsenders.decoratorimpl;
 
 import lombok.AllArgsConstructor;
 
 // With firebase message sender but maybe later
 @AllArgsConstructor
 public abstract class NotificationDecorator implements NotificationSender {
-    private NotificationSender notificationSender;
+    protected NotificationSender notificationSender;
 
     @Override
     public void send(int taskId, short userId) {

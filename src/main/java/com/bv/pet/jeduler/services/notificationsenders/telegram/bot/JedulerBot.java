@@ -2,9 +2,10 @@ package com.bv.pet.jeduler.services.notificationsenders.telegram.bot;
 
 import com.bv.pet.jeduler.application.cache.TelegramInfo;
 import com.bv.pet.jeduler.services.notificationsenders.telegram.token.TokenConnector;
-import com.bv.pet.jeduler.services.notificationsenders.NotificationMessageBuilder;
-import com.bv.pet.jeduler.services.notificationsenders.NotificationSender;
+import com.bv.pet.jeduler.services.notificationsenders.service.NotificationMessageBuilder;
+import com.bv.pet.jeduler.services.notificationsenders.decoratorimpl.NotificationSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.telegram.abilitybots.api.bot.AbilityBot;
@@ -24,10 +25,11 @@ import static org.telegram.abilitybots.api.util.AbilityUtils.getChatId;
 // https://web.telegram.org/k/#@JedulerBot
 public class JedulerBot extends AbilityBot implements NotificationSender {
     private final ResponseHandler responseHandler;
-    private final TelegramNotificationSender sender;
+    private final TelegramNotificationSender tgSender;
 
     @Autowired
     public JedulerBot(
+            @Qualifier("firebaseNotificationSender") NotificationSender sender,
             Environment env,
             TokenConnector connector,
             NotificationMessageBuilder messageBuilder,
@@ -39,7 +41,13 @@ public class JedulerBot extends AbilityBot implements NotificationSender {
         );
 
         responseHandler = new ResponseHandler(silent, db, connector);
-        sender = new TelegramNotificationSender(silent, telegramInfo.getUsersChatId(), db, messageBuilder);
+        tgSender = new TelegramNotificationSender(
+                sender,
+                silent,
+                telegramInfo.getUsersChatId(),
+                db,
+                messageBuilder
+        );
     }
 
     @Override
@@ -65,6 +73,6 @@ public class JedulerBot extends AbilityBot implements NotificationSender {
 
     @Override
     public void send(int taskId, short userId) {
-        sender.send(taskId, userId);
+        tgSender.send(taskId, userId);
     }
 }

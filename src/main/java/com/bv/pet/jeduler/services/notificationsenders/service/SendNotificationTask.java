@@ -1,4 +1,6 @@
-package com.bv.pet.jeduler.services.notificationsenders;
+package com.bv.pet.jeduler.services.notificationsenders.service;
+
+import com.bv.pet.jeduler.services.notificationsenders.decoratorimpl.NotificationSender;
 
 public class SendNotificationTask implements Runnable{
     private final NotificationSender sender;

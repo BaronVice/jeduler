@@ -2,8 +2,8 @@ package com.bv.pet.jeduler.application.runners;
 
 import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.projections.mailtask.MailTask;
-import com.bv.pet.jeduler.services.notificationsenders.NotificationService;
-import com.bv.pet.jeduler.services.notificationsenders.SendNotificationTask;
+import com.bv.pet.jeduler.services.notificationsenders.service.NotificationService;
+import com.bv.pet.jeduler.services.notificationsenders.service.SendNotificationTask;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

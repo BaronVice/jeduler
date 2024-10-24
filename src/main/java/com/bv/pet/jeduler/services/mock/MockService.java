@@ -7,7 +7,7 @@ import com.bv.pet.jeduler.entities.*;
 import com.bv.pet.jeduler.entities.user.User;
 import com.bv.pet.jeduler.repositories.*;
 import com.bv.pet.jeduler.services.mock.pools.ObjectPool;
-import com.bv.pet.jeduler.services.notificationsenders.NotificationService;
+import com.bv.pet.jeduler.services.notificationsenders.service.NotificationService;
 import com.bv.pet.jeduler.utils.Assert;
 
 

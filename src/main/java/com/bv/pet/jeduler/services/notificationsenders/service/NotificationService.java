@@ -1,4 +1,4 @@
-package com.bv.pet.jeduler.services.notificationsenders;
+package com.bv.pet.jeduler.services.notificationsenders.service;
 
 import com.bv.pet.jeduler.entities.Notification;
 import com.bv.pet.jeduler.entities.Task;
@@ -8,6 +8,7 @@ import com.bv.pet.jeduler.repositories.NotificationRepository;
 import com.bv.pet.jeduler.repositories.TaskRepository;
 import com.bv.pet.jeduler.repositories.UserRepository;
 import com.bv.pet.jeduler.services.mock.pools.TaskPool;
+import com.bv.pet.jeduler.services.notificationsenders.decoratorimpl.NotificationSender;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
